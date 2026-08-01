@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reviewer Dashboard - Damietta IP Portal</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #f1f5f9;
+      margin: 0;
+    }
+    .sidebar {
+      width: 250px;
+      min-height: 100vh;
+      background: rgba(15, 23, 42, .95);
+      border-right: 1px solid rgba(148, 163, 184, .1);
+      transition: width .3s ease, margin-left .3s ease;
+      overflow: hidden;
+    }
+    .sidebar.collapsed {
+      width: 0;
+      margin-left: -250px;
+    }
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 1.25rem;
+      border-bottom: 1px solid rgba(148, 163, 184, .1);
+    }
+    .avatar-logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #2563EB, #14B8A6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 700;
+      font-size: .8rem;
+      flex-shrink: 0;
+    }
+    .nav-item-dash {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-size: .85rem;
+      font-weight: 500;
+      color: #94A3B8;
+      width: 100%;
+      text-align: left;
+      transition: all .2s;
+    }
+    .nav-item-dash:hover {
+      background: rgba(148, 163, 184, .08);
+      color: #E2E8F0;
+    }
+    .nav-item-dash.active {
+      background: rgba(37, 99, 235, .2);
+      color: #fff;
+    }
+    .nav-item-dash.logout {
+      color: #EF4444;
+    }
+    .card-white {
+      background: #fff;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+    }
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .table-dash th {
+      font-size: .75rem;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      color: #64748B;
+      border-bottom: 1px solid #e2e8f0 !important;
+      white-space: nowrap;
+    }
+    .table-dash td {
+      font-size: .85rem;
+      vertical-align: middle;
+      border-bottom: 1px solid #f1f5f9 !important;
+    }
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: .75rem;
+      font-weight: 600;
+    }
+    .btn-sm-icon {
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: .75rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+    }
+    .toast-dash {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 2000;
+      padding: 12px 18px;
+      border-radius: 10px;
+      color: #fff;
+      font-size: .85rem;
+      font-weight: 600;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, .2);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all .3s;
+      pointer-events: none;
+    }
+    .toast-dash.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    @media (max-width: 768px) {
+      .sidebar { position: fixed; z-index: 1050; }
+      .main-content { padding: 1rem !important; }
+    }
+  </style>
+</head>
+<body>
+<div class="d-flex">
+  <!-- Sidebar -->
+  <aside id="sidebar" class="sidebar">
+    <a href="/" class="sidebar-header text-decoration-none">
+      <div class="avatar-logo">RK</div>
+      <div>
+        <div class="fw-bold" style="color: #fff; font-size: .85rem;">Reviewer Panel</div>
+        <div style="color: #14B8A6; font-size: .7rem;">Faculty Reviewer</div>
+      </div>
+    </a>
+    <nav class="p-2 d-flex flex-column" style="gap: 4px;">
+      <button class="nav-item-dash active" data-view="dashboard"><i class="bi bi-file-earmark-text"></i> Dashboard</button>
+      <button class="nav-item-dash" data-view="reviews"><i class="bi bi-person-check"></i> My Reviews</button>
+      <button class="nav-item-dash" data-view="feedback"><i class="bi bi-chat-left-text"></i> Feedback</button>
+    </nav>
+    <div class="p-2 mt-auto border-top d-flex flex-column" style="gap: 4px;">
+      <a href="/" class="nav-item-dash text-decoration-none"><i class="bi bi-chevron-right"></i> Home</a>
+      <a href="/login" class="nav-item-dash logout text-decoration-none"><i class="bi bi-x-circle"></i> Logout</a>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main id="main" class="main-content flex-grow-1 p-4" style="padding: 1.5rem 2rem !important;">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div class="d-flex align-items-center" style="gap: 1rem;">
+        <button class="btn btn-light border" onclick="toggleSidebar()"><i id="menu-icon" class="bi bi-x-lg"></i></button>
+        <h2 id="page-title" class="mb-0 fw-bold" style="font-size: 1.4rem; color: #0F172A;">Review Dashboard</h2>
+      </div>
+      <div class="d-flex align-items-center" style="gap: 1rem;">
+        <div class="position-relative">
+          <span class="position-absolute" style="top: -4px; right: -2px; width: 8px; height: 8px; border-radius: 50%; background: #EF4444;"></span>
+          <i class="bi bi-bell" style="font-size: 1.2rem; color: #64748B;"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-lg-3">
+        <div class="card-white p-4">
+          <div class="stat-value" style="color: #2563EB;">12</div>
+          <div style="font-size: .8rem; color: #64748B;">Pending Reviews</div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="card-white p-4">
+          <div class="stat-value" style="color: #14B8A6;">48</div>
+          <div style="font-size: .8rem; color: #64748B;">Completed</div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="card-white p-4">
+          <div class="stat-value" style="color: #F59E0B;">3</div>
+          <div style="font-size: .8rem; color: #64748B;">Revisions Needed</div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="card-white p-4">
+          <div class="stat-value" style="color: #8B5CF6;">2.4d</div>
+          <div style="font-size: .8rem; color: #64748B;">Avg. Review Time</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dashboard view -->
+    <div id="view-dashboard">
+      <div class="card-white p-4">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+          <h3 class="fs-6 fw-bold mb-0" style="color: #0F172A;">Assigned Reviews</h3>
+          <div class="position-relative">
+            <i class="bi bi-search position-absolute" style="left: 10px; top: 50%; transform: translateY(-50%); color: #94A3B8; font-size: .85rem;"></i>
+            <input id="search-input" class="form-control form-control-sm ps-4" style="width: 200px; border-color: #e2e8f0; font-size: .8rem;" placeholder="Search..." oninput="filterReviews()">
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-dash mb-0">
+            <thead>
+              <tr>
+                <th>ID</th><th>Student</th><th>Title</th><th>Department</th><th>Status</th><th>Date</th><th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="reviews-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- My Reviews view -->
+    <div id="view-reviews" style="display: none;">
+      <div class="card-white p-4">
+        <h3 class="fs-6 fw-bold mb-4" style="color: #0F172A;">My Completed Reviews</h3>
+        <div id="my-reviews-list" class="d-flex flex-column" style="gap: 1rem;"></div>
+      </div>
+    </div>
+
+    <!-- Feedback view -->
+    <div id="view-feedback" style="display: none;">
+      <div class="card-white p-4">
+        <h3 class="fs-6 fw-bold mb-4" style="color: #0F172A;">Feedback Overview</h3>
+        <div id="feedback-list" class="d-flex flex-column" style="gap: 1rem;"></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div id="toast" class="toast-dash"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  let reviews = [
+    { id: 'RES-2026-001', student: 'Ahmed Hassan', title: 'Blockchain for Healthcare Data', date: '2026-07-24', status: 'Under Review', dept: 'Computer Science' },
+    { id: 'RES-2026-003', student: 'Omar Youssef', title: 'IoT Smart Grid Optimization', date: '2026-07-22', status: 'Revisions Needed', dept: 'Electrical Engineering' },
+    { id: 'RES-2026-006', student: 'Nadia Fawzi', title: 'ML for Arabic OCR', date: '2026-07-19', status: 'Under Review', dept: 'Computer Science' },
+  ];
+
+  const statusMap = {
+    'Under Review': ['rgba(37,99,235,.12)', '#2563EB'],
+    'Revisions Needed': ['rgba(245,158,11,.12)', '#F59E0B'],
+    'Approved': ['rgba(20,184,166,.12)', '#14B8A6'],
+    'Rejected': ['rgba(239,68,68,.12)', '#EF4444'],
+  };
+  const badge = (s) => {
+    const [bg, color] = statusMap[s] || ['rgba(148,163,184,.12)', '#94A3B8'];
+    return `<span class="badge-status" style="background:${bg};color:${color};">${s}</span>`;
+  };
+
+  function renderReviews() {
+    const q = (document.getElementById('search-input').value || '').toLowerCase();
+    const filtered = reviews.filter(r =>
+      !q || [r.id, r.student, r.title, r.dept, r.status].some(f => f.toLowerCase().includes(q)));
+    document.getElementById('reviews-body').innerHTML = filtered.length ? filtered.map(r => `
+      <tr>
+        <td class="fw-semibold" style="color:#2563EB;">${r.id}</td>
+        <td style="color:#0F172A;">${r.student}</td>
+        <td style="color:#334155;">${r.title}</td>
+        <td style="color:#64748B; font-size:.8rem;">${r.dept}</td>
+        <td>${badge(r.status)}</td>
+        <td style="color:#64748B;">${r.date}</td>
+        <td>
+          <div class="d-flex flex-wrap" style="gap: 6px;">
+            <button class="btn-sm-icon" style="border:1px solid rgba(37,99,235,.2);background:rgba(37,99,235,.06);color:#2563EB;" onclick="approve('${r.id}')"><i class="bi bi-check-circle"></i> Approve</button>
+            <button class="btn-sm-icon" style="border:1px solid rgba(245,158,11,.2);background:rgba(245,158,11,.06);color:#F59E0B;" onclick="revise('${r.id}')"><i class="bi bi-clock"></i> Revise</button>
+            <button class="btn-sm-icon" style="border:1px solid rgba(239,68,68,.2);background:rgba(239,68,68,.06);color:#EF4444;" onclick="reject('${r.id}')"><i class="bi bi-x-circle"></i> Reject</button>
+          </div>
+        </td>
+      </tr>`).join('')
+      : `<tr><td colspan="7" class="text-center py-4" style="color:#94A3B8;">No reviews match your search.</td></tr>`;
+  }
+  function filterReviews() { renderReviews(); }
+
+  function approve(id) {
+    const r = reviews.find(x => x.id === id);
+    r.status = 'Approved';
+    renderReviews();
+    toast(`${r.title} approved!`, 'success');
+  }
+  function revise(id) {
+    const r = reviews.find(x => x.id === id);
+    r.status = 'Revisions Needed';
+    renderReviews();
+    toast(`Revisions requested for ${id}`, 'warning');
+  }
+  function reject(id) {
+    const r = reviews.find(x => x.id === id);
+    r.status = 'Rejected';
+    renderReviews();
+    toast(`${r.title} rejected.`, 'error');
+  }
+
+  function renderMyReviews() {
+    const done = reviews.filter(r => r.status === 'Approved' || r.status === 'Rejected');
+    document.getElementById('my-reviews-list').innerHTML = done.length ? done.map(r => `
+      <div class="d-flex justify-content-between align-items-center p-3" style="background:#f8fafc; border-radius:12px; border:1px solid #e2e8f0;">
+        <div>
+          <div class="fw-semibold" style="color:#0F172A; font-size:.9rem;">${r.title}</div>
+          <div style="font-size:.8rem; color:#64748B;">${r.student} &middot; ${r.id}</div>
+        </div>
+        <div>${badge(r.status)}</div>
+      </div>`).join('')
+      : `<div class="text-center py-5" style="color:#94A3B8;"><i class="bi bi-clipboard-check fs-1 d-block mb-3 opacity-50"></i><p class="mb-0">No completed reviews yet.</p></div>`;
+  }
+
+  function renderFeedback() {
+    document.getElementById('feedback-list').innerHTML = `
+      <div class="p-3" style="background:#f8fafc; border-radius:12px; border:1px solid #e2e8f0;">
+        <div class="fw-semibold mb-2" style="color:#0F172A; font-size:.9rem;">Feedback Guidelines</div>
+        <div style="font-size:.85rem; color:#64748B; line-height:1.6;">Provide constructive feedback on methodology, originality, and technical merit. Comments are visible to the student and become part of the official review record.</div>
+      </div>
+      <div class="p-3" style="background:#f8fafc; border-radius:12px; border:1px solid #e2e8f0;">
+        <div class="fw-semibold mb-2" style="color:#0F172A; font-size:.9rem;">Average Rating</div>
+        <div class="d-flex align-items-center gap-3">
+          <div class="fs-2 fw-bold" style="color:#2563EB;">4.2</div>
+          <div style="color:#F59E0B;"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i></div>
+          <div style="font-size:.8rem; color:#64748B;">/ 5 from 48 reviews</div>
+        </div>
+      </div>`;
+  }
+
+  const viewTitles = {
+    'dashboard': 'Review Dashboard', 'reviews': 'My Reviews', 'feedback': 'Feedback',
+  };
+  function showView(view) {
+    document.getElementById('page-title').textContent = viewTitles[view];
+    document.querySelectorAll('.nav-item-dash[data-view]').forEach(b => {
+      b.classList.toggle('active', b.dataset.view === view);
+    });
+    ['dashboard', 'reviews', 'feedback'].forEach(v => {
+      document.getElementById('view-' + v).style.display = v === view ? 'block' : 'none';
+    });
+    if (view === 'reviews') renderMyReviews();
+    if (view === 'feedback') renderFeedback();
+  }
+  document.querySelectorAll('.nav-item-dash[data-view]').forEach(b =>
+    b.addEventListener('click', () => showView(b.dataset.view)));
+
+  function toggleSidebar() {
+    const sb = document.getElementById('sidebar');
+    const collapsed = sb.classList.toggle('collapsed');
+    document.getElementById('menu-icon').className = collapsed ? 'bi bi-list' : 'bi bi-x-lg';
+  }
+
+  function toast(msg, type) {
+    const el = document.getElementById('toast');
+    el.style.background = type === 'error' ? '#EF4444' : type === 'warning' ? '#F59E0B' : type === 'info' ? '#2563EB' : '#14B8A6';
+    el.textContent = msg;
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 2500);
+  }
+
+  renderReviews();
+</script>
+</body>
+</html>
