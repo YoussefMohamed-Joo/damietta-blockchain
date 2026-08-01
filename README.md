@@ -1,32 +1,64 @@
-# React + TypeScript + Vite
+# Damietta IP Portal
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+بوابة تسجيل الملكية الفكرية لجامعة دمياط — نظام كامل بوردات لوحة تحكم (طالب، مراجع، أدمن) مع مساعد ذكاء اصطناعي مبني على Groq.
 
-Currently, two official plugins are available:
+## Live Demo
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+[https://damietta-blockchain.vercel.app](https://damietta-blockchain.vercel.app)
 
-## React Compiler
+## التقنيات
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **React 19** + **TypeScript** + **Vite 8**
+- **React Router v7**
+- **Tailwind CSS** + **lucide-react** للأيقونات
+- **Groq SDK** (Llama 3.3 70B) للمساعد الذكي
+- **Vercel** للنشر
 
-## Expanding the Oxlint configuration
+## التشغيل محليًا
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+1. تثبيت الاعتماديات:
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+   ```bash
+   npm install
+   ```
+
+2. إعداد متغيرات البيئة — أنشئ ملف `.env` في جذر المشروع:
+
+   ```env
+   VITE_GROQ_API_KEY=your_groq_api_key
+   ```
+
+   احصل على المفتاح من [console.groq.com](https://console.groq.com).
+
+3. تشغيل خادم التطوير:
+
+   ```bash
+   npm run dev
+   ```
+
+   افتح المتصفح على `http://localhost:5173`.
+
+## الأوامر المتاحة
+
+| الأمر | الوصف |
+| --- | --- |
+| `npm run dev` | تشغيل خادم التطوير مع HMR |
+| `npm run build` | بناء نسخة الإنتاج (`tsc -b && vite build`) |
+| `npm run preview` | معاينة نسخة الإنتاج محليًا |
+| `npm run lint` | فحص الكود بـ Oxlint |
+
+## النشر
+
+```bash
+npx vercel --prod
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## بنية المشروع
+
+```
+src/
+├── components/       # Navbar, Footer, Layout, AIAssistant, UI مكونات
+│   └── ui/           # مكونات UI عامة
+├── lib/              # groq.ts (تكامل الذكاء الاصطناعي), utils.ts
+└── pages/            # الصفحات واللوحات (Student, Reviewer, Admin...)
+```
