@@ -1,64 +1,64 @@
 # Damietta IP Portal
 
-بوابة تسجيل الملكية الفكرية لجامعة دمياط — نظام كامل بوردات لوحة تحكم (طالب، مراجع، أدمن) مع مساعد ذكاء اصطناعي مبني على Groq.
+Intellectual Property (IP) registration portal for Damietta University — a full-featured system with dashboards for students, reviewers, and admins, plus an AI assistant powered by Groq.
 
 ## Live Demo
 
 [https://damietta-blockchain.vercel.app](https://damietta-blockchain.vercel.app)
 
-## التقنيات
+## Tech Stack
 
 - **React 19** + **TypeScript** + **Vite 8**
 - **React Router v7**
-- **Tailwind CSS** + **lucide-react** للأيقونات
-- **Groq SDK** (Llama 3.3 70B) للمساعد الذكي
-- **Vercel** للنشر
+- **Tailwind CSS** + **lucide-react** for icons
+- **Groq SDK** (Llama 3.3 70B) for the AI assistant
+- **Vercel** for deployment
 
-## التشغيل محليًا
+## Getting Started
 
-1. تثبيت الاعتماديات:
+1. Install dependencies:
 
    ```bash
    npm install
    ```
 
-2. إعداد متغيرات البيئة — أنشئ ملف `.env` في جذر المشروع:
+2. Create a `.env` file in the project root:
 
    ```env
    VITE_GROQ_API_KEY=your_groq_api_key
    ```
 
-   احصل على المفتاح من [console.groq.com](https://console.groq.com).
+   Get a key from [console.groq.com](https://console.groq.com).
 
-3. تشغيل خادم التطوير:
+3. Start the dev server:
 
    ```bash
    npm run dev
    ```
 
-   افتح المتصفح على `http://localhost:5173`.
+   Open http://localhost:5173 in your browser.
 
-## الأوامر المتاحة
+## Available Scripts
 
-| الأمر | الوصف |
+| Command | Description |
 | --- | --- |
-| `npm run dev` | تشغيل خادم التطوير مع HMR |
-| `npm run build` | بناء نسخة الإنتاج (`tsc -b && vite build`) |
-| `npm run preview` | معاينة نسخة الإنتاج محليًا |
-| `npm run lint` | فحص الكود بـ Oxlint |
+| `npm run dev` | Start dev server with HMR |
+| `npm run build` | Build for production (`tsc -b && vite build`) |
+| `npm run preview` | Preview the production build locally |
+| `npm run lint` | Lint the code with Oxlint |
 
-## النشر
+## Deployment
 
 ```bash
 npx vercel --prod
 ```
 
-## بنية المشروع
+## Project Structure
 
 ```
 src/
-├── components/       # Navbar, Footer, Layout, AIAssistant, UI مكونات
-│   └── ui/           # مكونات UI عامة
-├── lib/              # groq.ts (تكامل الذكاء الاصطناعي), utils.ts
-└── pages/            # الصفحات واللوحات (Student, Reviewer, Admin...)
+├── components/       # Navbar, Footer, Layout, AIAssistant, UI components
+│   └── ui/           # Shared UI components
+├── lib/              # groq.ts (AI integration), utils.ts
+└── pages/            # Pages and dashboards (Student, Reviewer, Admin...)
 ```
