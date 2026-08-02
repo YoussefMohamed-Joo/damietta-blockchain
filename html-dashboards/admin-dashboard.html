@@ -1,752 +1,221 @@
 <!DOCTYPE html>
 <html lang="en">
+<!-- ===== HEADER (see partials/header.html) ===== -->
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard - Damietta IP Portal</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Segoe UI', system-ui, sans-serif;
-      background: #f1f5f9;
-      margin: 0;
-    }
-    .sidebar {
-      width: 250px;
-      min-height: 100vh;
-      background: rgba(15, 23, 42, .95);
-      border-right: 1px solid rgba(148, 163, 184, .1);
-      transition: width .3s ease, margin-left .3s ease;
-      overflow: hidden;
-    }
-    .sidebar.collapsed {
-      width: 0;
-      margin-left: -250px;
-    }
-    .sidebar-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 1.25rem;
-      border-bottom: 1px solid rgba(148, 163, 184, .1);
-    }
-    .avatar-logo {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      background: linear-gradient(135deg, #2563EB, #14B8A6);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-      font-weight: 700;
-      font-size: .8rem;
-      flex-shrink: 0;
-    }
-    .nav-item-dash {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 14px;
-      border-radius: 12px;
-      border: none;
-      background: transparent;
-      cursor: pointer;
-      font-size: .85rem;
-      font-weight: 500;
-      color: #94A3B8;
-      width: 100%;
-      text-align: left;
-      transition: all .2s;
-    }
-    .nav-item-dash:hover {
-      background: rgba(148, 163, 184, .08);
-      color: #E2E8F0;
-    }
-    .nav-item-dash.active {
-      background: rgba(37, 99, 235, .2);
-      color: #fff;
-    }
-    .nav-item-dash.logout {
-      color: #EF4444;
-    }
-    .card-glass {
-      background: rgba(255, 255, 255, .95);
-      border-radius: 16px;
-      border: 1px solid rgba(255, 255, 255, .5);
-      box-shadow: 0 4px 16px rgba(0, 0, 0, .04);
-    }
-    .stat-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 1rem;
-    }
-    .change-pill {
-      font-size: .75rem;
-      font-weight: 600;
-      padding: 2px 8px;
-      border-radius: 8px;
-    }
-    .badge-status {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: .75rem;
-      font-weight: 600;
-      white-space: nowrap;
-    }
-    .role-badge {
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: .75rem;
-      font-weight: 600;
-    }
-    .btn-icon {
-      width: 28px;
-      height: 28px;
-      border-radius: 6px;
-      border: 1px solid rgba(37, 99, 235, .2);
-      background: rgba(37, 99, 235, .06);
-      color: #2563EB;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-    }
-    .btn-icon.teal {
-      border-color: rgba(20, 184, 166, .2);
-      background: rgba(20, 184, 166, .06);
-      color: #14B8A6;
-    }
-    .btn-icon.red {
-      border-color: rgba(239, 68, 68, .2);
-      background: rgba(239, 68, 68, .06);
-      color: #EF4444;
-    }
-    .btn-icon.big {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-    }
-    .table-dash th {
-      font-size: .75rem;
-      text-transform: uppercase;
-      letter-spacing: .05em;
-      color: #64748B;
-      border-bottom: 1px solid rgba(148, 163, 184, .2) !important;
-      white-space: nowrap;
-    }
-    .table-dash td {
-      font-size: .85rem;
-      vertical-align: middle;
-      border-bottom: 1px solid rgba(148, 163, 184, .1) !important;
-    }
-    .table-dash .hash {
-      font-family: 'Consolas', monospace;
-      font-size: .8rem;
-    }
-    .form-input {
-      width: 100%;
-      padding: 10px 14px;
-      border-radius: 10px;
-      border: 1px solid rgba(148, 163, 184, .3);
-      font-size: .85rem;
-      outline: none;
-      box-sizing: border-box;
-    }
-    .form-input:focus {
-      border-color: #2563EB;
-    }
-    .form-label-custom {
-      display: block;
-      font-size: .8rem;
-      font-weight: 600;
-      color: #334155;
-      margin-bottom: 4px;
-    }
-    .setting-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem;
-      background: rgba(255, 255, 255, .4);
-      border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, .3);
-    }
-    .setting-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      background: rgba(37, 99, 235, .1);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #2563EB;
-      flex-shrink: 0;
-    }
-    .toggle {
-      width: 44px;
-      height: 24px;
-      border-radius: 12px;
-      background: #CBD5E1;
-      cursor: pointer;
-      position: relative;
-      transition: background .2s;
-      flex-shrink: 0;
-    }
-    .toggle.on {
-      background: #2563EB;
-    }
-    .toggle .knob {
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background: #fff;
-      position: absolute;
-      top: 2px;
-      left: 2px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, .15);
-      transition: left .2s;
-    }
-    .toggle.on .knob {
-      left: 22px;
-    }
-    .toast-dash {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      z-index: 2000;
-      padding: 12px 18px;
-      border-radius: 10px;
-      color: #fff;
-      font-size: .85rem;
-      font-weight: 600;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, .2);
-      opacity: 0;
-      transform: translateY(20px);
-      transition: all .3s;
-      pointer-events: none;
-    }
-    .toast-dash.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    @media (max-width: 768px) {
-      .sidebar { position: fixed; z-index: 1050; }
-      .main-content { padding: 1rem !important; }
-    }
-  </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="assets/css/dashboard.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 </head>
 <body>
-<div class="d-flex">
-  <!-- Sidebar -->
-  <aside id="sidebar" class="sidebar">
-    <a href="/" class="sidebar-header text-decoration-none">
-      <img src="/img/logo.png" alt="" style="height: 32px; border-radius: 8px;">
-      <div>
-        <div class="fw-bold" style="color: #fff; font-size: .85rem;">IP Portal</div>
-        <div style="color: #14B8A6; font-size: .7rem;">Admin Panel</div>
-      </div>
-    </a>
-    <nav class="p-2 d-flex flex-column" style="gap: 4px;">
-      <button class="nav-item-dash active" data-view="overview"><i class="bi bi-grid-1x2"></i> Overview</button>
-      <button class="nav-item-dash" data-view="users"><i class="bi bi-people"></i> Users</button>
-      <button class="nav-item-dash" data-view="submissions"><i class="bi bi-file-earmark-text"></i> Submissions</button>
-      <button class="nav-item-dash" data-view="blockchain"><i class="bi bi-shield-check"></i> Blockchain Records</button>
-      <button class="nav-item-dash" data-view="certificates"><i class="bi bi-award"></i> Certificates</button>
-      <button class="nav-item-dash" data-view="settings"><i class="bi bi-gear"></i> Settings</button>
-    </nav>
-    <div class="p-2 mt-auto border-top d-flex flex-column" style="gap: 4px;">
-      <a href="/" class="nav-item-dash text-decoration-none"><i class="bi bi-house"></i> Home</a>
-      <a href="/login" class="nav-item-dash logout text-decoration-none"><i class="bi bi-box-arrow-right"></i> Logout</a>
-    </div>
-  </aside>
+  <div class="layout">
+    <!-- ===== SIDEBAR (injected from layout.js) ===== -->
+    <div id="sidebar-root"></div>
 
-  <!-- Main -->
-  <main id="main" class="main-content flex-grow-1 p-4" style="padding: 1.5rem 2rem !important;">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <div class="d-flex align-items-center" style="gap: 1rem;">
-        <button class="btn btn-light border" onclick="toggleSidebar()"><i id="menu-icon" class="bi bi-x-lg"></i></button>
-        <h2 id="page-title" class="mb-0 fw-bold" style="font-size: 1.4rem; color: #0F172A;">Overview</h2>
-      </div>
-      <div class="d-flex align-items-center" style="gap: 1rem;">
-        <div class="position-relative">
-          <i class="bi bi-search position-absolute" style="left: 12px; top: 50%; transform: translateY(-50%); color: #94A3B8;"></i>
-          <input id="global-search" class="form-control form-control-sm ps-4" style="width: 220px; font-size: .8rem; border-color: rgba(148,163,184,.2);" placeholder="Search anything..." oninput="applySearch()">
-        </div>
-        <div class="position-relative">
-          <span class="position-absolute" style="top: -4px; right: -2px; width: 8px; height: 8px; border-radius: 50%; background: #EF4444;"></span>
-          <i class="bi bi-bell" style="font-size: 1.2rem; color: #64748B;"></i>
-        </div>
-        <div class="avatar-logo" style="width: 36px; height: 36px;">AK</div>
-      </div>
-    </div>
+    <div class="main-wrap">
+      <!-- ===== NAVBAR (injected from layout.js) ===== -->
+      <div id="navbar-root"></div>
 
-    <!-- Overview -->
-    <div id="view-overview">
-      <div class="row g-4 mb-4">
-        <div class="col-6 col-lg-3">
-          <div class="card-glass p-4 h-100">
-            <div class="d-flex justify-content-between align-items-start mb-3">
-              <div class="stat-icon" style="background: rgba(37,99,235,.12); color: #2563EB; margin-bottom: 0;"><i class="bi bi-people fs-5"></i></div>
-              <span class="change-pill" style="background: rgba(20,184,166,.1); color: #14B8A6;">+12%</span>
+      <!-- ===== CONTENT ===== -->
+      <main class="main-content">
+
+        <!-- ---- Overview ---- -->
+        <section data-section="overview">
+          <div class="grid-stats">
+            <div class="card-glass">
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <div class="stat-icon" style="background:rgba(37,99,235,.12);color:#2563EB;margin-bottom:0;"><i class="bi bi-people"></i></div>
+                <span class="change-pill" style="background:rgba(20,184,166,.1);color:#14B8A6;">+12%</span>
+              </div>
+              <div class="stat-value">1,284</div>
+              <div class="stat-label">Total Users</div>
             </div>
-            <div class="fs-2 fw-bold" style="color: #0F172A;">1,284</div>
-            <div style="font-size: .8rem; color: #64748B;">Total Users</div>
-          </div>
-        </div>
-        <div class="col-6 col-lg-3">
-          <div class="card-glass p-4 h-100">
-            <div class="d-flex justify-content-between align-items-start mb-3">
-              <div class="stat-icon" style="background: rgba(20,184,166,.12); color: #14B8A6; margin-bottom: 0;"><i class="bi bi-journal-text fs-5"></i></div>
-              <span class="change-pill" style="background: rgba(20,184,166,.1); color: #14B8A6;">+8%</span>
+            <div class="card-glass">
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <div class="stat-icon" style="background:rgba(20,184,166,.12);color:#14B8A6;margin-bottom:0;"><i class="bi bi-journal-text"></i></div>
+                <span class="change-pill" style="background:rgba(20,184,166,.1);color:#14B8A6;">+8%</span>
+              </div>
+              <div class="stat-value">3,542</div>
+              <div class="stat-label">Total Research</div>
             </div>
-            <div class="fs-2 fw-bold" style="color: #0F172A;">3,542</div>
-            <div style="font-size: .8rem; color: #64748B;">Total Research</div>
-          </div>
-        </div>
-        <div class="col-6 col-lg-3">
-          <div class="card-glass p-4 h-100">
-            <div class="d-flex justify-content-between align-items-start mb-3">
-              <div class="stat-icon" style="background: rgba(245,158,11,.12); color: #F59E0B; margin-bottom: 0;"><i class="bi bi-award fs-5"></i></div>
-              <span class="change-pill" style="background: rgba(20,184,166,.1); color: #14B8A6;">+15%</span>
+            <div class="card-glass">
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <div class="stat-icon" style="background:rgba(245,158,11,.12);color:#F59E0B;margin-bottom:0;"><i class="bi bi-award"></i></div>
+                <span class="change-pill" style="background:rgba(20,184,166,.1);color:#14B8A6;">+15%</span>
+              </div>
+              <div class="stat-value">2,891</div>
+              <div class="stat-label">Certificates Issued</div>
             </div>
-            <div class="fs-2 fw-bold" style="color: #0F172A;">2,891</div>
-            <div style="font-size: .8rem; color: #64748B;">Certificates Issued</div>
-          </div>
-        </div>
-        <div class="col-6 col-lg-3">
-          <div class="card-glass p-4 h-100">
-            <div class="d-flex justify-content-between align-items-start mb-3">
-              <div class="stat-icon" style="background: rgba(239,68,68,.12); color: #EF4444; margin-bottom: 0;"><i class="bi bi-clock fs-5"></i></div>
-              <span class="change-pill" style="background: rgba(239,68,68,.1); color: #EF4444;">-3%</span>
+            <div class="card-glass">
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <div class="stat-icon" style="background:rgba(239,68,68,.12);color:#EF4444;margin-bottom:0;"><i class="bi bi-clock"></i></div>
+                <span class="change-pill" style="background:rgba(239,68,68,.1);color:#EF4444;">-3%</span>
+              </div>
+              <div class="stat-value">47</div>
+              <div class="stat-label">Pending Reviews</div>
             </div>
-            <div class="fs-2 fw-bold" style="color: #0F172A;">47</div>
-            <div style="font-size: .8rem; color: #64748B;">Pending Reviews</div>
           </div>
-        </div>
-      </div>
 
-      <div class="card-glass p-4">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <h3 class="fs-6 fw-bold mb-0" style="color: #0F172A;">Recent Submissions</h3>
-          <button class="btn btn-link btn-sm fw-semibold text-decoration-none" style="color: #2563EB;" onclick="showView('submissions')">View All</button>
-        </div>
-        <div class="table-responsive">
-          <table class="table table-dash mb-0">
-            <thead>
-              <tr>
-                <th>ID</th><th>Student</th><th>Title</th><th>Status</th><th>Date</th><th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="recent-submissions-body"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- Users -->
-    <div id="view-users" style="display: none;">
-      <div class="card-glass p-4">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <h3 class="fs-6 fw-bold mb-0 d-flex align-items-center" style="color: #0F172A; gap: 8px;"><i class="bi bi-people"></i> User Management</h3>
-          <button class="btn btn-sm fw-semibold text-white" style="background: #2563EB; border-radius: 10px;" onclick="openAddUser()"><i class="bi bi-person-plus me-1"></i>Add User</button>
-        </div>
-        <div class="table-responsive">
-          <table class="table table-dash mb-0">
-            <thead>
-              <tr>
-                <th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Papers</th><th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="users-body"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- Submissions -->
-    <div id="view-submissions" style="display: none;">
-      <div class="card-glass p-4">
-        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-          <h3 class="fs-6 fw-bold mb-0 d-flex align-items-center" style="color: #0F172A; gap: 8px;"><i class="bi bi-list-ul"></i> All Submissions</h3>
-          <div class="d-flex align-items-center" style="gap: 8px;">
-            <select id="status-filter" class="form-select form-select-sm" style="font-size: .8rem; border-color: rgba(148,163,184,.2);" onchange="applySearch()">
-              <option>All Status</option>
-              <option>Approved</option>
-              <option>Pending</option>
-              <option>Under Review</option>
-              <option>Rejected</option>
-              <option>Active</option>
-              <option>Inactive</option>
-              <option>Confirmed</option>
-            </select>
-            <button class="btn btn-sm text-white fw-semibold" style="background: #2563EB; border-radius: 10px;" onclick="toast('Export started', 'info')"><i class="bi bi-download me-1"></i>Export</button>
+          <div class="card-glass">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h3 class="fs-6 fw-bold mb-0" style="color:var(--text-dark);">Recent Submissions</h3>
+              <a href="#" class="btn-link" style="font-size:.8rem;color:#2563EB;font-weight:600;" onclick="switchView('submissions');return false;">View All</a>
+            </div>
+            <div class="table-scroll">
+              <table class="table-dash">
+                <thead>
+                  <tr><th>ID</th><th>Student</th><th>Title</th><th>Status</th><th>Date</th><th>Actions</th></tr>
+                </thead>
+                <tbody id="recent-submissions-body"></tbody>
+              </table>
+            </div>
           </div>
-        </div>
-        <div class="table-responsive">
-          <table class="table table-dash mb-0">
-            <thead>
-              <tr>
-                <th>ID</th><th>Student</th><th>Title</th><th>Status</th><th>Date</th><th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="all-submissions-body"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+        </section>
 
-    <!-- Blockchain -->
-    <div id="view-blockchain" style="display: none;">
-      <div class="card-glass p-4">
-        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-          <h3 class="fs-6 fw-bold mb-0 d-flex align-items-center" style="color: #0F172A; gap: 8px;"><i class="bi bi-shield-check"></i> Blockchain Transactions</h3>
-          <span class="badge d-inline-flex align-items-center gap-2" style="background: rgba(37,99,235,.1); color: #64748B; font-weight: 500; padding: 6px 12px; border-radius: 8px;"><i class="bi bi-activity"></i> Network: Ethereum Sepolia</span>
-        </div>
-        <div class="table-responsive">
-          <table class="table table-dash mb-0">
-            <thead>
-              <tr>
-                <th>Transaction Hash</th><th>Research</th><th>Timestamp</th><th>Block</th><th>Status</th><th>Explorer</th>
-              </tr>
-            </thead>
-            <tbody id="blockchain-body"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+        <!-- ---- Users ---- -->
+        <section data-section="users" style="display:none;">
+          <div class="card-glass">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h3 class="fs-6 fw-bold mb-0" style="color:var(--text-dark);"><i class="bi bi-people me-2"></i>User Management</h3>
+              <button class="btn-primary-dash btn-sm-dash" onclick="openModal('add-user-modal')"><i class="bi bi-person-plus"></i> Add User</button>
+            </div>
+            <div class="table-scroll">
+              <table class="table-dash">
+                <thead>
+                  <tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Papers</th><th>Actions</th></tr>
+                </thead>
+                <tbody id="users-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
 
-    <!-- Certificates -->
-    <div id="view-certificates" style="display: none;">
-      <div class="card-glass p-4">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <h3 class="fs-6 fw-bold mb-0 d-flex align-items-center" style="color: #0F172A; gap: 8px;"><i class="bi bi-award"></i> Digital Certificates</h3>
-          <button class="btn btn-sm text-white fw-semibold" style="background: #2563EB; border-radius: 10px;" onclick="toast('Certificate issuance form opened', 'info')"><i class="bi bi-award me-1"></i>Issue New</button>
-        </div>
-        <div class="table-responsive">
-          <table class="table table-dash mb-0">
-            <thead>
-              <tr>
-                <th>Certificate ID</th><th>Student</th><th>Research</th><th>Issued Date</th><th>QR Code</th><th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="certs-body"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+        <!-- ---- Submissions ---- -->
+        <section data-section="submissions" style="display:none;">
+          <div class="card-glass">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+              <h3 class="fs-6 fw-bold mb-0" style="color:var(--text-dark);"><i class="bi bi-list-ul me-2"></i>All Submissions</h3>
+              <div class="d-flex align-items-center" style="gap:8px;">
+                <select id="status-filter" class="form-select-dash" style="width:auto;padding:8px 12px;" onchange="applySearch()">
+                  <option>All Status</option>
+                  <option>Approved</option>
+                  <option>Pending</option>
+                  <option>Under Review</option>
+                  <option>Rejected</option>
+                  <option>Active</option>
+                  <option>Inactive</option>
+                  <option>Confirmed</option>
+                </select>
+                <button class="btn-primary-dash btn-sm-dash" onclick="dummyDownload('submissions-export.csv')"><i class="bi bi-download"></i> Export</button>
+              </div>
+            </div>
+            <div class="table-scroll">
+              <table class="table-dash">
+                <thead>
+                  <tr><th>ID</th><th>Student</th><th>Title</th><th>Status</th><th>Date</th><th>Actions</th></tr>
+                </thead>
+                <tbody id="all-submissions-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
 
-    <!-- Settings -->
-    <div id="view-settings" style="display: none;">
-      <div class="card-glass p-4">
-        <h3 class="fs-6 fw-bold mb-4 d-flex align-items-center" style="color: #0F172A; gap: 8px;"><i class="bi bi-gear"></i> Platform Settings</h3>
-        <div id="settings-list" class="d-flex flex-column" style="gap: 1.25rem;"></div>
-        <button class="btn text-white fw-semibold mt-4" style="background: #2563EB; border-radius: 10px;" onclick="saveSettings()"><i class="bi bi-save me-1"></i>Save Changes</button>
-      </div>
-    </div>
-  </main>
-</div>
+        <!-- ---- Blockchain ---- -->
+        <section data-section="blockchain" style="display:none;">
+          <div class="card-glass">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+              <h3 class="fs-6 fw-bold mb-0" style="color:var(--text-dark);"><i class="bi bi-shield-check me-2"></i>Blockchain Transactions</h3>
+              <span class="badge-status" style="background:rgba(37,99,235,.1);color:#64748B;border-radius:8px;"><i class="bi bi-activity"></i> Network: Ethereum Sepolia</span>
+            </div>
+            <div class="table-scroll">
+              <table class="table-dash">
+                <thead>
+                  <tr><th>Transaction Hash</th><th>Research</th><th>Timestamp</th><th>Block</th><th>Status</th><th>Explorer</th></tr>
+                </thead>
+                <tbody id="blockchain-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
 
-<!-- Add User Modal -->
-<div class="modal fade" id="addUserModal" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered" style="max-width: 420px;">
-    <div class="modal-content p-3" style="border-radius: 20px; border: none;">
-      <div class="modal-header border-0">
-        <h5 class="modal-title fw-bold" style="color: #0F172A;">Add New User</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <!-- ---- Certificates ---- -->
+        <section data-section="certificates" style="display:none;">
+          <div class="card-glass">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h3 class="fs-6 fw-bold mb-0" style="color:var(--text-dark);"><i class="bi bi-award me-2"></i>Digital Certificates</h3>
+              <button class="btn-primary-dash btn-sm-dash" onclick="toast('Certificate issuance form opened','info')"><i class="bi bi-award"></i> Issue New</button>
+            </div>
+            <div class="table-scroll">
+              <table class="table-dash">
+                <thead>
+                  <tr><th>Certificate ID</th><th>Student</th><th>Research</th><th>Issued Date</th><th>QR Code</th><th>Actions</th></tr>
+                </thead>
+                <tbody id="certs-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ---- Settings ---- -->
+        <section data-section="settings" style="display:none;">
+          <div class="card-glass">
+            <h3 class="fs-6 fw-bold mb-4" style="color:var(--text-dark);"><i class="bi bi-gear me-2"></i>Platform Settings</h3>
+            <div id="settings-list" class="d-flex flex-column" style="gap:1.25rem;"></div>
+            <button class="btn-primary-dash mt-4" onclick="saveSettings()"><i class="bi bi-save"></i> Save Changes</button>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ===== MODAL: Add User ===== -->
+  <div class="modal-overlay" id="add-user-modal">
+    <div class="modal-box" style="width:420px;">
+      <div class="modal-head">
+        <h3>Add New User</h3>
+        <button class="modal-close" onclick="closeModal('add-user-modal')"><i class="bi bi-x-lg"></i></button>
       </div>
-      <div class="modal-body d-flex flex-column" style="gap: 1rem;">
+      <div class="d-flex flex-column" style="gap:1rem;">
         <div>
-          <label class="form-label-custom">Full Name</label>
+          <label class="form-label-dash">Full Name</label>
           <input id="nu-name" class="form-input" placeholder="e.g. Mohamed Ali">
         </div>
         <div>
-          <label class="form-label-custom">Email Address</label>
+          <label class="form-label-dash">Email Address</label>
           <input id="nu-email" class="form-input" type="email" placeholder="e.g. m.ali@du.edu.eg">
         </div>
         <div>
-          <label class="form-label-custom">Password</label>
+          <label class="form-label-dash">Password</label>
           <input id="nu-password" class="form-input" type="password" placeholder="********">
         </div>
         <div>
-          <label class="form-label-custom">Role</label>
-          <select id="nu-role" class="form-select" style="padding: 10px 14px; border-radius: 10px; border: 1px solid rgba(148,163,184,.3);">
+          <label class="form-label-dash">Role</label>
+          <select id="nu-role" class="form-select-dash">
             <option>Student</option>
             <option>Reviewer</option>
             <option>Admin</option>
           </select>
         </div>
       </div>
-      <div class="p-3">
-        <button class="btn text-white w-100 fw-semibold" style="background: #2563EB; border-radius: 12px;" onclick="addUser()">Add User</button>
+      <div class="modal-foot">
+        <button class="btn-primary-dash flex-1" onclick="addUser()">Add User</button>
       </div>
     </div>
   </div>
-</div>
 
-<div id="toast" class="toast-dash"></div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-  const stats = [
-    { label: 'Total Users', value: '1,284', change: '+12%' },
-    { label: 'Total Research', value: '3,542', change: '+8%' },
-    { label: 'Certificates Issued', value: '2,891', change: '+15%' },
-    { label: 'Pending Reviews', value: '47', change: '-3%' },
-  ];
-  let users = [
-    { name: 'Dr. Khaled Ibrahim', email: 'k.ibrahim@du.edu.eg', role: 'Admin', status: 'Active', papers: 42 },
-    { name: 'Dr. Samira Younis', email: 's.younis@du.edu.eg', role: 'Reviewer', status: 'Active', papers: 28 },
-    { name: 'Ahmed Hassan', email: 'ahmed.hassan@stud.du.edu.eg', role: 'Student', status: 'Active', papers: 3 },
-    { name: 'Mariam Ali', email: 'mariam.ali@stud.du.edu.eg', role: 'Student', status: 'Active', papers: 1 },
-    { name: 'Sarah Nabil', email: 's.nabil@du.edu.eg', role: 'Reviewer', status: 'Inactive', papers: 15 },
-  ];
-  const recentSubmissions = [
-    { id: 'RES-2026-001', student: 'Ahmed Hassan', title: 'Blockchain for Healthcare Data', status: 'Approved', date: '2026-07-24', hash: '0x7f8a...3b2c' },
-    { id: 'RES-2026-002', student: 'Mariam Ali', title: 'AI-Based Crop Disease Detection', status: 'Pending', date: '2026-07-23', hash: '—' },
-    { id: 'RES-2026-003', student: 'Omar Youssef', title: 'IoT Smart Grid Optimization', status: 'Under Review', date: '2026-07-22', hash: '—' },
-    { id: 'RES-2026-004', student: 'Nour El-Din', title: 'NLP for Arabic Sentiment Analysis', status: 'Approved', date: '2026-07-21', hash: '0x9d2f...7e1a' },
-    { id: 'RES-2026-005', student: 'Laila Mahmoud', title: 'Deep Learning for Medical Imaging', status: 'Rejected', date: '2026-07-20', hash: '—' },
-  ];
-  const blockchainRecords = [
-    { tx: '0x7f8a...3b2c', research: 'Blockchain for Healthcare Data', timestamp: '2026-07-24 14:32:18', block: 18472921, status: 'Confirmed' },
-    { tx: '0x9d2f...7e1a', research: 'NLP for Arabic Sentiment Analysis', timestamp: '2026-07-21 09:15:42', block: 18471200, status: 'Confirmed' },
-    { tx: '0x4b1e...8f3d', research: 'Renewable Energy Forecasting', timestamp: '2026-07-18 16:04:55', block: 18468934, status: 'Confirmed' },
-    { tx: '0x2c8a...5e9f', research: 'Smart Agriculture System', timestamp: '2026-07-15 11:22:30', block: 18465412, status: 'Confirmed' },
-  ];
-  const certData = [
-    { id: 'CERT-2026-001', student: 'Ahmed Hassan', research: 'Blockchain for Healthcare Data', issued: '2026-07-24', qr: '••••' },
-    { id: 'CERT-2026-002', student: 'Nour El-Din', research: 'NLP for Arabic Sentiment Analysis', issued: '2026-07-21', qr: '••••' },
-    { id: 'CERT-2026-003', student: 'Hossam Kamal', research: 'Renewable Energy Forecasting', issued: '2026-07-18', qr: '••••' },
-  ];
-
-  const statusMap = {
-    'Approved': ['rgba(20,184,166,.12)', '#14B8A6', 'check-circle'],
-    'Pending': ['rgba(245,158,11,.12)', '#F59E0B', 'clock'],
-    'Under Review': ['rgba(37,99,235,.12)', '#2563EB', 'person-check'],
-    'Rejected': ['rgba(239,68,68,.12)', '#EF4444', 'x-circle'],
-    'Confirmed': ['rgba(20,184,166,.12)', '#14B8A6', 'check-circle'],
-    'Active': ['rgba(20,184,166,.12)', '#14B8A6', 'check-circle'],
-    'Inactive': ['rgba(239,68,68,.12)', '#EF4444', 'x-circle'],
-  };
-  const badge = (s) => {
-    const [bg, color, icon] = statusMap[s] || ['rgba(148,163,184,.12)', '#94A3B8', 'exclamation-triangle'];
-    return `<span class="badge-status" style="background:${bg};color:${color};"><i class="bi bi-${icon}" style="font-size:.7rem;"></i> ${s}</span>`;
-  };
-  const roleBadge = (role) => {
-    const m = { Admin: ['rgba(239,68,68,.1)', '#EF4444'], Reviewer: ['rgba(37,99,235,.1)', '#2563EB'], Student: ['rgba(20,184,166,.1)', '#14B8A6'] };
-    const [bg, color] = m[role] || ['rgba(148,163,184,.1)', '#64748B'];
-    return `<span class="role-badge" style="background:${bg};color:${color};">${role}</span>`;
-  };
-
-  let toggles = { 'Maintenance Mode': false, 'Auto-Certificate Generation': true, 'Notification Alerts': true };
-  let uploadSize = '50 MB';
-
-  const addUserModal = new bootstrap.Modal(document.getElementById('addUserModal'));
-  let currentView = 'overview';
-
-  const viewTitles = {
-    'overview': 'Overview', 'users': 'Users', 'submissions': 'Submissions',
-    'blockchain': 'Blockchain Records', 'certificates': 'Certificates', 'settings': 'Settings',
-  };
-
-  function matches(item, fields) {
-    const q = (document.getElementById('global-search').value || '').toLowerCase();
-    const sf = document.getElementById('status-filter').value;
-    const okQ = !q || fields.some(f => String(item[f]).toLowerCase().includes(q));
-    const okS = sf === 'All Status' || item.status === sf;
-    return okQ && okS;
-  }
-
-  function renderRecent() {
-    document.getElementById('recent-submissions-body').innerHTML = recentSubmissions.map(r => `
-      <tr>
-        <td class="fw-semibold" style="color:#2563EB;">${r.id}</td>
-        <td style="color:#0F172A;">${r.student}</td>
-        <td style="color:#334155;">${r.title}</td>
-        <td>${badge(r.status)}</td>
-        <td style="color:#64748B;">${r.date}</td>
-        <td>
-          <div class="d-flex" style="gap: 5px;">
-            <button class="btn-icon" onclick="toast('Viewing details for ${r.id}', 'info')"><i class="bi bi-eye"></i></button>
-            <button class="btn-icon teal" onclick="toast('${r.id} approved successfully!', 'success')"><i class="bi bi-check-circle"></i></button>
-            <button class="btn-icon red" onclick="toast('${r.id} rejected.', 'error')"><i class="bi bi-x-circle"></i></button>
-          </div>
-        </td>
-      </tr>`).join('');
-  }
-
-  function renderUsers() {
-    document.getElementById('users-body').innerHTML = users.filter(u => matches(u, ['name', 'email', 'role', 'status'])).map(u => `
-      <tr>
-        <td class="fw-semibold" style="color:#0F172A;">${u.name}</td>
-        <td style="color:#64748B;">${u.email}</td>
-        <td>${roleBadge(u.role)}</td>
-        <td>${badge(u.status)}</td>
-        <td style="color:#334155;">${u.papers}</td>
-        <td><button class="btn-icon big" onclick="toast('Managing user: ${u.name}', 'info')"><i class="bi bi-three-dots"></i></button></td>
-      </tr>`).join('');
-  }
-
-  function renderAllSubmissions() {
-    const data = recentSubmissions.concat(recentSubmissions).slice(0, 8);
-    document.getElementById('all-submissions-body').innerHTML = data.filter(r => matches(r, ['id', 'student', 'title', 'status', 'date'])).map(r => `
-      <tr>
-        <td class="fw-semibold" style="color:#2563EB;">${r.id}</td>
-        <td style="color:#0F172A;">${r.student}</td>
-        <td style="color:#334155;">${r.title}</td>
-        <td>${badge(r.status)}</td>
-        <td style="color:#64748B;">${r.date}</td>
-        <td>
-          <div class="d-flex" style="gap: 6px;">
-            <button class="btn-icon big" onclick="toast('Viewing details for ${r.id}', 'info')"><i class="bi bi-eye"></i></button>
-            <button class="btn-icon big teal" onclick="toast('${r.title} approved!', 'success')"><i class="bi bi-check-circle"></i></button>
-            <button class="btn-icon big red" onclick="toast('${r.title} rejected.', 'error')"><i class="bi bi-x-circle"></i></button>
-          </div>
-        </td>
-      </tr>`).join('');
-  }
-
-  function renderBlockchain() {
-    document.getElementById('blockchain-body').innerHTML = blockchainRecords.filter(b => matches(b, ['tx', 'research', 'timestamp', 'block', 'status'])).map(b => `
-      <tr>
-        <td class="hash fw-semibold" style="color:#2563EB;">${b.tx}</td>
-        <td style="color:#0F172A;">${b.research}</td>
-        <td style="color:#64748B; font-size:.8rem;">${b.timestamp}</td>
-        <td class="hash" style="color:#334155;">${b.block}</td>
-        <td>${badge(b.status)}</td>
-        <td><button class="btn btn-sm fw-semibold" style="border:1px solid rgba(37,99,235,.2); background:rgba(37,99,235,.06); color:#2563EB; border-radius:8px;" onclick="toast('Viewing transaction ${b.tx}')"><i class="bi bi-eye me-1"></i>View</button></td>
-      </tr>`).join('');
-  }
-
-  function renderCerts() {
-    document.getElementById('certs-body').innerHTML = certData.filter(c => matches(c, ['id', 'student', 'research', 'issued', 'qr'])).map(c => `
-      <tr>
-        <td class="fw-semibold" style="color:#2563EB;">${c.id}</td>
-        <td style="color:#0F172A;">${c.student}</td>
-        <td style="color:#334155;">${c.research}</td>
-        <td style="color:#64748B;">${c.issued}</td>
-        <td><span class="hash" style="color:#94A3B8; background:rgba(0,0,0,.03); padding:4px 8px; border-radius:6px;">${c.qr}</span></td>
-        <td>
-          <div class="d-flex" style="gap: 6px;">
-            <button class="btn-icon big" onclick="toast('Viewing certificate ${c.id}', 'info')"><i class="bi bi-eye"></i></button>
-            <button class="btn-icon big teal" onclick="toast('Downloading ${c.id}', 'success')"><i class="bi bi-download"></i></button>
-          </div>
-        </td>
-      </tr>`).join('');
-  }
-
-  function renderSettings() {
-    const settings = [
-      { label: 'Maintenance Mode', desc: 'Disable user access during maintenance', type: 'toggle' },
-      { label: 'Blockchain Network', desc: 'Sepolia Testnet (Chain ID: 11155111)', type: 'info', info: 'Sepolia Testnet' },
-      { label: 'Auto-Certificate Generation', desc: 'Automatically issue certificates upon approval', type: 'toggle' },
-      { label: 'Storage Provider', desc: 'IPFS (InterPlanetary File System) - 98.2% Uptime', type: 'info', info: 'IPFS' },
-      { label: 'Max Upload Size', desc: '50 MB per research document', type: 'text' },
-      { label: 'Notification Alerts', desc: 'Send email notifications for reviews and approvals', type: 'toggle' },
-    ];
-    const icons = {
-      'Maintenance Mode': 'shield-check', 'Blockchain Network': 'wifi',
-      'Auto-Certificate Generation': 'award', 'Storage Provider': 'hdd',
-      'Max Upload Size': 'upload', 'Notification Alerts': 'bell',
+  <!-- ===== FOOTER (see partials/footer.html) ===== -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    window.DASHBOARD = {
+      role: 'admin', active: 'overview', title: 'Overview',
+      name: 'IP Portal', subtitle: 'Admin Panel', initials: 'AK', logo: '/img/logo.png'
     };
-    document.getElementById('settings-list').innerHTML = settings.map(s => `
-      <div class="setting-row">
-        <div class="d-flex align-items-center" style="gap: 12px;">
-          <div class="setting-icon"><i class="bi bi-${icons[s.label]}"></i></div>
-          <div>
-            <div class="fw-semibold" style="color:#0F172A; font-size:.9rem;">${s.label}</div>
-            <div style="font-size:.8rem; color:#64748B; margin-top:2px;">${s.desc}</div>
-          </div>
-        </div>
-        ${s.type === 'toggle'
-          ? `<div class="toggle ${toggles[s.label] ? 'on' : ''}" onclick="toggleSetting('${s.label}')"><div class="knob"></div></div>`
-          : s.type === 'info'
-            ? `<span style="font-size:.8rem; color:#2563EB; font-weight:500; background:rgba(37,99,235,.08); padding:6px 12px; border-radius:8px; white-space:nowrap;">${s.info}</span>`
-            : `<input id="upload-size-input" class="form-input" style="width:100px; text-align:center;" value="${uploadSize}" onchange="uploadSize = this.value">`}
-      </div>`).join('');
-  }
-
-  function toggleSetting(label) {
-    toggles[label] = !toggles[label];
-    renderSettings();
-  }
-  function saveSettings() {
-    toast('Settings saved successfully!', 'success');
-  }
-
-  function openAddUser() {
-    document.getElementById('nu-name').value = '';
-    document.getElementById('nu-email').value = '';
-    document.getElementById('nu-password').value = '';
-    document.getElementById('nu-role').value = 'Student';
-    addUserModal.show();
-  }
-  function addUser() {
-    const name = document.getElementById('nu-name').value.trim();
-    const email = document.getElementById('nu-email').value.trim();
-    const password = document.getElementById('nu-password').value.trim();
-    const role = document.getElementById('nu-role').value;
-    if (!name || !email || !password) {
-      toast('Please fill all fields', 'error');
-      return;
-    }
-    users.push({ name, email, role, status: 'Active', papers: 0 });
-    addUserModal.hide();
-    renderUsers();
-    toast(`${name} added successfully!`, 'success');
-  }
-
-  function showView(view) {
-    currentView = view;
-    document.getElementById('page-title').textContent = viewTitles[view];
-    document.querySelectorAll('.nav-item-dash[data-view]').forEach(b => {
-      b.classList.toggle('active', b.dataset.view === view);
-    });
-    ['overview', 'users', 'submissions', 'blockchain', 'certificates', 'settings'].forEach(v => {
-      document.getElementById('view-' + v).style.display = v === view ? 'block' : 'none';
-    });
-    if (view === 'settings') renderSettings();
-    if (view === 'certificates') renderCerts();
-  }
-  document.querySelectorAll('.nav-item-dash[data-view]').forEach(b =>
-    b.addEventListener('click', () => showView(b.dataset.view)));
-
-  function toggleSidebar() {
-    const sb = document.getElementById('sidebar');
-    const collapsed = sb.classList.toggle('collapsed');
-    document.getElementById('menu-icon').className = collapsed ? 'bi bi-list' : 'bi bi-x-lg';
-  }
-
-  function applySearch() {
-    renderRecent();
-    renderUsers();
-    renderAllSubmissions();
-    renderBlockchain();
-    renderCerts();
-  }
-
-  function toast(msg, type) {
-    const el = document.getElementById('toast');
-    el.style.background = type === 'error' ? '#EF4444' : type === 'warning' ? '#F59E0B' : type === 'info' ? '#2563EB' : '#14B8A6';
-    el.textContent = msg;
-    el.classList.add('show');
-    setTimeout(() => el.classList.remove('show'), 2500);
-  }
-
-  renderRecent();
-  renderUsers();
-  renderAllSubmissions();
-  renderBlockchain();
-  renderCerts();
-</script>
+  </script>
+  <script src="assets/js/layout.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/pages/admin.js"></script>
 </body>
 </html>

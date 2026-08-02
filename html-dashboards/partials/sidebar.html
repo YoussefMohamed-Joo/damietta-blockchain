@@ -1,0 +1,38 @@
+<!-- ============================================================
+     PARTIAL: SIDEBAR
+     Blade equivalent:
+     resources/views/partials/sidebar.blade.php
+     Included via: @include('partials.sidebar')
+     ------------------------------------------------------------
+     The active item is determined per page. In Blade you would
+     use Request::is() / Route::currentRouteName() to set .active.
+     Left here as static markup with the Admin role fully filled.
+     ============================================================ -->
+<aside class="sidebar dark">
+  <a href="{{ route('home') }}" class="sidebar-header">
+    <img src="/img/logo.png" alt="Logo">
+    <div>
+      <div class="sidebar-title">{{ Auth::user()->name ?? 'IP Portal' }}</div>
+      <div class="sidebar-subtitle">Admin Panel</div>
+    </div>
+  </a>
+
+  <nav class="sidebar-nav">
+    <a class="nav-item {{ request()->routeIs('admin.overview') ? 'active' : '' }}" href="{{ route('admin.overview') }}"><i class="bi bi-grid-1x2"></i><span>Overview</span></a>
+    <a class="nav-item {{ request()->routeIs('admin.users') ? 'active' : '' }}" href="{{ route('admin.users') }}"><i class="bi bi-people"></i><span>Users</span></a>
+    <a class="nav-item {{ request()->routeIs('admin.submissions') ? 'active' : '' }}" href="{{ route('admin.submissions') }}"><i class="bi bi-file-earmark-text"></i><span>Submissions</span></a>
+    <a class="nav-item {{ request()->routeIs('admin.blockchain') ? 'active' : '' }}" href="{{ route('admin.blockchain') }}"><i class="bi bi-shield-check"></i><span>Blockchain Records</span></a>
+    <a class="nav-item {{ request()->routeIs('admin.certificates') ? 'active' : '' }}" href="{{ route('admin.certificates') }}"><i class="bi bi-award"></i><span>Certificates</span></a>
+    <a class="nav-item {{ request()->routeIs('admin.settings') ? 'active' : '' }}" href="{{ route('admin.settings') }}"><i class="bi bi-gear"></i><span>Settings</span></a>
+    <a class="nav-item {{ request()->routeIs('admin.audit') ? 'active' : '' }}" href="{{ route('admin.audit') }}"><i class="bi bi-clipboard-data"></i><span>Audit Logs</span></a>
+    <a class="nav-item {{ request()->routeIs('admin.notifications') ? 'active' : '' }}" href="{{ route('admin.notifications') }}"><i class="bi bi-bell"></i><span>Notifications</span></a>
+  </nav>
+
+  <div class="sidebar-foot">
+    <a href="{{ route('home') }}" class="nav-item"><i class="bi bi-house"></i><span>Home</span></a>
+    <form method="POST" action="{{ route('logout') }}">
+      @csrf
+      <button type="submit" class="nav-item logout"><i class="bi bi-box-arrow-right"></i><span>Logout</span></button>
+    </form>
+  </div>
+</aside>

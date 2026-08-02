@@ -1,0 +1,21 @@
+<!-- ============================================================
+     PARTIAL: FOOTER
+     Blade equivalent:
+     resources/views/partials/footer.blade.php
+     Included via: @include('partials.footer')
+     ------------------------------------------------------------
+     Shared scripts. The page-specific script is passed via
+     @yield('scripts') from the child view.
+     ============================================================ -->
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Shared app helpers (toast, badges, dummy data, layout) -->
+<script src="assets/js/layout.js"></script>
+<script src="assets/js/app.js"></script>
+
+<!-- Page-specific script injected from the child view -->
+@yield('scripts')
+
+</body>
+</html>
