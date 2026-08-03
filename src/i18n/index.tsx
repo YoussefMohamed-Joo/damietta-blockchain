@@ -61,8 +61,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const el = document.documentElement
     el.lang = lang
-    el.dir = lang === 'ar' ? 'rtl' : 'ltr'
-    document.body.classList.toggle('rtl', lang === 'ar')
+    el.dir = 'ltr'
   }, [lang])
 
   const t = (key: string) => tFn(lang, key)

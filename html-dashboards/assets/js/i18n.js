@@ -612,8 +612,7 @@ function setLanguage(lang) {
   try { localStorage.setItem('ipp_lang', currentLang); } catch (e) {}
   const html = document.documentElement;
   html.lang = currentLang === 'ar' ? 'ar' : 'en';
-  html.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
-  document.body.classList.toggle('rtl', currentLang === 'ar');
+  html.dir = 'ltr';
   applyTranslations();
   if (window.ON_LANG_CHANGE) window.ON_LANG_CHANGE(currentLang);
 }
@@ -641,13 +640,11 @@ if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
     const html = document.documentElement;
     html.lang = currentLang === 'ar' ? 'ar' : 'en';
-    html.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
-    document.body.classList.toggle('rtl', currentLang === 'ar');
+    html.dir = 'ltr';
     applyTranslations();
   });
 } else {
   const html = document.documentElement;
   html.lang = currentLang === 'ar' ? 'ar' : 'en';
-  html.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
-  document.body.classList.toggle('rtl', currentLang === 'ar');
+  html.dir = 'ltr';
 }

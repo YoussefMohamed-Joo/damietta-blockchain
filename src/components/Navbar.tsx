@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { useI18n } from '../i18n'
 
 export default function Navbar() {
-  const { lang, t } = useI18n()
+  const { t } = useI18n()
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const location = useLocation()
@@ -39,7 +39,7 @@ export default function Navbar() {
         <Link to="/" className="flex items-center shrink-0" style={{ marginTop: 6 }}>
           <img src="/img/logo.png" alt="" className="w-auto object-contain" draggable="false" style={{ userSelect: 'none', WebkitUserSelect: 'none', WebkitTouchCallout: 'none', height: 72 }} onContextMenu={(e) => e.preventDefault()} />
         </Link>
-        <ul className="hidden lg:flex items-center justify-center gap-6 xl:gap-8 flex-1" style={{ marginLeft: lang === 'ar' ? 'auto' : 60 }}>
+        <ul className="hidden lg:flex items-center justify-center gap-6 xl:gap-8 flex-1" style={{ marginLeft: 60 }}>
           <li>{navLink('/', t('nav.home'))}</li>
           <li>{navLink('/features', t('nav.features'))}</li>
           <li>{navLink('/how-it-works', t('nav.how'))}</li>

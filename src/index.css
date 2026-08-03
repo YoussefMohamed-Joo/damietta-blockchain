@@ -125,16 +125,3 @@ footer .footer-bottom{border-top:1px solid rgba(255,255,255,.06);padding:1.5rem 
 .lang-toggle:hover{border-color:#2563EB;color:#2563EB;box-shadow:0 4px 12px -4px rgba(37,99,235,.3)}
 .footer-lang-toggle{border-color:rgba(148,163,184,.35);background:rgba(148,163,184,.1);color:#cbd5e1}
 .footer-lang-toggle:hover{border-color:#60A5FA;color:#fff;background:rgba(37,99,235,.2)}
-
-/* RTL support */
-html[dir="rtl"] body{font-family:'Segoe UI',Tahoma,Arial,sans-serif}
-html[dir="rtl"] .text-slate-800,html[dir="rtl"] .text-slate-700,html[dir="rtl"] .text-slate-900{letter-spacing:0}
-html[dir="rtl"] section,html[dir="rtl"] .content-section,html[dir="rtl"] .page-header{text-align:right}
-html[dir="rtl"] .section-title,html[dir="rtl"] .section-sub{text-align:center}
-html[dir="rtl"] .ml-auto{margin-left:0!important;margin-right:auto}
-html[dir="rtl"] .mr-auto{margin-right:0!important;margin-left:auto}
-html[dir="rtl"] .search-glass{padding:.35rem 1.5rem .35rem .35rem}
-html[dir="rtl"] .comparison-card li{direction:rtl}
-html[dir="rtl"] .faq-question{text-align:right}
-html[dir="rtl"] .step-line{left:auto;right:calc(50% - 1px)}
-@media(min-width:1024px){html[dir="rtl"] .step-line{right:calc(100% + 4px);left:auto;transform:rotate(180deg)}}
