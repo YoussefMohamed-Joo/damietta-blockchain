@@ -9,9 +9,16 @@ export default function Footer() {
     >{label}</Link>
   ))
 
+  const extCol = (items: [string, string][]) => items.map(([label, to]) => (
+    <a key={to} href={to} style={{ color: '#94A3B8', fontSize: '.85rem', transition: 'color .2s', textDecoration: 'none', padding: '.2rem 0', display: 'inline-block' }}
+      onMouseEnter={e => e.currentTarget.style.color = '#fff'}
+      onMouseLeave={e => e.currentTarget.style.color = '#94A3B8'}
+    >{label}</a>
+  ))
+
   return (
     <footer style={{ padding: '3.5rem 2rem 0', marginTop: 'auto', background: 'rgba(15,23,42,.95)', borderTop: '1px solid rgba(255,255,255,.06)', position: 'relative', zIndex: 1 }}>
-      <div className="max-w-5xl mx-auto" style={{ display: 'grid', gridTemplateColumns: '1.6fr 1fr 1fr 1.2fr', gap: '3rem' }}>
+      <div className="max-w-5xl mx-auto" style={{ display: 'grid', gridTemplateColumns: '1.6fr 1fr 1fr 1fr 1.2fr', gap: '2.5rem' }}>
         <div>
           <img src="/img/logo.png" alt="" style={{ height: 36, marginBottom: '.85rem' }} />
           <p style={{ color: '#94A3B8', fontSize: '.82rem', lineHeight: 1.7 }}>
@@ -38,12 +45,13 @@ export default function Footer() {
         {[
           { title: 'Quick Links', items: [['Home','/'],['Features','/features'],['How It Works','/how-it-works'],['Verify Research','/verify'],['Admin Panel','/admin'],['Student Dashboard','/dashboard']] as [string, string][] },
           { title: 'Resources', items: [['Student Portal','/student-portal'],['Faculty Guide','/faculty-guide'],['FAQs','/faqs'],['Contact Support','/contact']] as [string, string][] },
+          { title: 'Dashboards', external: true, items: [['Student Dashboard','/html-dashboards/student-dashboard'],['Reviewer Dashboard','/html-dashboards/reviewer-dashboard'],['Admin Dashboard','/html-dashboards/admin-dashboard'],['Audit Logs','/html-dashboards/audit-logs'],['Notifications','/html-dashboards/notifications']] as [string, string][] },
           { title: 'Legal & Security', items: [['Privacy Policy','/privacy'],['Terms of Service','/terms']] as [string, string][] },
         ].map(colData => (
           <div key={colData.title}>
             <h4 style={{ marginBottom: '1rem', fontSize: '.8rem', fontWeight: 700, color: '#E2E8F0', textTransform: 'uppercase', letterSpacing: '.06em' }}>{colData.title}</h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '.5rem' }}>
-              {col(colData.items)}
+              {colData.external ? extCol(colData.items) : col(colData.items)}
               {colData.title === 'Legal & Security' && (
                 <div style={{ marginTop: '.75rem', padding: '.8rem', background: 'rgba(37,99,235,.1)', borderRadius: 10, border: '1px solid rgba(37,99,235,.2)' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '.4rem', color: '#2563EB', fontSize: '.75rem', fontWeight: 600 }}>
