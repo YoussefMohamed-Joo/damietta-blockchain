@@ -29,6 +29,9 @@
   </nav>
 
   <div class="sidebar-foot">
+    <button class="nav-item" id="lang-toggle" onclick="setLanguage(getLang() === 'ar' ? 'en' : 'ar')" type="button">
+      <i class="bi bi-translate"></i><span data-i18n="footer.switch_lang">عربي</span>
+    </button>
     <a href="{{ route('home') }}" class="nav-item"><i class="bi bi-house"></i><span>Home</span></a>
     <form method="POST" action="{{ route('logout') }}">
       @csrf

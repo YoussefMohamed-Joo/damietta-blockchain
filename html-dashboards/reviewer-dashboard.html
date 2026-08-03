@@ -24,20 +24,20 @@
         <!-- ---- Dashboard ---- -->
         <section data-section="dashboard">
           <div class="grid-stats">
-            <div class="card-white"><div class="stat-value" style="color:#2563EB;">12</div><div class="stat-label">Pending Reviews</div></div>
-            <div class="card-white"><div class="stat-value" style="color:#14B8A6;">48</div><div class="stat-label">Completed</div></div>
-            <div class="card-white"><div class="stat-value" style="color:#F59E0B;">3</div><div class="stat-label">Revisions Needed</div></div>
-            <div class="card-white"><div class="stat-value" style="color:#8B5CF6;">2.4d</div><div class="stat-label">Avg. Review Time</div></div>
+            <div class="card-white"><div class="stat-value" style="color:#2563EB;">12</div><div class="stat-label" data-i18n="rev.pending_reviews">Pending Reviews</div></div>
+            <div class="card-white"><div class="stat-value" style="color:#14B8A6;">48</div><div class="stat-label" data-i18n="rev.completed">Completed</div></div>
+            <div class="card-white"><div class="stat-value" style="color:#F59E0B;">3</div><div class="stat-label" data-i18n="rev.revisions">Revisions Needed</div></div>
+            <div class="card-white"><div class="stat-value" style="color:#8B5CF6;">2.4d</div><div class="stat-label" data-i18n="rev.avg_time">Avg. Review Time</div></div>
           </div>
 
           <div class="card-white">
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-              <h3 class="fs-6 fw-bold mb-0" style="color:var(--text-dark);">Assigned Reviews</h3>
+              <h3 class="fs-6 fw-bold mb-0" style="color:var(--text-dark);" data-i18n="rev.assigned">Assigned Reviews</h3>
             </div>
             <div class="table-scroll">
               <table class="table-dash">
                 <thead>
-                  <tr><th>ID</th><th>Student</th><th>Title</th><th>Department</th><th>Status</th><th>Date</th><th>Action</th></tr>
+                  <tr><th data-i18n="th.id">ID</th><th data-i18n="th.student">Student</th><th data-i18n="th.title">Title</th><th data-i18n="th.department">Department</th><th data-i18n="th.status">Status</th><th data-i18n="th.date">Date</th><th data-i18n="th.action">Action</th></tr>
                 </thead>
                 <tbody id="reviews-body"></tbody>
               </table>
@@ -48,7 +48,7 @@
         <!-- ---- My Reviews ---- -->
         <section data-section="reviews" style="display:none;">
           <div class="card-white">
-            <h3 class="fs-6 fw-bold mb-4" style="color:var(--text-dark);">My Completed Reviews</h3>
+            <h3 class="fs-6 fw-bold mb-4" style="color:var(--text-dark);" data-i18n="rev.my_reviews">My Completed Reviews</h3>
             <div id="my-reviews-list" class="d-flex flex-column" style="gap:1rem;"></div>
           </div>
         </section>
@@ -56,7 +56,7 @@
         <!-- ---- Feedback ---- -->
         <section data-section="feedback" style="display:none;">
           <div class="card-white">
-            <h3 class="fs-6 fw-bold mb-4" style="color:var(--text-dark);">Feedback Overview</h3>
+            <h3 class="fs-6 fw-bold mb-4" style="color:var(--text-dark);" data-i18n="rev.feedback">Feedback Overview</h3>
             <div id="feedback-list" class="d-flex flex-column" style="gap:1rem;"></div>
           </div>
         </section>
@@ -73,6 +73,7 @@
       name: 'Reviewer Panel', subtitle: 'Faculty Reviewer', initials: 'RK'
     };
   </script>
+  <script src="assets/js/i18n.js"></script>
   <script src="assets/js/layout.js"></script>
   <script src="assets/js/app.js"></script>
   <script src="assets/js/pages/reviewer.js"></script>

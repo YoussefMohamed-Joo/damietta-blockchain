@@ -38,7 +38,7 @@ const STATUS_MAP = {
 
 function statusBadge(status) {
   const [bg, color, ic] = STATUS_MAP[status] || ['rgba(148,163,184,.12)', '#94A3B8', 'bi-exclamation-triangle'];
-  return `<span class="badge-status" style="background:${bg};color:${color};"><i class="bi ${ic}" style="font-size:.7rem;"></i> ${status}</span>`;
+  return `<span class="badge-status" style="background:${bg};color:${color};"><i class="bi ${ic}" style="font-size:.7rem;"></i> ${tr(status)}</span>`;
 }
 
 function roleBadge(role) {
@@ -48,7 +48,7 @@ function roleBadge(role) {
     Student: ['rgba(20,184,166,.12)', '#14B8A6'],
   };
   const [bg, color] = m[role] || ['rgba(148,163,184,.12)', '#64748B'];
-  return `<span class="role-badge" style="background:${bg};color:${color};">${role}</span>`;
+  return `<span class="role-badge" style="background:${bg};color:${color};">${tr(role)}</span>`;
 }
 
 /* ---------- Modal ---------- */
@@ -96,7 +96,7 @@ function dummyDownload(name) {
   a.href = '#';
   a.download = name || 'document.pdf';
   a.click();
-  toast('Download started', 'info');
+  toast(t('toast.download_started'), 'info');
 }
 
 /* ---------- Dummy Data ---------- */

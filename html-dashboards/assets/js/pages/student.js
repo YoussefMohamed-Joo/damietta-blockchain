@@ -36,7 +36,7 @@ function renderActivity() {
     <div class="d-flex" style="gap:12px;">
       <div class="rounded-3 d-flex align-items-center justify-content-center" style="width:36px;height:36px;background:${a.bg};color:${a.color};flex-shrink:0;"><i class="bi ${a.icon}"></i></div>
       <div>
-        <div class="fw-semibold" style="font-size:.85rem;color:var(--text-dark);">${a.action}</div>
+        <div class="fw-semibold" style="font-size:.85rem;color:var(--text-dark);">${tr(a.action)}</div>
         <div style="font-size:.8rem;color:var(--text-muted);">${a.desc}</div>
         <div style="font-size:.75rem;color:var(--text-faint);">${a.time}</div>
       </div>
@@ -54,8 +54,8 @@ function renderResearch() {
       <td class="hash" style="color:${r.hash === '—' ? 'var(--text-faint)' : '#2563EB'};">${esc(r.hash)}</td>
       <td>
         <div class="d-flex" style="gap:6px;">
-          <button class="btn-icon sm" onclick="viewSubmission('${r.id}')" title="View"><i class="bi bi-eye"></i></button>
-          <button class="btn-icon sm teal" onclick="dummyDownload('${r.id}.pdf')" title="Download"><i class="bi bi-download"></i></button>
+          <button class="btn-icon sm" onclick="viewSubmission('${r.id}')" title="${t('act.view')}"><i class="bi bi-eye"></i></button>
+          <button class="btn-icon sm teal" onclick="dummyDownload('${r.id}.pdf')" title="${t('common.download')}"><i class="bi bi-download"></i></button>
         </div>
       </td>
     </tr>`).join('');
@@ -77,7 +77,7 @@ function submitResearch() {
   const title = document.getElementById('up-title').value.trim();
   const supervisor = document.getElementById('up-supervisor').value.trim();
   if (!title || !supervisor) {
-    toast('Please fill in Research Title and Supervisor Name', 'error');
+    toast(t('toast.fill_title_supervisor'), 'error');
     return;
   }
   const newId = 'RES-2026-' + String(studentSubmissions.length + 1).padStart(3, '0');
@@ -86,15 +86,15 @@ function submitResearch() {
   document.getElementById('up-title').value = '';
   document.getElementById('up-supervisor').value = '';
   document.getElementById('up-keywords').value = '';
-  document.getElementById('file-name').textContent = 'Choose File (PDF)';
-  toast(`"${title}" submitted! Hash generated.`, 'success');
+  document.getElementById('file-name').textContent = t('std.choose_file');
+  toast(tf('toast.submit_success', { title: title }), 'success');
 }
 
 /* ---------- Certificates ---------- */
 function renderCerts() {
   const list = document.getElementById('cert-list');
   if (!studentCerts.length) {
-    list.innerHTML = `<div class="empty-state"><i class="bi bi-award"></i><p>No certificates issued yet. Submit and get your research approved first.</p></div>`;
+    list.innerHTML = `<div class="empty-state"><i class="bi bi-award"></i><p>${t('std.no_certs')}</p></div>`;
     return;
   }
   list.innerHTML = studentCerts.map(c => `
@@ -104,13 +104,13 @@ function renderCerts() {
         <div>
           <div class="fw-bold" style="color:var(--text-dark);font-size:.9rem;">${esc(c.research)}</div>
           <div class="d-flex flex-wrap" style="gap:1rem;font-size:.8rem;color:var(--text-muted);margin-top:4px;">
-            <span>ID: ${esc(c.id)}</span><span>Issued: ${esc(c.issued)}</span><span>Expires: ${esc(c.expires)}</span>
+            <span>${t('th.id')}: ${esc(c.id)}</span><span>${t('std.issued')}: ${esc(c.issued)}</span><span>${t('std.expires')}: ${esc(c.expires)}</span>
           </div>
         </div>
       </div>
       <div class="d-flex" style="gap:8px;">
-        <button class="btn-icon" onclick="window.open('/certificate/${c.id}','_blank')" title="View"><i class="bi bi-eye"></i></button>
-        <button class="btn-icon teal" onclick="dummyDownload('${c.id}.pdf')" title="Download"><i class="bi bi-download"></i></button>
+        <button class="btn-icon" onclick="window.open('/certificate/${c.id}','_blank')" title="${t('act.view')}"><i class="bi bi-eye"></i></button>
+        <button class="btn-icon teal" onclick="dummyDownload('${c.id}.pdf')" title="${t('common.download')}"><i class="bi bi-download"></i></button>
       </div>
     </div>`).join('');
 }
@@ -120,10 +120,10 @@ function updateProfile() {
   const name = document.getElementById('prof-name').value.trim();
   const email = document.getElementById('prof-email').value.trim();
   if (!name || !email) {
-    toast('Name and Email are required', 'error');
+    toast(t('toast.name_email_required'), 'error');
     return;
   }
-  toast('Profile updated successfully!', 'success');
+  toast(t('toast.profile_updated'), 'success');
 }
 
 /* ---------- Crop profile picture ---------- */
@@ -178,8 +178,16 @@ function saveCrop() {
   document.getElementById('avatar-img').style.display = 'block';
   document.getElementById('avatar-text').style.display = 'none';
   closeModal('crop-modal');
-  toast('Profile picture updated!', 'success');
+  toast(t('toast.pic_updated'), 'success');
 }
+
+/* ---------- Re-render on language switch ---------- */
+function reRenderStudent() {
+  renderActivity();
+  renderResearch();
+  renderCerts();
+}
+document.addEventListener('langchange', reRenderStudent);
 
 /* ---------- Init ---------- */
 document.addEventListener('DOMContentLoaded', () => {

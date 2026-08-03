@@ -27,35 +27,35 @@
             <div class="card-glass">
               <div class="stat-icon" style="background:rgba(37,99,235,.12);color:#2563EB;"><i class="bi bi-journal-text"></i></div>
               <div class="stat-value">3</div>
-              <div class="stat-label">Total Submissions</div>
+              <div class="stat-label" data-i18n="std.total_submissions">Total Submissions</div>
             </div>
             <div class="card-glass">
               <div class="stat-icon" style="background:rgba(20,184,166,.12);color:#14B8A6;"><i class="bi bi-check-circle"></i></div>
               <div class="stat-value">1</div>
-              <div class="stat-label">Approved</div>
+              <div class="stat-label" data-i18n="std.approved">Approved</div>
             </div>
             <div class="card-glass">
               <div class="stat-icon" style="background:rgba(245,158,11,.12);color:#F59E0B;"><i class="bi bi-clock"></i></div>
               <div class="stat-value">2</div>
-              <div class="stat-label">Pending Review</div>
+              <div class="stat-label" data-i18n="std.pending_review">Pending Review</div>
             </div>
             <div class="card-glass">
               <div class="stat-icon" style="background:rgba(139,92,246,.12);color:#8B5CF6;"><i class="bi bi-award"></i></div>
               <div class="stat-value">1</div>
-              <div class="stat-label">Certificates</div>
+              <div class="stat-label" data-i18n="std.certificates">Certificates</div>
             </div>
           </div>
 
           <div class="grid-2">
             <div class="card-glass">
-              <h3 class="fs-6 fw-bold mb-3" style="color:var(--text-dark);">Recent Activity</h3>
+              <h3 class="fs-6 fw-bold mb-3" style="color:var(--text-dark);" data-i18n="std.recent_activity">Recent Activity</h3>
               <div id="activity-list" class="d-flex flex-column" style="gap:14px;"></div>
             </div>
             <div class="card-glass h-100 text-center d-flex flex-column justify-content-center align-items-center" style="background:linear-gradient(135deg,rgba(37,99,235,.08),rgba(20,184,166,.08));border-color:rgba(37,99,235,.15);">
               <div class="stat-icon" style="background:rgba(37,99,235,.12);color:#2563EB;margin-bottom:1rem;"><i class="bi bi-upload fs-3"></i></div>
-              <h3 class="fs-6 fw-bold mb-2" style="color:var(--text-dark);">Submit New Research</h3>
-              <p class="mb-3" style="font-size:.85rem;color:var(--text-muted);max-width:260px;">Upload your graduation project to get it verified and protected on the blockchain.</p>
-              <button class="btn-primary-dash" onclick="goToUpload()"><i class="bi bi-upload"></i> Upload Project</button>
+              <h3 class="fs-6 fw-bold mb-2" style="color:var(--text-dark);" data-i18n="std.submit_new">Submit New Research</h3>
+              <p class="mb-3" style="font-size:.85rem;color:var(--text-muted);max-width:260px;" data-i18n="std.submit_desc">Upload your graduation project to get it verified and protected on the blockchain.</p>
+              <button class="btn-primary-dash" onclick="goToUpload()"><i class="bi bi-upload"></i> <span data-i18n="std.upload_project">Upload Project</span></button>
             </div>
           </div>
         </section>
@@ -64,35 +64,35 @@
         <section data-section="my-research" style="display:none;">
           <div class="card-glass">
             <div class="d-flex justify-content-between align-items-center mb-3">
-              <h3 class="fs-6 fw-bold mb-0" style="color:var(--text-dark);">My Research Submissions</h3>
-              <button class="btn-primary-dash btn-sm-dash" onclick="scrollToUpload()"><i class="bi bi-upload"></i> New Submission</button>
+              <h3 class="fs-6 fw-bold mb-0" style="color:var(--text-dark);" data-i18n="std.my_research">My Research Submissions</h3>
+              <button class="btn-primary-dash btn-sm-dash" onclick="scrollToUpload()"><i class="bi bi-upload"></i> <span data-i18n="std.new_submission">New Submission</span></button>
             </div>
             <div class="table-scroll">
               <table class="table-dash">
                 <thead>
-                  <tr><th>ID</th><th>Title</th><th>Status</th><th>Date</th><th>Blockchain Hash</th><th>Actions</th></tr>
+                  <tr><th data-i18n="th.id">ID</th><th data-i18n="th.title">Title</th><th data-i18n="th.status">Status</th><th data-i18n="th.date">Date</th><th data-i18n="th.blockchain_hash">Blockchain Hash</th><th data-i18n="th.actions">Actions</th></tr>
                 </thead>
                 <tbody id="research-body"></tbody>
               </table>
             </div>
 
             <div id="upload-section" class="upload-section">
-              <h4 class="fs-6 fw-bold mb-3 d-flex align-items-center" style="color:var(--text-dark);gap:8px;"><i class="bi bi-upload" style="color:#2563EB;"></i> Upload New Research</h4>
+              <h4 class="fs-6 fw-bold mb-3 d-flex align-items-center" style="color:var(--text-dark);gap:8px;"><i class="bi bi-upload" style="color:#2563EB;"></i> <span data-i18n="std.upload_new">Upload New Research</span></h4>
               <div class="row g-3 mb-3">
                 <div class="col-md-6">
-                  <input id="up-title" class="form-input" placeholder="Research Title">
+                  <input id="up-title" class="form-input" placeholder="Research Title" data-i18n="std.research_title">
                 </div>
                 <div class="col-md-6">
-                  <input id="up-supervisor" class="form-input" placeholder="Supervisor Name">
+                  <input id="up-supervisor" class="form-input" placeholder="Supervisor Name" data-i18n="std.supervisor">
                 </div>
               </div>
               <div class="d-flex flex-wrap gap-3 mb-3 align-items-center">
-                <input id="up-keywords" class="form-input flex-grow-1" placeholder="Keywords (comma separated)" style="max-width:400px;">
-                <label class="file-label mb-0"><i class="bi bi-upload"></i><span id="file-name">Choose File (PDF)</span>
-                  <input type="file" accept=".pdf" style="display:none;" onchange="document.getElementById('file-name').textContent = this.files[0] ? this.files[0].name : 'Choose File (PDF)'">
+                <input id="up-keywords" class="form-input flex-grow-1" placeholder="Keywords (comma separated)" style="max-width:400px;" data-i18n="std.keywords">
+                <label class="file-label mb-0"><i class="bi bi-upload"></i><span id="file-name" data-i18n="std.choose_file">Choose File (PDF)</span>
+                  <input type="file" accept=".pdf" style="display:none;" onchange="document.getElementById('file-name').textContent = this.files[0] ? this.files[0].name : t('std.choose_file')">
                 </label>
               </div>
-              <button class="btn-primary-dash" onclick="submitResearch()"><i class="bi bi-hash"></i> Submit &amp; Generate Hash</button>
+              <button class="btn-primary-dash" onclick="submitResearch()"><i class="bi bi-hash"></i> <span data-i18n="std.submit_hash">Submit &amp; Generate Hash</span></button>
             </div>
           </div>
         </section>
@@ -100,7 +100,7 @@
         <!-- ---- Certificates ---- -->
         <section data-section="certificates" style="display:none;">
           <div class="card-glass">
-            <h3 class="fs-6 fw-bold mb-4" style="color:var(--text-dark);">My Certificates</h3>
+            <h3 class="fs-6 fw-bold mb-4" style="color:var(--text-dark);" data-i18n="std.my_certificates">My Certificates</h3>
             <div id="cert-list" class="d-flex flex-column" style="gap:1rem;"></div>
           </div>
         </section>
@@ -108,7 +108,7 @@
         <!-- ---- Profile ---- -->
         <section data-section="profile" style="display:none;">
           <div class="card-glass">
-            <h3 class="fs-6 fw-bold mb-4" style="color:var(--text-dark);">Profile Settings</h3>
+            <h3 class="fs-6 fw-bold mb-4" style="color:var(--text-dark);" data-i18n="std.profile">Profile Settings</h3>
             <div class="d-flex flex-wrap" style="gap:2rem;">
               <div class="profile-avatar" onclick="document.getElementById('pic-input').click()">
                 <span id="avatar-text">AH</span>
@@ -118,24 +118,24 @@
               </div>
               <div class="row g-3 flex-grow-1">
                 <div class="col-md-6">
-                  <label class="form-label-upper">Full Name</label>
+                  <label class="form-label-upper" data-i18n="form.full_name">Full Name</label>
                   <input id="prof-name" class="form-input" value="Ahmed Hassan">
                 </div>
                 <div class="col-md-6">
-                  <label class="form-label-upper">Email</label>
+                  <label class="form-label-upper" data-i18n="form.email">Email</label>
                   <input id="prof-email" class="form-input" value="ahmed.hassan@stud.du.edu.eg">
                 </div>
                 <div class="col-md-6">
-                  <label class="form-label-upper">Student ID</label>
+                  <label class="form-label-upper" data-i18n="std.student_id">Student ID</label>
                   <input class="form-input input-disabled" value="STU-2024-0891" disabled>
                 </div>
                 <div class="col-md-6">
-                  <label class="form-label-upper">Department</label>
+                  <label class="form-label-upper" data-i18n="common.department">Department</label>
                   <input id="prof-dept" class="form-input" value="Computer Science">
                 </div>
               </div>
             </div>
-            <button class="btn-primary-dash mt-4" onclick="updateProfile()">Update Profile</button>
+            <button class="btn-primary-dash mt-4" onclick="updateProfile()"><span data-i18n="std.update_profile">Update Profile</span></button>
           </div>
         </section>
 
@@ -147,19 +147,19 @@
   <div class="modal-overlay" id="submission-modal">
     <div class="modal-box">
       <div class="modal-head">
-        <h3>Submission Details</h3>
+        <h3 data-i18n="std.details">Submission Details</h3>
         <button class="modal-close" onclick="closeModal('submission-modal')"><i class="bi bi-x-lg"></i></button>
       </div>
       <div class="d-flex flex-column" style="gap:14px;">
-        <div><div class="detail-label">ID</div><div class="detail-value" id="md-id"></div></div>
-        <div><div class="detail-label">Title</div><div class="detail-value" id="md-title"></div></div>
-        <div><div class="detail-label">Status</div><div class="detail-value" id="md-status"></div></div>
-        <div><div class="detail-label">Submitted</div><div class="detail-value" id="md-date"></div></div>
-        <div><div class="detail-label">Blockchain Hash</div><div class="detail-value" id="md-hash"></div></div>
+        <div><div class="detail-label" data-i18n="th.id">ID</div><div class="detail-value" id="md-id"></div></div>
+        <div><div class="detail-label" data-i18n="th.title">Title</div><div class="detail-value" id="md-title"></div></div>
+        <div><div class="detail-label" data-i18n="th.status">Status</div><div class="detail-value" id="md-status"></div></div>
+        <div><div class="detail-label" data-i18n="std.submitted">Submitted</div><div class="detail-value" id="md-date"></div></div>
+        <div><div class="detail-label" data-i18n="th.blockchain_hash">Blockchain Hash</div><div class="detail-value" id="md-hash"></div></div>
       </div>
       <div class="modal-foot">
-        <button class="btn-ghost flex-1" onclick="closeModal('submission-modal')">Close</button>
-        <button class="btn-primary-dash flex-1" onclick="dummyDownload(document.getElementById('md-id').textContent + '.pdf'); closeModal('submission-modal')">Download</button>
+        <button class="btn-ghost flex-1" onclick="closeModal('submission-modal')" data-i18n="common.close">Close</button>
+        <button class="btn-primary-dash flex-1" onclick="dummyDownload(document.getElementById('md-id').textContent + '.pdf'); closeModal('submission-modal')" data-i18n="common.download">Download</button>
       </div>
     </div>
   </div>
@@ -167,10 +167,10 @@
   <div class="modal-overlay" id="crop-modal">
     <div class="modal-box" style="width:420px;">
       <div class="modal-head">
-        <h3>Crop Profile Picture</h3>
+        <h3 data-i18n="std.crop_title">Crop Profile Picture</h3>
         <button class="modal-close" onclick="closeModal('crop-modal')"><i class="bi bi-x-lg"></i></button>
       </div>
-      <p style="font-size:.8rem;color:var(--text-muted);margin-bottom:1rem;">Drag to reposition, use slider to zoom</p>
+      <p style="font-size:.8rem;color:var(--text-muted);margin-bottom:1rem;" data-i18n="std.crop_hint">Drag to reposition, use slider to zoom</p>
       <div class="crop-circle" id="crop-circle">
         <img id="crop-img" src="" alt="">
       </div>
@@ -180,8 +180,8 @@
         <button class="btn-icon" onclick="zoomCrop(0.2)"><i class="bi bi-zoom-in"></i></button>
       </div>
       <div class="modal-foot">
-        <button class="btn-ghost btn-muted flex-1" onclick="closeModal('crop-modal')">Cancel</button>
-        <button class="btn-primary-dash flex-1" onclick="saveCrop()">Save</button>
+        <button class="btn-ghost btn-muted flex-1" onclick="closeModal('crop-modal')" data-i18n="common.cancel">Cancel</button>
+        <button class="btn-primary-dash flex-1" onclick="saveCrop()" data-i18n="common.save">Save</button>
       </div>
     </div>
   </div>
@@ -194,6 +194,7 @@
       name: 'Ahmed Hassan', subtitle: 'Student', initials: 'AH'
     };
   </script>
+  <script src="assets/js/i18n.js"></script>
   <script src="assets/js/layout.js"></script>
   <script src="assets/js/app.js"></script>
   <script src="assets/js/pages/student.js"></script>

@@ -41,9 +41,9 @@ function renderRecent() {
       <td style="color:var(--text-muted);">${esc(r.date)}</td>
       <td>
         <div class="d-flex" style="gap:6px;">
-          <button class="btn-icon sm" onclick="toast('Viewing details for ${r.id}','info')" title="View"><i class="bi bi-eye"></i></button>
-          <button class="btn-icon sm teal" onclick="toast('${r.id} approved successfully!','success')" title="Approve"><i class="bi bi-check-circle"></i></button>
-          <button class="btn-icon sm red" onclick="toast('${r.id} rejected.','error')" title="Reject"><i class="bi bi-x-circle"></i></button>
+          <button class="btn-icon sm" onclick="toast(tf('toast.viewing_details',{id:'${r.id}'}),'info')" title="${t('act.view')}"><i class="bi bi-eye"></i></button>
+          <button class="btn-icon sm teal" onclick="toast(tf('toast.approved',{id:'${r.id}'}),'success')" title="${t('act.approve')}"><i class="bi bi-check-circle"></i></button>
+          <button class="btn-icon sm red" onclick="toast(tf('toast.rejected',{id:'${r.id}'}),'error')" title="${t('act.reject')}"><i class="bi bi-x-circle"></i></button>
         </div>
       </td>
     </tr>`).join('');
@@ -58,7 +58,7 @@ function renderUsers() {
       <td>${roleBadge(u.role)}</td>
       <td>${statusBadge(u.status)}</td>
       <td style="color:var(--text-body);">${u.papers}</td>
-      <td><button class="btn-icon" onclick="toast('Managing user: ${esc(u.name)}','info')" title="Manage"><i class="bi bi-three-dots"></i></button></td>
+      <td><button class="btn-icon" onclick="toast(tf('toast.managing_user',{name:'${esc(u.name)}'}),'info')" title="${t('common.manage')}"><i class="bi bi-three-dots"></i></button></td>
     </tr>`).join('');
 }
 
@@ -67,11 +67,11 @@ function addUser() {
   const email = document.getElementById('nu-email').value.trim();
   const password = document.getElementById('nu-password').value.trim();
   const role = document.getElementById('nu-role').value;
-  if (!name || !email || !password) { toast('Please fill all fields', 'error'); return; }
+  if (!name || !email || !password) { toast(t('toast.fill_fields'), 'error'); return; }
   adminUsers.push({ name: name, email: email, role: role, status: 'Active', papers: 0 });
   closeModal('add-user-modal');
   renderUsers();
-  toast(`${name} added successfully!`, 'success');
+  toast(name + ' ' + t('toast.add_user_success'), 'success');
 }
 
 /* ---------- All submissions ---------- */
@@ -86,9 +86,9 @@ function renderAllSubmissions() {
       <td style="color:var(--text-muted);">${esc(r.date)}</td>
       <td>
         <div class="d-flex" style="gap:6px;">
-          <button class="btn-icon" onclick="toast('Viewing details for ${r.id}','info')" title="View"><i class="bi bi-eye"></i></button>
-          <button class="btn-icon teal" onclick="toast('${esc(r.title)} approved!','success')" title="Approve"><i class="bi bi-check-circle"></i></button>
-          <button class="btn-icon red" onclick="toast('${esc(r.title)} rejected.','error')" title="Reject"><i class="bi bi-x-circle"></i></button>
+          <button class="btn-icon" onclick="toast(tf('toast.viewing_details',{id:'${r.id}'}),'info')" title="${t('act.view')}"><i class="bi bi-eye"></i></button>
+          <button class="btn-icon teal" onclick="toast(tf('toast.approved_title',{title:'${esc(r.title)}'}),'success')" title="${t('act.approve')}"><i class="bi bi-check-circle"></i></button>
+          <button class="btn-icon red" onclick="toast(tf('toast.rejected_title',{title:'${esc(r.title)}'}),'error')" title="${t('act.reject')}"><i class="bi bi-x-circle"></i></button>
         </div>
       </td>
     </tr>`).join('');
@@ -103,7 +103,7 @@ function renderBlockchain() {
       <td style="color:var(--text-muted);font-size:.8rem;">${esc(b.timestamp)}</td>
       <td class="hash" style="color:var(--text-body);">${b.block}</td>
       <td>${statusBadge(b.status)}</td>
-      <td><button class="btn-sm-icon primary" onclick="toast('Viewing transaction ${b.tx}')"><i class="bi bi-eye"></i> View</button></td>
+      <td><button class="btn-sm-icon primary" onclick="toast(tf('toast.viewing_tx',{tx:'${b.tx}'}))"><i class="bi bi-eye"></i> ${t('act.view')}</button></td>
     </tr>`).join('');
 }
 
@@ -118,33 +118,43 @@ function renderCerts() {
       <td><span class="hash" style="color:var(--text-faint);background:rgba(0,0,0,.03);padding:4px 8px;border-radius:6px;">${esc(c.qr)}</span></td>
       <td>
         <div class="d-flex" style="gap:6px;">
-          <button class="btn-icon" onclick="toast('Viewing certificate ${c.id}','info')" title="View"><i class="bi bi-eye"></i></button>
-          <button class="btn-icon teal" onclick="dummyDownload('${c.id}.pdf')" title="Download"><i class="bi bi-download"></i></button>
+          <button class="btn-icon" onclick="toast(tf('toast.viewing_cert',{id:'${c.id}'}),'info')" title="${t('act.view')}"><i class="bi bi-eye"></i></button>
+          <button class="btn-icon teal" onclick="dummyDownload('${c.id}.pdf')" title="${t('common.download')}"><i class="bi bi-download"></i></button>
         </div>
       </td>
     </tr>`).join('');
 }
 
 /* ---------- Settings ---------- */
+const SET_KEY = {
+  'Maintenance Mode': 'set.maintenance',
+  'Blockchain Network': 'set.blockchain_network',
+  'Auto-Certificate Generation': 'set.auto_cert',
+  'Storage Provider': 'set.storage',
+  'Max Upload Size': 'set.max_upload',
+  'Notification Alerts': 'set.notif_alerts',
+};
+function setLabel(label) { return t(SET_KEY[label] || label); }
+
 let toggles = { 'Maintenance Mode': false, 'Auto-Certificate Generation': true, 'Notification Alerts': true };
 let uploadSize = '50 MB';
 
 function renderSettings() {
   const settings = [
-    { label: 'Maintenance Mode', desc: 'Disable user access during maintenance', type: 'toggle', icon: 'bi-shield-check' },
-    { label: 'Blockchain Network', desc: 'Sepolia Testnet (Chain ID: 11155111)', type: 'info', icon: 'bi-wifi', info: 'Sepolia Testnet' },
-    { label: 'Auto-Certificate Generation', desc: 'Automatically issue certificates upon approval', type: 'toggle', icon: 'bi-award' },
-    { label: 'Storage Provider', desc: 'IPFS (InterPlanetary File System) - 98.2% Uptime', type: 'info', icon: 'bi-hdd', info: 'IPFS' },
-    { label: 'Max Upload Size', desc: '50 MB per research document', type: 'text', icon: 'bi-upload' },
-    { label: 'Notification Alerts', desc: 'Send email notifications for reviews and approvals', type: 'toggle', icon: 'bi-bell' },
+    { label: 'Maintenance Mode', descKey: 'set.maintenance_desc', type: 'toggle', icon: 'bi-shield-check' },
+    { label: 'Blockchain Network', descKey: 'set.blockchain_network_desc', type: 'info', icon: 'bi-wifi', info: 'Sepolia Testnet' },
+    { label: 'Auto-Certificate Generation', descKey: 'set.auto_cert_desc', type: 'toggle', icon: 'bi-award' },
+    { label: 'Storage Provider', descKey: 'set.storage_desc', type: 'info', icon: 'bi-hdd', info: 'IPFS' },
+    { label: 'Max Upload Size', descKey: 'set.max_upload_desc', type: 'text', icon: 'bi-upload' },
+    { label: 'Notification Alerts', descKey: 'set.notif_alerts_desc', type: 'toggle', icon: 'bi-bell' },
   ];
   document.getElementById('settings-list').innerHTML = settings.map(s => `
     <div class="setting-row">
       <div class="d-flex align-items-center" style="gap:12px;">
         <div class="setting-icon"><i class="bi ${s.icon}"></i></div>
         <div>
-          <div class="fw-semibold" style="color:var(--text-dark);font-size:.9rem;">${s.label}</div>
-          <div style="font-size:.8rem;color:var(--text-muted);margin-top:2px;">${s.desc}</div>
+          <div class="fw-semibold" style="color:var(--text-dark);font-size:.9rem;">${setLabel(s.label)}</div>
+          <div style="font-size:.8rem;color:var(--text-muted);margin-top:2px;">${t(s.descKey)}</div>
         </div>
       </div>
       ${s.type === 'toggle'
@@ -159,8 +169,20 @@ function toggleSetting(label) {
   renderSettings();
 }
 function saveSettings() {
-  toast('Settings saved successfully!', 'success');
+  toast(t('toast.settings_saved'), 'success');
 }
+
+/* ---------- Re-render on language switch ---------- */
+function reRenderAdmin() {
+  renderRecent();
+  renderUsers();
+  renderAllSubmissions();
+  renderBlockchain();
+  renderCerts();
+  const st = document.querySelector('[data-section="settings"]');
+  if (st && st.style.display !== 'none') renderSettings();
+}
+document.addEventListener('langchange', reRenderAdmin);
 
 /* ---------- Init ---------- */
 document.addEventListener('DOMContentLoaded', () => {

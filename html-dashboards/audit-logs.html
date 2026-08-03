@@ -23,36 +23,36 @@
         <div class="card-glass">
           <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
             <div>
-              <h3 class="fs-6 fw-bold mb-1" style="color:var(--text-dark);"><i class="bi bi-clipboard-data me-2"></i>Audit Logs</h3>
-              <div style="font-size:.8rem;color:var(--text-muted);">Immutable record of actions across the platform. Data is dummy for demonstration.</div>
+              <h3 class="fs-6 fw-bold mb-1" style="color:var(--text-dark);"><i class="bi bi-clipboard-data me-2"></i><span data-i18n="aud.title">Audit Logs</span></h3>
+              <div style="font-size:.8rem;color:var(--text-muted);" data-i18n="aud.desc">Immutable record of actions across the platform. Data is dummy for demonstration.</div>
             </div>
             <div class="d-flex align-items-center flex-wrap" style="gap:8px;">
               <select id="audit-status-filter" class="form-select-dash" style="width:auto;padding:8px 12px;" onchange="renderAuditLogs()">
-                <option>All Status</option>
-                <option>Success</option>
-                <option>Info</option>
-                <option>Warning</option>
-                <option>Danger</option>
+                <option value="All Status" data-i18n="adm.all_status">All Status</option>
+                <option value="Success" data-i18n="status.success">Success</option>
+                <option value="Info" data-i18n="status.info">Info</option>
+                <option value="Warning" data-i18n="status.warning">Warning</option>
+                <option value="Danger" data-i18n="status.danger">Danger</option>
               </select>
               <select id="audit-action-filter" class="form-select-dash" style="width:auto;padding:8px 12px;" onchange="renderAuditLogs()">
-                <option>All Actions</option>
-                <option>User Login</option>
-                <option>User Login Failed</option>
-                <option>Research Submitted</option>
-                <option>Research Approved</option>
-                <option>Revision Requested</option>
-                <option>Certificate Issued</option>
-                <option>Password Reset</option>
-                <option>Settings Updated</option>
+                <option value="All Actions" data-i18n="aud.all_actions">All Actions</option>
+                <option value="User Login" data-i18n="aud.act_user_login">User Login</option>
+                <option value="User Login Failed" data-i18n="aud.act_login_failed">User Login Failed</option>
+                <option value="Research Submitted" data-i18n="aud.act_research_submitted">Research Submitted</option>
+                <option value="Research Approved" data-i18n="aud.act_research_approved">Research Approved</option>
+                <option value="Revision Requested" data-i18n="aud.act_revision_requested">Revision Requested</option>
+                <option value="Certificate Issued" data-i18n="aud.act_cert_issued">Certificate Issued</option>
+                <option value="Password Reset" data-i18n="aud.act_password_reset">Password Reset</option>
+                <option value="Settings Updated" data-i18n="aud.act_settings_updated">Settings Updated</option>
               </select>
-              <button class="btn-primary-dash btn-sm-dash" onclick="dummyDownload('audit-logs.csv')"><i class="bi bi-download"></i> Export</button>
+              <button class="btn-primary-dash btn-sm-dash" onclick="dummyDownload('audit-logs.csv')"><i class="bi bi-download"></i> <span data-i18n="act.export">Export</span></button>
             </div>
           </div>
 
           <div class="table-scroll">
             <table class="table-dash">
               <thead>
-                <tr><th>Log ID</th><th>Action</th><th>User</th><th>Role</th><th>IP Address</th><th>Timestamp</th><th>Status</th></tr>
+                <tr><th data-i18n="th.log_id">Log ID</th><th data-i18n="th.action">Action</th><th data-i18n="th.user">User</th><th data-i18n="th.role">Role</th><th data-i18n="th.ip">IP Address</th><th data-i18n="th.timestamp">Timestamp</th><th data-i18n="th.status">Status</th></tr>
               </thead>
               <tbody id="audit-body"></tbody>
             </table>
@@ -70,6 +70,7 @@
       name: 'IP Portal', subtitle: 'Admin Panel', initials: 'AK', logo: '/img/logo.png'
     };
   </script>
+  <script src="assets/js/i18n.js"></script>
   <script src="assets/js/layout.js"></script>
   <script src="assets/js/app.js"></script>
   <script src="assets/js/pages/audit-logs.js"></script>

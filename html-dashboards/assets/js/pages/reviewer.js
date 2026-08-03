@@ -27,32 +27,32 @@ function renderReviews() {
       <td style="color:var(--text-muted);">${esc(r.date)}</td>
       <td>
         <div class="d-flex flex-wrap" style="gap:6px;">
-          <button class="btn-sm-icon primary" onclick="approve('${r.id}')"><i class="bi bi-check-circle"></i> Approve</button>
-          <button class="btn-sm-icon amber" onclick="revise('${r.id}')"><i class="bi bi-clock"></i> Revise</button>
-          <button class="btn-sm-icon red" onclick="reject('${r.id}')"><i class="bi bi-x-circle"></i> Reject</button>
+          <button class="btn-sm-icon primary" onclick="approve('${r.id}')"><i class="bi bi-check-circle"></i> ${t('act.approve')}</button>
+          <button class="btn-sm-icon amber" onclick="revise('${r.id}')"><i class="bi bi-clock"></i> ${t('act.revise')}</button>
+          <button class="btn-sm-icon red" onclick="reject('${r.id}')"><i class="bi bi-x-circle"></i> ${t('act.reject')}</button>
         </div>
       </td>
     </tr>`).join('')
-    : `<tr><td colspan="7" class="text-center py-4" style="color:var(--text-faint);">No reviews match your search.</td></tr>`;
+    : `<tr><td colspan="7" class="text-center py-4" style="color:var(--text-faint);">${t('empty.no_search')}</td></tr>`;
 }
 
 function approve(id) {
   const r = reviewerReviews.find(x => x.id === id);
   r.status = 'Approved';
   renderReviews();
-  toast(`${r.title} approved!`, 'success');
+  toast(tf('toast.approved_title', { title: r.title }), 'success');
 }
 function revise(id) {
   const r = reviewerReviews.find(x => x.id === id);
   r.status = 'Revisions Needed';
   renderReviews();
-  toast(`Revisions requested for ${id}`, 'warning');
+  toast(tf('toast.revisions_requested', { id: id }), 'warning');
 }
 function reject(id) {
   const r = reviewerReviews.find(x => x.id === id);
   r.status = 'Rejected';
   renderReviews();
-  toast(`${r.title} rejected.`, 'error');
+  toast(tf('toast.rejected_title', { title: r.title }), 'error');
 }
 
 /* ---------- My Reviews ---------- */
@@ -66,22 +66,22 @@ function renderMyReviews() {
       </div>
       <div>${statusBadge(r.status)}</div>
     </div>`).join('')
-    : `<div class="empty-state"><i class="bi bi-clipboard-check"></i><p>No completed reviews yet.</p></div>`;
+    : `<div class="empty-state"><i class="bi bi-clipboard-check"></i><p>${t('rev.no_completed')}</p></div>`;
 }
 
 /* ---------- Feedback ---------- */
 function renderFeedback() {
   document.getElementById('feedback-list').innerHTML = `
     <div class="p-3" style="background:#f8fafc;border-radius:12px;border:1px solid #e2e8f0;">
-      <div class="fw-semibold mb-2" style="color:var(--text-dark);font-size:.9rem;">Feedback Guidelines</div>
-      <div style="font-size:.85rem;color:var(--text-muted);line-height:1.6;">Provide constructive feedback on methodology, originality, and technical merit. Comments are visible to the student and become part of the official review record.</div>
+      <div class="fw-semibold mb-2" style="color:var(--text-dark);font-size:.9rem;">${t('rev.guidelines_title')}</div>
+      <div style="font-size:.85rem;color:var(--text-muted);line-height:1.6;">${t('rev.guidelines')}</div>
     </div>
     <div class="p-3" style="background:#f8fafc;border-radius:12px;border:1px solid #e2e8f0;">
-      <div class="fw-semibold mb-2" style="color:var(--text-dark);font-size:.9rem;">Average Rating</div>
+      <div class="fw-semibold mb-2" style="color:var(--text-dark);font-size:.9rem;">${t('rev.avg_rating')}</div>
       <div class="d-flex align-items-center" style="gap:12px;">
         <div class="fs-2 fw-bold" style="color:#2563EB;">4.2</div>
         <div style="color:#F59E0B;"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i></div>
-        <div style="font-size:.8rem;color:var(--text-muted);">/ 5 from 48 reviews</div>
+        <div style="font-size:.8rem;color:var(--text-muted);">${t('rev.from_reviews')}</div>
       </div>
     </div>`;
 }
@@ -91,6 +91,15 @@ window.GLOBAL_SEARCH = function (value) {
   window._search = value;
   renderReviews();
 };
+
+function reRenderReviewer() {
+  renderReviews();
+  const rs = document.querySelector('[data-section="reviews"]');
+  const fb = document.querySelector('[data-section="feedback"]');
+  if (rs && rs.style.display !== 'none') renderMyReviews();
+  if (fb && fb.style.display !== 'none') renderFeedback();
+}
+document.addEventListener('langchange', reRenderReviewer);
 
 document.addEventListener('DOMContentLoaded', () => {
   renderReviews();

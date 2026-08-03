@@ -23,10 +23,10 @@
         <div class="card-glass">
           <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
             <div>
-              <h3 class="fs-6 fw-bold mb-1" style="color:var(--text-dark);"><i class="bi bi-bell me-2"></i>Notifications</h3>
+              <h3 class="fs-6 fw-bold mb-1" style="color:var(--text-dark);"><i class="bi bi-bell me-2"></i><span data-i18n="notif.title">Notifications</span></h3>
               <div style="font-size:.8rem;color:var(--text-muted);" id="unread-count"></div>
             </div>
-            <button class="btn-primary-dash btn-sm-dash" onclick="markAllRead()"><i class="bi bi-check2-all"></i> Mark all as read</button>
+            <button class="btn-primary-dash btn-sm-dash" onclick="markAllRead()"><i class="bi bi-check2-all"></i> <span data-i18n="notif.mark_all">Mark all as read</span></button>
           </div>
           <div id="notif-list" class="d-flex flex-column" style="gap:.5rem;"></div>
         </div>
@@ -42,6 +42,7 @@
       name: 'IP Portal', subtitle: 'Admin Panel', initials: 'AK', logo: '/img/logo.png'
     };
   </script>
+  <script src="assets/js/i18n.js"></script>
   <script src="assets/js/layout.js"></script>
   <script src="assets/js/app.js"></script>
   <script src="assets/js/pages/notifications.js"></script>

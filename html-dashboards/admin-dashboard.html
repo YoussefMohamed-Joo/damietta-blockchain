@@ -30,7 +30,7 @@
                 <span class="change-pill" style="background:rgba(20,184,166,.1);color:#14B8A6;">+12%</span>
               </div>
               <div class="stat-value">1,284</div>
-              <div class="stat-label">Total Users</div>
+              <div class="stat-label" data-i18n="adm.total_users">Total Users</div>
             </div>
             <div class="card-glass">
               <div class="d-flex justify-content-between align-items-start mb-3">
@@ -38,7 +38,7 @@
                 <span class="change-pill" style="background:rgba(20,184,166,.1);color:#14B8A6;">+8%</span>
               </div>
               <div class="stat-value">3,542</div>
-              <div class="stat-label">Total Research</div>
+              <div class="stat-label" data-i18n="adm.total_research">Total Research</div>
             </div>
             <div class="card-glass">
               <div class="d-flex justify-content-between align-items-start mb-3">
@@ -46,7 +46,7 @@
                 <span class="change-pill" style="background:rgba(20,184,166,.1);color:#14B8A6;">+15%</span>
               </div>
               <div class="stat-value">2,891</div>
-              <div class="stat-label">Certificates Issued</div>
+              <div class="stat-label" data-i18n="adm.certs_issued">Certificates Issued</div>
             </div>
             <div class="card-glass">
               <div class="d-flex justify-content-between align-items-start mb-3">
@@ -54,19 +54,19 @@
                 <span class="change-pill" style="background:rgba(239,68,68,.1);color:#EF4444;">-3%</span>
               </div>
               <div class="stat-value">47</div>
-              <div class="stat-label">Pending Reviews</div>
+              <div class="stat-label" data-i18n="adm.pending_reviews">Pending Reviews</div>
             </div>
           </div>
 
           <div class="card-glass">
             <div class="d-flex justify-content-between align-items-center mb-3">
-              <h3 class="fs-6 fw-bold mb-0" style="color:var(--text-dark);">Recent Submissions</h3>
-              <a href="#" class="btn-link" style="font-size:.8rem;color:#2563EB;font-weight:600;" onclick="switchView('submissions');return false;">View All</a>
+              <h3 class="fs-6 fw-bold mb-0" style="color:var(--text-dark);" data-i18n="adm.recent_submissions">Recent Submissions</h3>
+              <a href="#" class="btn-link" style="font-size:.8rem;color:#2563EB;font-weight:600;" onclick="switchView('submissions');return false;" data-i18n="common.view_all">View All</a>
             </div>
             <div class="table-scroll">
               <table class="table-dash">
                 <thead>
-                  <tr><th>ID</th><th>Student</th><th>Title</th><th>Status</th><th>Date</th><th>Actions</th></tr>
+                  <tr><th data-i18n="th.id">ID</th><th data-i18n="th.student">Student</th><th data-i18n="th.title">Title</th><th data-i18n="th.status">Status</th><th data-i18n="th.date">Date</th><th data-i18n="th.actions">Actions</th></tr>
                 </thead>
                 <tbody id="recent-submissions-body"></tbody>
               </table>
@@ -78,13 +78,13 @@
         <section data-section="users" style="display:none;">
           <div class="card-glass">
             <div class="d-flex justify-content-between align-items-center mb-3">
-              <h3 class="fs-6 fw-bold mb-0" style="color:var(--text-dark);"><i class="bi bi-people me-2"></i>User Management</h3>
-              <button class="btn-primary-dash btn-sm-dash" onclick="openModal('add-user-modal')"><i class="bi bi-person-plus"></i> Add User</button>
+              <h3 class="fs-6 fw-bold mb-0" style="color:var(--text-dark);"><i class="bi bi-people me-2"></i><span data-i18n="adm.users">User Management</span></h3>
+              <button class="btn-primary-dash btn-sm-dash" onclick="openModal('add-user-modal')"><i class="bi bi-person-plus"></i> <span data-i18n="common.add_user">Add User</span></button>
             </div>
             <div class="table-scroll">
               <table class="table-dash">
                 <thead>
-                  <tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Papers</th><th>Actions</th></tr>
+                  <tr><th data-i18n="th.name">Name</th><th data-i18n="th.email">Email</th><th data-i18n="th.role">Role</th><th data-i18n="th.status">Status</th><th data-i18n="th.papers">Papers</th><th data-i18n="th.actions">Actions</th></tr>
                 </thead>
                 <tbody id="users-body"></tbody>
               </table>
@@ -96,25 +96,25 @@
         <section data-section="submissions" style="display:none;">
           <div class="card-glass">
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-              <h3 class="fs-6 fw-bold mb-0" style="color:var(--text-dark);"><i class="bi bi-list-ul me-2"></i>All Submissions</h3>
+              <h3 class="fs-6 fw-bold mb-0" style="color:var(--text-dark);"><i class="bi bi-list-ul me-2"></i><span data-i18n="adm.all_submissions">All Submissions</span></h3>
               <div class="d-flex align-items-center" style="gap:8px;">
                 <select id="status-filter" class="form-select-dash" style="width:auto;padding:8px 12px;" onchange="applySearch()">
-                  <option>All Status</option>
-                  <option>Approved</option>
-                  <option>Pending</option>
-                  <option>Under Review</option>
-                  <option>Rejected</option>
-                  <option>Active</option>
-                  <option>Inactive</option>
-                  <option>Confirmed</option>
+                  <option value="All Status" data-i18n="adm.all_status">All Status</option>
+                  <option value="Approved" data-i18n="status.approved">Approved</option>
+                  <option value="Pending" data-i18n="status.pending">Pending</option>
+                  <option value="Under Review" data-i18n="status.under_review">Under Review</option>
+                  <option value="Rejected" data-i18n="status.rejected">Rejected</option>
+                  <option value="Active" data-i18n="status.active">Active</option>
+                  <option value="Inactive" data-i18n="status.inactive">Inactive</option>
+                  <option value="Confirmed" data-i18n="common.confirmed">Confirmed</option>
                 </select>
-                <button class="btn-primary-dash btn-sm-dash" onclick="dummyDownload('submissions-export.csv')"><i class="bi bi-download"></i> Export</button>
+                <button class="btn-primary-dash btn-sm-dash" onclick="dummyDownload('submissions-export.csv')"><i class="bi bi-download"></i> <span data-i18n="act.export">Export</span></button>
               </div>
             </div>
             <div class="table-scroll">
               <table class="table-dash">
                 <thead>
-                  <tr><th>ID</th><th>Student</th><th>Title</th><th>Status</th><th>Date</th><th>Actions</th></tr>
+                  <tr><th data-i18n="th.id">ID</th><th data-i18n="th.student">Student</th><th data-i18n="th.title">Title</th><th data-i18n="th.status">Status</th><th data-i18n="th.date">Date</th><th data-i18n="th.actions">Actions</th></tr>
                 </thead>
                 <tbody id="all-submissions-body"></tbody>
               </table>
@@ -126,13 +126,13 @@
         <section data-section="blockchain" style="display:none;">
           <div class="card-glass">
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-              <h3 class="fs-6 fw-bold mb-0" style="color:var(--text-dark);"><i class="bi bi-shield-check me-2"></i>Blockchain Transactions</h3>
-              <span class="badge-status" style="background:rgba(37,99,235,.1);color:#64748B;border-radius:8px;"><i class="bi bi-activity"></i> Network: Ethereum Sepolia</span>
+              <h3 class="fs-6 fw-bold mb-0" style="color:var(--text-dark);"><i class="bi bi-shield-check me-2"></i><span data-i18n="adm.blockchain">Blockchain Transactions</span></h3>
+              <span class="badge-status" style="background:rgba(37,99,235,.1);color:#64748B;border-radius:8px;"><i class="bi bi-activity"></i> <span data-i18n="adm.network">Network: Ethereum Sepolia</span></span>
             </div>
             <div class="table-scroll">
               <table class="table-dash">
                 <thead>
-                  <tr><th>Transaction Hash</th><th>Research</th><th>Timestamp</th><th>Block</th><th>Status</th><th>Explorer</th></tr>
+                  <tr><th data-i18n="th.tx_hash">Transaction Hash</th><th data-i18n="th.research">Research</th><th data-i18n="th.timestamp">Timestamp</th><th data-i18n="th.block">Block</th><th data-i18n="th.status">Status</th><th data-i18n="th.explorer">Explorer</th></tr>
                 </thead>
                 <tbody id="blockchain-body"></tbody>
               </table>
@@ -144,13 +144,13 @@
         <section data-section="certificates" style="display:none;">
           <div class="card-glass">
             <div class="d-flex justify-content-between align-items-center mb-3">
-              <h3 class="fs-6 fw-bold mb-0" style="color:var(--text-dark);"><i class="bi bi-award me-2"></i>Digital Certificates</h3>
-              <button class="btn-primary-dash btn-sm-dash" onclick="toast('Certificate issuance form opened','info')"><i class="bi bi-award"></i> Issue New</button>
+              <h3 class="fs-6 fw-bold mb-0" style="color:var(--text-dark);"><i class="bi bi-award me-2"></i><span data-i18n="adm.digital_certs">Digital Certificates</span></h3>
+              <button class="btn-primary-dash btn-sm-dash" onclick="toast(t('toast.cert_form'),'info')"><i class="bi bi-award"></i> <span data-i18n="common.issue_new">Issue New</span></button>
             </div>
             <div class="table-scroll">
               <table class="table-dash">
                 <thead>
-                  <tr><th>Certificate ID</th><th>Student</th><th>Research</th><th>Issued Date</th><th>QR Code</th><th>Actions</th></tr>
+                  <tr><th data-i18n="th.cert_id">Certificate ID</th><th data-i18n="th.student">Student</th><th data-i18n="th.research">Research</th><th data-i18n="th.issued_date">Issued Date</th><th data-i18n="th.qr">QR Code</th><th data-i18n="th.actions">Actions</th></tr>
                 </thead>
                 <tbody id="certs-body"></tbody>
               </table>
@@ -161,9 +161,9 @@
         <!-- ---- Settings ---- -->
         <section data-section="settings" style="display:none;">
           <div class="card-glass">
-            <h3 class="fs-6 fw-bold mb-4" style="color:var(--text-dark);"><i class="bi bi-gear me-2"></i>Platform Settings</h3>
+            <h3 class="fs-6 fw-bold mb-4" style="color:var(--text-dark);"><i class="bi bi-gear me-2"></i><span data-i18n="adm.platform_settings">Platform Settings</span></h3>
             <div id="settings-list" class="d-flex flex-column" style="gap:1.25rem;"></div>
-            <button class="btn-primary-dash mt-4" onclick="saveSettings()"><i class="bi bi-save"></i> Save Changes</button>
+            <button class="btn-primary-dash mt-4" onclick="saveSettings()"><i class="bi bi-save"></i> <span data-i18n="adm.save_changes">Save Changes</span></button>
           </div>
         </section>
 
@@ -175,33 +175,33 @@
   <div class="modal-overlay" id="add-user-modal">
     <div class="modal-box" style="width:420px;">
       <div class="modal-head">
-        <h3>Add New User</h3>
+        <h3 data-i18n="adm.add_new_user">Add New User</h3>
         <button class="modal-close" onclick="closeModal('add-user-modal')"><i class="bi bi-x-lg"></i></button>
       </div>
       <div class="d-flex flex-column" style="gap:1rem;">
         <div>
-          <label class="form-label-dash">Full Name</label>
+          <label class="form-label-dash" data-i18n="form.full_name">Full Name</label>
           <input id="nu-name" class="form-input" placeholder="e.g. Mohamed Ali">
         </div>
         <div>
-          <label class="form-label-dash">Email Address</label>
+          <label class="form-label-dash" data-i18n="form.email_address">Email Address</label>
           <input id="nu-email" class="form-input" type="email" placeholder="e.g. m.ali@du.edu.eg">
         </div>
         <div>
-          <label class="form-label-dash">Password</label>
+          <label class="form-label-dash" data-i18n="form.password">Password</label>
           <input id="nu-password" class="form-input" type="password" placeholder="********">
         </div>
         <div>
-          <label class="form-label-dash">Role</label>
+          <label class="form-label-dash" data-i18n="form.role">Role</label>
           <select id="nu-role" class="form-select-dash">
-            <option>Student</option>
-            <option>Reviewer</option>
-            <option>Admin</option>
+            <option value="Student" data-i18n="role.student">Student</option>
+            <option value="Reviewer" data-i18n="role.reviewer">Reviewer</option>
+            <option value="Admin" data-i18n="role.admin">Admin</option>
           </select>
         </div>
       </div>
       <div class="modal-foot">
-        <button class="btn-primary-dash flex-1" onclick="addUser()">Add User</button>
+        <button class="btn-primary-dash flex-1" onclick="addUser()" data-i18n="common.add_user">Add User</button>
       </div>
     </div>
   </div>
@@ -214,6 +214,7 @@
       name: 'IP Portal', subtitle: 'Admin Panel', initials: 'AK', logo: '/img/logo.png'
     };
   </script>
+  <script src="assets/js/i18n.js"></script>
   <script src="assets/js/layout.js"></script>
   <script src="assets/js/app.js"></script>
   <script src="assets/js/pages/admin.js"></script>
