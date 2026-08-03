@@ -110,10 +110,40 @@
     );
   }
 
+  function footer() {
+    const links = [
+      { label: 'Student Dashboard', href: 'student-dashboard.html' },
+      { label: 'Reviewer Dashboard', href: 'reviewer-dashboard.html' },
+      { label: 'Admin Dashboard', href: 'admin-dashboard.html' },
+      { label: 'Audit Logs', href: 'audit-logs.html' },
+      { label: 'Notifications', href: 'notifications.html' },
+    ];
+    return (
+      '<footer class="dashboard-footer">' +
+        '<div class="dashboard-footer-inner">' +
+          '<div class="dashboard-footer-brand">' +
+            '<div class="avatar-logo">' + C.initials + '</div>' +
+            '<div><div class="fw-bold" style="font-size:.9rem;">Damietta IP Portal</div>' +
+            '<div style="font-size:.75rem;color:var(--text-faint);">Blockchain research protection system</div></div>' +
+          '</div>' +
+          '<div class="dashboard-footer-links">' +
+            links.map(function (l) {
+              return '<a href="' + l.href + '">' + l.label + '</a>';
+            }).join('') +
+            '<a href="/">Home</a>' +
+            '<a href="/login">Login</a>' +
+          '</div>' +
+          '<div class="dashboard-footer-copy">&copy; 2026 Damietta University. All rights reserved.</div>' +
+        '</div>' +
+      '</footer>'
+    );
+  }
+
   function mount() {
     document.getElementById('sidebar-root').innerHTML = sidebar();
     document.getElementById('navbar-root').innerHTML = topbar();
     document.getElementById('bell-root').innerHTML = bell();
+    document.querySelector('.main-wrap').insertAdjacentHTML('beforeend', footer());
 
     var toggle = document.getElementById('sidebar-toggle');
     toggle.addEventListener('click', function () {

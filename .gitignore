@@ -29,3 +29,6 @@ dist-ssr
 *.sw?
 
 .vercel
+
+# Copy of dashboards served by Vite (source lives in html-dashboards/)
+public/html-dashboards/
