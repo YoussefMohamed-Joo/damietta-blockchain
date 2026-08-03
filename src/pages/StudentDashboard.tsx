@@ -7,11 +7,12 @@ import {
 } from 'lucide-react'
 import NotificationBell from '../components/NotificationBell'
 import { toast } from '../components/Toast'
+import { useI18n } from '../i18n'
 const sidebarItems = [
-  { key: 'overview', label: 'Overview', icon: LayoutDashboard },
-  { key: 'my-research', label: 'My Research', icon: FileText },
-  { key: 'certificates', label: 'Certificates', icon: Award },
-  { key: 'profile', label: 'Profile', icon: User },
+  { key: 'overview', label: 'Overview', labelKey: 'student.overview', icon: LayoutDashboard },
+  { key: 'my-research', label: 'My Research', labelKey: 'student.my_research', icon: FileText },
+  { key: 'certificates', label: 'Certificates', labelKey: 'student.certificates', icon: Award },
+  { key: 'profile', label: 'Profile', labelKey: 'student.profile', icon: User },
 ]
 
 const researchData = [
@@ -25,6 +26,7 @@ const certData = [
 ]
 
 export default function StudentDashboard() {
+  const { t } = useI18n()
   const [active, setActive] = useState('overview')
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [uploadTitle, setUploadTitle] = useState('')
@@ -44,6 +46,19 @@ export default function StudentDashboard() {
   const [dragging, setDragging] = useState(false)
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
 
+  const statusKey: Record<string, string> = {
+    Approved: 'student.status_approved',
+    Pending: 'student.status_pending',
+    'Under Review': 'student.status_under_review',
+    Rejected: 'student.status_rejected',
+  }
+  const activeLabels: Record<string, string> = {
+    overview: 'student.overview',
+    'my-research': 'student.my_research',
+    certificates: 'student.certificates',
+    profile: 'student.profile',
+  }
+
   const statusBadge = (s: string) => {
     const m: Record<string, { bg: string; color: string; icon: typeof CheckCircle }> = {
       Approved: { bg: 'rgba(20,184,166,.12)', color: '#14B8A6', icon: CheckCircle },
@@ -55,7 +70,7 @@ export default function StudentDashboard() {
     const Icon = c.icon
     return (
       <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '4px 10px', borderRadius: 20, fontSize: '.75rem', fontWeight: 600, background: c.bg, color: c.color }}>
-        <Icon size={12} />{s}
+        <Icon size={12} />{t(statusKey[s] ?? s)}
       </span>
     )
   }
@@ -67,10 +82,10 @@ export default function StudentDashboard() {
           <>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.25rem', marginBottom: '2rem' }}>
               {[
-                { label: 'Total Submissions', value: '3', icon: BookOpen, color: '#2563EB', bg: 'rgba(37,99,235,.12)' },
-                { label: 'Approved', value: '1', icon: CheckCircle, color: '#14B8A6', bg: 'rgba(20,184,166,.12)' },
-                { label: 'Pending Review', value: '2', icon: Clock, color: '#F59E0B', bg: 'rgba(245,158,11,.12)' },
-                { label: 'Certificates', value: '1', icon: Award, color: '#8B5CF6', bg: 'rgba(139,92,246,.12)' },
+                { label: 'Total Submissions', labelKey: 'student.total_submissions', value: '3', icon: BookOpen, color: '#2563EB', bg: 'rgba(37,99,235,.12)' },
+                { label: 'Approved', labelKey: 'student.approved', value: '1', icon: CheckCircle, color: '#14B8A6', bg: 'rgba(20,184,166,.12)' },
+                { label: 'Pending Review', labelKey: 'student.pending_review', value: '2', icon: Clock, color: '#F59E0B', bg: 'rgba(245,158,11,.12)' },
+                { label: 'Certificates', labelKey: 'student.certificates', value: '1', icon: Award, color: '#8B5CF6', bg: 'rgba(139,92,246,.12)' },
               ].map(s => {
                 const Icon = s.icon
                 return (
@@ -79,7 +94,7 @@ export default function StudentDashboard() {
                       <Icon className="w-5 h-5" style={{ color: s.color }} />
                     </div>
                     <div style={{ fontSize: '1.75rem', fontWeight: 700, color: '#0F172A', marginBottom: '.25rem' }}>{s.value}</div>
-                    <div style={{ fontSize: '.8rem', color: '#64748B' }}>{s.label}</div>
+                    <div style={{ fontSize: '.8rem', color: '#64748B' }}>{t(s.labelKey)}</div>
                   </div>
                 )
               })}
@@ -87,13 +102,13 @@ export default function StudentDashboard() {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
               <div style={{ background: 'rgba(255,255,255,.95)', borderRadius: 16, padding: '1.5rem', border: '1px solid rgba(255,255,255,.5)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                  <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#0F172A', margin: 0 }}>Recent Activity</h3>
+                  <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#0F172A', margin: 0 }}>{t('student.recent_activity')}</h3>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '.85rem' }}>
                   {[
-                    { action: 'Research Submitted', desc: 'AI-Based Crop Disease Detection', time: '2 days ago', icon: Upload, color: '#2563EB' },
-                    { action: 'Certificate Issued', desc: 'Blockchain for Healthcare Data', time: '3 days ago', icon: Award, color: '#8B5CF6' },
-                    { action: 'Status Update', desc: 'IoT Research moved to Under Review', time: '5 days ago', icon: TrendingUp, color: '#F59E0B' },
+                    { action: 'Research Submitted', actionKey: 'student.activity_submitted', desc: 'AI-Based Crop Disease Detection', time: '2 days ago', timeKey: 'student.activity_time_2d', icon: Upload, color: '#2563EB' },
+                    { action: 'Certificate Issued', actionKey: 'student.activity_certificate_issued', desc: 'Blockchain for Healthcare Data', time: '3 days ago', timeKey: 'student.activity_time_3d', icon: Award, color: '#8B5CF6' },
+                    { action: 'Status Update', actionKey: 'student.activity_status_update', descKey: 'student.activity_desc_iot', desc: 'IoT Research moved to Under Review', time: '5 days ago', timeKey: 'student.activity_time_5d', icon: TrendingUp, color: '#F59E0B' },
                   ].map((a, i) => {
                     const Icon = a.icon
                     return (
@@ -102,9 +117,9 @@ export default function StudentDashboard() {
                           <Icon className="w-4 h-4" style={{ color: a.color }} />
                         </div>
                         <div>
-                          <div style={{ fontWeight: 600, color: '#0F172A', fontSize: '.85rem' }}>{a.action}</div>
-                          <div style={{ color: '#64748B', fontSize: '.8rem' }}>{a.desc}</div>
-                          <div style={{ color: '#94A3B8', fontSize: '.75rem', marginTop: 2 }}>{a.time}</div>
+                          <div style={{ fontWeight: 600, color: '#0F172A', fontSize: '.85rem' }}>{t(a.actionKey)}</div>
+                          <div style={{ color: '#64748B', fontSize: '.8rem' }}>{t(a.descKey ?? a.desc)}</div>
+                          <div style={{ color: '#94A3B8', fontSize: '.75rem', marginTop: 2 }}>{t(a.timeKey)}</div>
                         </div>
                       </div>
                     )
@@ -115,10 +130,10 @@ export default function StudentDashboard() {
                 <div style={{ width: 64, height: 64, borderRadius: 16, background: 'rgba(37,99,235,.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
                   <Upload className="w-7 h-7 text-primary" />
                 </div>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0F172A', marginBottom: '.5rem' }}>Submit New Research</h3>
-                <p style={{ fontSize: '.85rem', color: '#64748B', marginBottom: '1.25rem', maxWidth: 260 }}>Upload your graduation project to get it verified and protected on the blockchain.</p>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0F172A', marginBottom: '.5rem' }}>{t('student.submit_new_research')}</h3>
+                <p style={{ fontSize: '.85rem', color: '#64748B', marginBottom: '1.25rem', maxWidth: 260 }}>{t('student.upload_desc')}</p>
                 <button onClick={() => { setActive('my-research'); setTimeout(() => document.querySelector('.upload-section')?.scrollIntoView({ behavior: 'smooth' }), 100) }} style={{ fontSize: '.85rem', color: '#fff', background: '#2563EB', border: 'none', padding: '10px 24px', borderRadius: 10, cursor: 'pointer', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <Upload className="w-4 h-4" /> Upload Project
+                  <Upload className="w-4 h-4" /> {t('student.upload_project')}
                 </button>
               </div>
             </div>
@@ -128,21 +143,21 @@ export default function StudentDashboard() {
         return (
           <div style={{ background: 'rgba(255,255,255,.95)', borderRadius: 16, padding: '1.5rem', border: '1px solid rgba(255,255,255,.5)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0F172A', margin: 0 }}>My Research Submissions</h3>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0F172A', margin: 0 }}>{t('student.my_research_submissions')}</h3>
               <button onClick={() => { document.querySelector('.upload-section')?.scrollIntoView({ behavior: 'smooth' }); setTimeout(() => (document.querySelector('.upload-section input') as HTMLInputElement)?.focus(), 500) }} style={{ fontSize: '.8rem', color: '#fff', background: '#2563EB', border: 'none', padding: '8px 16px', borderRadius: 10, cursor: 'pointer', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6 }}>
-                <Upload className="w-4 h-4" /> New Submission
+                <Upload className="w-4 h-4" /> {t('student.new_submission')}
               </button>
             </div>
             <div style={{ overflowX: 'auto' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '.85rem' }}>
                 <thead>
                   <tr style={{ borderBottom: '1px solid rgba(148,163,184,.2)', color: '#64748B', fontSize: '.75rem', textTransform: 'uppercase', letterSpacing: '.05em' }}>
-                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>ID</th>
-                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>Title</th>
-                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>Status</th>
-                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>Date</th>
-                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>Blockchain Hash</th>
-                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>Actions</th>
+                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('student.id')}</th>
+                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('student.title')}</th>
+                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('student.status')}</th>
+                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('student.date')}</th>
+                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('student.blockchain_hash')}</th>
+                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('student.actions')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -166,27 +181,27 @@ export default function StudentDashboard() {
             </div>
             <div className="upload-section" style={{ marginTop: '2rem', padding: '1.25rem', background: 'rgba(37,99,235,.05)', borderRadius: 12, border: '1px dashed rgba(37,99,235,.2)' }}>
               <h4 style={{ fontSize: '.9rem', fontWeight: 700, color: '#0F172A', marginBottom: '.75rem', display: 'flex', alignItems: 'center', gap: 6 }}>
-                <Upload className="w-4 h-4 text-primary" /> Upload New Research
+                <Upload className="w-4 h-4 text-primary" /> {t('student.upload_new_research')}
               </h4>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
-                <input value={uploadTitle} onChange={e => setUploadTitle(e.target.value)} placeholder="Research Title" style={{ padding: '.7rem 1rem', borderRadius: 10, border: '1.5px solid rgba(148,163,184,.2)', fontSize: '.85rem', outline: 'none', background: 'rgba(255,255,255,.5)' }} />
-                <input value={supervisor} onChange={e => setSupervisor(e.target.value)} placeholder="Supervisor Name" style={{ padding: '.7rem 1rem', borderRadius: 10, border: '1.5px solid rgba(148,163,184,.2)', fontSize: '.85rem', outline: 'none', background: 'rgba(255,255,255,.5)' }} />
+                <input value={uploadTitle} onChange={e => setUploadTitle(e.target.value)} placeholder={t('student.ph_research_title')} style={{ padding: '.7rem 1rem', borderRadius: 10, border: '1.5px solid rgba(148,163,184,.2)', fontSize: '.85rem', outline: 'none', background: 'rgba(255,255,255,.5)' }} />
+                <input value={supervisor} onChange={e => setSupervisor(e.target.value)} placeholder={t('student.ph_supervisor_name')} style={{ padding: '.7rem 1rem', borderRadius: 10, border: '1.5px solid rgba(148,163,184,.2)', fontSize: '.85rem', outline: 'none', background: 'rgba(255,255,255,.5)' }} />
               </div>
               <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
-                <input value={keywords} onChange={e => setKeywords(e.target.value)} placeholder="Keywords (comma separated)" style={{ flex: 1, padding: '.7rem 1rem', borderRadius: 10, border: '1.5px solid rgba(148,163,184,.2)', fontSize: '.85rem', outline: 'none', background: 'rgba(255,255,255,.5)' }} />
+                <input value={keywords} onChange={e => setKeywords(e.target.value)} placeholder={t('student.ph_keywords')} style={{ flex: 1, padding: '.7rem 1rem', borderRadius: 10, border: '1.5px solid rgba(148,163,184,.2)', fontSize: '.85rem', outline: 'none', background: 'rgba(255,255,255,.5)' }} />
                 <label style={{ padding: '.7rem 1.5rem', borderRadius: 10, border: '1.5px dashed rgba(37,99,235,.3)', fontSize: '.85rem', color: '#2563EB', cursor: 'pointer', background: 'rgba(37,99,235,.05)', display: 'flex', alignItems: 'center', gap: 6, fontWeight: 500, whiteSpace: 'nowrap' }}>
-                  <Upload className="w-4 h-4" /> {fileName || 'Choose File (PDF)'}
+                  <Upload className="w-4 h-4" /> {fileName || t('student.choose_file')}
                   <input type="file" accept=".pdf" style={{ display: 'none' }} onChange={e => { setFileName(e.target.files?.[0]?.name || '') }} />
                 </label>
               </div>
               <button onClick={() => {
-                if (!uploadTitle.trim() || !supervisor.trim()) { toast('Please fill in Research Title and Supervisor Name', 'error'); return }
+                if (!uploadTitle.trim() || !supervisor.trim()) { toast(t('student.toast_fill_fields'), 'error'); return }
                 const newId = `RES-2026-${String(submissions.length + 1).padStart(3, '0')}`
                 setSubmissions(prev => [...prev, { id: newId, title: uploadTitle.trim(), status: 'Pending', date: new Date().toISOString().slice(0, 10), hash: '—' }])
-                toast(`"${uploadTitle}" submitted! Hash generated.`, 'success')
+                toast(`"${uploadTitle}" ${t('student.toast_submitted')}`, 'success')
                 setUploadTitle(''); setSupervisor(''); setKeywords(''); setFileName('')
               }} style={{ fontSize: '.85rem', color: '#fff', background: '#2563EB', border: 'none', padding: '10px 24px', borderRadius: 10, cursor: 'pointer', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6 }}>
-                <Hash className="w-4 h-4" /> Submit & Generate Hash
+                <Hash className="w-4 h-4" /> {t('student.submit_generate_hash')}
               </button>
             </div>
           </div>
@@ -194,11 +209,11 @@ export default function StudentDashboard() {
       case 'certificates':
         return (
           <div style={{ background: 'rgba(255,255,255,.95)', borderRadius: 16, padding: '1.5rem', border: '1px solid rgba(255,255,255,.5)' }}>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0F172A', marginBottom: '1.25rem' }}>My Certificates</h3>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0F172A', marginBottom: '1.25rem' }}>{t('student.my_certificates')}</h3>
             {certData.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '3rem 1rem', color: '#94A3B8' }}>
                 <Award className="w-12 h-12" style={{ margin: '0 auto 1rem', opacity: 0.3 }} />
-                <p>No certificates issued yet. Submit and get your research approved first.</p>
+                <p>{t('student.no_certificates')}</p>
               </div>
             ) : (
               <div style={{ display: 'grid', gap: '1rem' }}>
@@ -211,9 +226,9 @@ export default function StudentDashboard() {
                       <div>
                         <div style={{ fontWeight: 700, color: '#0F172A', fontSize: '.9rem' }}>{c.research}</div>
                         <div style={{ display: 'flex', gap: '1rem', marginTop: 4, fontSize: '.8rem', color: '#64748B' }}>
-                          <span>ID: {c.id}</span>
-                          <span>Issued: {c.issued}</span>
-                          <span>Expires: {c.expires}</span>
+                          <span>{t('student.id')}: {c.id}</span>
+                          <span>{t('student.issued')}: {c.issued}</span>
+                          <span>{t('student.expires')}: {c.expires}</span>
                         </div>
                       </div>
                     </div>
@@ -234,7 +249,7 @@ export default function StudentDashboard() {
       case 'profile':
         return (
           <div style={{ background: 'rgba(255,255,255,.95)', borderRadius: 16, padding: '1.5rem', border: '1px solid rgba(255,255,255,.5)' }}>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0F172A', marginBottom: '1.5rem' }}>Profile Settings</h3>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0F172A', marginBottom: '1.5rem' }}>{t('student.profile_settings')}</h3>
             <div style={{ display: 'flex', gap: '2rem', alignItems: 'flex-start' }}>
               <div onClick={() => document.getElementById('pic-input')?.click()} style={{ width: 100, height: 100, borderRadius: 20, background: profilePic ? 'transparent' : 'linear-gradient(135deg,#2563EB,#14B8A6)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '2rem', fontWeight: 700, flexShrink: 0, cursor: 'pointer', overflow: 'hidden', position: 'relative', border: '2px dashed rgba(37,99,235,.3)' }}>
                 {profilePic ? <img src={profilePic} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 18 }} /> : 'AH'}
@@ -245,24 +260,24 @@ export default function StudentDashboard() {
               </div>
               <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div>
-                  <label style={{ fontSize: '.75rem', fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '.05em', display: 'block', marginBottom: 4 }}>Full Name</label>
+                  <label style={{ fontSize: '.75rem', fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '.05em', display: 'block', marginBottom: 4 }}>{t('student.full_name')}</label>
                   <input value={profileName} onChange={e => setProfileName(e.target.value)} style={{ width: '100%', padding: '.7rem 1rem', borderRadius: 10, border: '1.5px solid rgba(148,163,184,.2)', fontSize: '.85rem', outline: 'none', background: 'rgba(255,255,255,.5)' }} />
                 </div>
                 <div>
-                  <label style={{ fontSize: '.75rem', fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '.05em', display: 'block', marginBottom: 4 }}>Email</label>
+                  <label style={{ fontSize: '.75rem', fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '.05em', display: 'block', marginBottom: 4 }}>{t('student.email')}</label>
                   <input value={profileEmail} onChange={e => setProfileEmail(e.target.value)} style={{ width: '100%', padding: '.7rem 1rem', borderRadius: 10, border: '1.5px solid rgba(148,163,184,.2)', fontSize: '.85rem', outline: 'none', background: 'rgba(255,255,255,.5)' }} />
                 </div>
                 <div>
-                  <label style={{ fontSize: '.75rem', fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '.05em', display: 'block', marginBottom: 4 }}>Student ID</label>
+                  <label style={{ fontSize: '.75rem', fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '.05em', display: 'block', marginBottom: 4 }}>{t('student.student_id')}</label>
                   <input defaultValue="STU-2024-0891" disabled style={{ width: '100%', padding: '.7rem 1rem', borderRadius: 10, border: '1.5px solid rgba(148,163,184,.2)', fontSize: '.85rem', outline: 'none', background: 'rgba(148,163,184,.08)', color: '#94A3B8' }} />
                 </div>
                 <div>
-                  <label style={{ fontSize: '.75rem', fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '.05em', display: 'block', marginBottom: 4 }}>Department</label>
+                  <label style={{ fontSize: '.75rem', fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '.05em', display: 'block', marginBottom: 4 }}>{t('student.department')}</label>
                   <input value={profileDept} onChange={e => setProfileDept(e.target.value)} style={{ width: '100%', padding: '.7rem 1rem', borderRadius: 10, border: '1.5px solid rgba(148,163,184,.2)', fontSize: '.85rem', outline: 'none', background: 'rgba(255,255,255,.5)' }} />
                 </div>
               </div>
             </div>
-            <button onClick={() => { if (!profileName.trim() || !profileEmail.trim()) { toast('Name and Email are required', 'error'); return }; toast('Profile updated successfully!', 'success') }} style={{ marginTop: '1.5rem', fontSize: '.85rem', color: '#fff', background: '#2563EB', border: 'none', padding: '10px 24px', borderRadius: 10, cursor: 'pointer', fontWeight: 600 }}>Update Profile</button>
+            <button onClick={() => { if (!profileName.trim() || !profileEmail.trim()) { toast(t('student.toast_name_email_required'), 'error'); return }; toast(t('student.toast_profile_updated'), 'success') }} style={{ marginTop: '1.5rem', fontSize: '.85rem', color: '#fff', background: '#2563EB', border: 'none', padding: '10px 24px', borderRadius: 10, cursor: 'pointer', fontWeight: 600 }}>{t('student.update_profile')}</button>
           </div>
         )
     }
@@ -286,7 +301,7 @@ export default function StudentDashboard() {
           <div style={{ width: 36, height: 36, borderRadius: 10, background: 'linear-gradient(135deg,#2563EB,#14B8A6)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '.8rem', fontWeight: 700 }}>AH</div>
           <div>
             <div style={{ color: '#0F172A', fontWeight: 700, fontSize: '.85rem' }}>Ahmed Hassan</div>
-            <div style={{ color: '#64748B', fontSize: '.7rem' }}>Student</div>
+            <div style={{ color: '#64748B', fontSize: '.7rem' }}>{t('student.role_student')}</div>
           </div>
         </a>
         <nav style={{ flex: 1, padding: '.75rem', display: 'flex', flexDirection: 'column', gap: '.25rem' }}>
@@ -304,17 +319,17 @@ export default function StudentDashboard() {
                 onMouseLeave={e => { if (active !== item.key) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#475569' } }}
               >
                 <Icon className="w-4 h-4" />
-                {item.label}
+                {t(item.labelKey)}
               </button>
             )
           })}
         </nav>
         <div style={{ padding: '.75rem', borderTop: '1px solid rgba(148,163,184,.1)', display: 'flex', flexDirection: 'column', gap: '.25rem' }}>
           <a href="/" style={{ display: 'flex', alignItems: 'center', gap: '.75rem', padding: '.7rem .85rem', borderRadius: 12, cursor: 'pointer', fontSize: '.85rem', fontWeight: 500, color: '#2563EB', background: 'transparent', width: '100%', textAlign: 'left', textDecoration: 'none' }}>
-            <LayoutDashboard className="w-4 h-4" /> Home
+            <LayoutDashboard className="w-4 h-4" /> {t('student.home')}
           </a>
           <a href="/login" style={{ display: 'flex', alignItems: 'center', gap: '.75rem', padding: '.7rem .85rem', borderRadius: 12, cursor: 'pointer', fontSize: '.85rem', fontWeight: 500, color: '#EF4444', background: 'transparent', width: '100%', textAlign: 'left', textDecoration: 'none' }}>
-            <LogOut className="w-4 h-4" /> Logout
+            <LogOut className="w-4 h-4" /> {t('student.logout')}
           </a>
         </div>
       </aside>
@@ -324,7 +339,7 @@ export default function StudentDashboard() {
             <button onClick={() => setSidebarOpen(!sidebarOpen)} style={{ width: 36, height: 36, borderRadius: 10, border: '1px solid rgba(148,163,184,.2)', background: 'rgba(255,255,255,.5)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748B' }}>
               {sidebarOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
             </button>
-            <h2 style={{ fontSize: '1.4rem', fontWeight: 700, color: '#0F172A', margin: 0, textTransform: 'capitalize' }}>{active === 'my-research' ? 'My Research' : active}</h2>
+            <h2 style={{ fontSize: '1.4rem', fontWeight: 700, color: '#0F172A', margin: 0, textTransform: 'capitalize' }}>{t(activeLabels[active] ?? active)}</h2>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <NotificationBell user="student" />
@@ -337,10 +352,10 @@ export default function StudentDashboard() {
         <div style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(0,0,0,.6)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div style={{ background: '#fff', borderRadius: 24, padding: '1.5rem', width: 420, maxWidth: '90vw', boxShadow: '0 25px 60px rgba(0,0,0,.4)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-              <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 700, color: '#0F172A' }}>Crop Profile Picture</h3>
+              <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 700, color: '#0F172A' }}>{t('student.crop_title')}</h3>
               <button onClick={() => setCropModal(false)} style={{ width: 32, height: 32, borderRadius: 8, border: 'none', background: 'rgba(148,163,184,.1)', cursor: 'pointer' }}><X size={16} /></button>
             </div>
-            <p style={{ fontSize: '.8rem', color: '#64748B', marginBottom: '1rem' }}>Drag to reposition, use slider to zoom</p>
+            <p style={{ fontSize: '.8rem', color: '#64748B', marginBottom: '1rem' }}>{t('student.crop_help')}</p>
             <div style={{ width: 280, height: 280, borderRadius: '50%', overflow: 'hidden', margin: '0 auto 1rem', position: 'relative', border: '3px solid #2563EB', background: '#f1f5f9' }}
               onMouseDown={e => { setDragging(true); setDragStart({ x: e.clientX - cropPos.x, y: e.clientY - cropPos.y }) }}
               onMouseMove={e => { if (dragging) setCropPos({ x: e.clientX - dragStart.x, y: e.clientY - dragStart.y }) }}
@@ -355,8 +370,8 @@ export default function StudentDashboard() {
               <button onClick={() => setCropZoom(z => Math.min(5, z + 0.2))} style={{ width: 36, height: 36, borderRadius: 8, border: '1px solid rgba(148,163,184,.2)', background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#475569' }}><ZoomIn size={16} /></button>
             </div>
             <div style={{ display: 'flex', gap: '.5rem' }}>
-              <button onClick={() => setCropModal(false)} style={{ flex: 1, fontSize: '.85rem', color: '#64748B', background: 'rgba(148,163,184,.1)', border: 'none', padding: '10px', borderRadius: 10, cursor: 'pointer', fontWeight: 600 }}>Cancel</button>
-              <button onClick={() => { setProfilePic(cropImage); setCropModal(false); toast('Profile picture updated!', 'success') }} style={{ flex: 1, fontSize: '.85rem', color: '#fff', background: '#2563EB', border: 'none', padding: '10px', borderRadius: 10, cursor: 'pointer', fontWeight: 600 }}>Save</button>
+              <button onClick={() => setCropModal(false)} style={{ flex: 1, fontSize: '.85rem', color: '#64748B', background: 'rgba(148,163,184,.1)', border: 'none', padding: '10px', borderRadius: 10, cursor: 'pointer', fontWeight: 600 }}>{t('student.cancel')}</button>
+              <button onClick={() => { setProfilePic(cropImage); setCropModal(false); toast(t('student.toast_pic_updated'), 'success') }} style={{ flex: 1, fontSize: '.85rem', color: '#fff', background: '#2563EB', border: 'none', padding: '10px', borderRadius: 10, cursor: 'pointer', fontWeight: 600 }}>{t('student.save')}</button>
             </div>
           </div>
         </div>
@@ -366,26 +381,26 @@ export default function StudentDashboard() {
         <div style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(0,0,0,.4)', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => setViewingSubmission(null)}>
           <div style={{ background: '#fff', borderRadius: 20, padding: '2rem', width: 480, maxWidth: '90vw', boxShadow: '0 25px 60px rgba(0,0,0,.3)' }} onClick={e => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-              <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 700, color: '#0F172A' }}>Submission Details</h3>
+              <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 700, color: '#0F172A' }}>{t('student.submission_details')}</h3>
               <button onClick={() => setViewingSubmission(null)} style={{ width: 32, height: 32, borderRadius: 8, border: 'none', background: 'rgba(148,163,184,.1)', cursor: 'pointer' }}><X size={16} /></button>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '.85rem' }}>
               {[
-                { label: 'ID', value: viewingSubmission.id },
-                { label: 'Title', value: viewingSubmission.title },
-                { label: 'Status', value: viewingSubmission.status },
-                { label: 'Submitted', value: viewingSubmission.date },
-                { label: 'Blockchain Hash', value: viewingSubmission.hash },
+                { label: 'ID', labelKey: 'student.id', value: viewingSubmission.id },
+                { label: 'Title', labelKey: 'student.title', value: viewingSubmission.title },
+                { label: 'Status', labelKey: 'student.status', value: viewingSubmission.status },
+                { label: 'Submitted', labelKey: 'student.submitted', value: viewingSubmission.date },
+                { label: 'Blockchain Hash', labelKey: 'student.blockchain_hash', value: viewingSubmission.hash },
               ].map(f => (
                 <div key={f.label}>
-                  <div style={{ fontSize: '.7rem', fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '.05em', marginBottom: 2 }}>{f.label}</div>
-                  <div style={{ fontSize: '.9rem', fontWeight: 500, color: '#0F172A' }}>{f.value}</div>
+                  <div style={{ fontSize: '.7rem', fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '.05em', marginBottom: 2 }}>{t(f.labelKey)}</div>
+                  <div style={{ fontSize: '.9rem', fontWeight: 500, color: '#0F172A' }}>{t(statusKey[f.value] ?? f.value)}</div>
                 </div>
               ))}
             </div>
             <div style={{ display: 'flex', gap: '.5rem', marginTop: '1.5rem' }}>
-              <button onClick={() => setViewingSubmission(null)} style={{ flex: 1, fontSize: '.85rem', color: '#2563EB', background: 'rgba(37,99,235,.08)', border: 'none', padding: '10px', borderRadius: 10, cursor: 'pointer', fontWeight: 600 }}>Close</button>
-              <button onClick={() => { const a = document.createElement('a'); a.href = '#'; a.download = `${viewingSubmission.id}.pdf`; a.click(); setViewingSubmission(null) }} style={{ flex: 1, fontSize: '.85rem', color: '#fff', background: '#2563EB', border: 'none', padding: '10px', borderRadius: 10, cursor: 'pointer', fontWeight: 600 }}>Download</button>
+              <button onClick={() => setViewingSubmission(null)} style={{ flex: 1, fontSize: '.85rem', color: '#2563EB', background: 'rgba(37,99,235,.08)', border: 'none', padding: '10px', borderRadius: 10, cursor: 'pointer', fontWeight: 600 }}>{t('student.close')}</button>
+              <button onClick={() => { const a = document.createElement('a'); a.href = '#'; a.download = `${viewingSubmission.id}.pdf`; a.click(); setViewingSubmission(null) }} style={{ flex: 1, fontSize: '.85rem', color: '#fff', background: '#2563EB', border: 'none', padding: '10px', borderRadius: 10, cursor: 'pointer', fontWeight: 600 }}>{t('student.download')}</button>
             </div>
           </div>
         </div>

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useI18n } from '../i18n'
 
 function formatPhone(val: string) {
   const digits = val.replace(/\D/g, '')
@@ -11,6 +12,7 @@ function formatPhone(val: string) {
 }
 
 export default function Login() {
+  const { t } = useI18n()
   const [tab, setTab] = useState<'login' | 'register'>('login')
   const [showPw, setShowPw] = useState(false)
   const [phone, setPhone] = useState('')
@@ -25,8 +27,8 @@ export default function Login() {
     }
   }
 
-  const title = tab === 'login' ? 'Welcome Back' : 'Create Account'
-  const subtitle = tab === 'login' ? 'Access your researcher portal and managed IP dossiers.' : 'Register to protect your research with blockchain technology.'
+  const title = tab === 'login' ? t('login.welcome_back') : t('register.create_account')
+  const subtitle = tab === 'login' ? t('login.subtitle') : t('register.subtitle')
 
   return (
     <div style={{ height: '100vh', display: 'flex', background: '#f7f9fb', overflow: 'hidden', position: 'fixed', top: 0, left: 0, width: '100%' }}>
@@ -60,7 +62,7 @@ export default function Login() {
                   borderBottom: tab === m ? '2.5px solid #004ac6' : '2.5px solid transparent',
                   color: tab === m ? '#004ac6' : '#94A3B8',
                   marginBottom: '-1px',
-                }}>{m}</button>
+                }}>{m === 'login' ? t('login.tab_login') : t('register.tab_register')}</button>
               ))}
             </div>
 
@@ -74,25 +76,25 @@ export default function Login() {
               onMouseLeave={e => { e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.background = '#fff'; e.currentTarget.style.boxShadow = '0 1px 2px rgba(0,0,0,.02)' }}
             >
               <svg style={{ width: 17, height: 17, color: '#004ac6' }} viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
-              Sign in with University SSO
+              {t('login.sso')}
             </button>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '.7rem', marginBottom: '.55rem' }}>
               <hr style={{ flex: 1, border: 'none', borderTop: '1px dashed #e2e8f0' }} />
-              <span style={{ fontSize: 10, fontWeight: 600, color: '#94A3B8', whiteSpace: 'nowrap', letterSpacing: '.07em' }}>OR CONTINUE WITH</span>
+              <span style={{ fontSize: 10, fontWeight: 600, color: '#94A3B8', whiteSpace: 'nowrap', letterSpacing: '.07em' }}>{t('login.or_continue_with')}</span>
               <hr style={{ flex: 1, border: 'none', borderTop: '1px dashed #e2e8f0' }} />
             </div>
 
             <form style={{ display: 'flex', flexDirection: 'column', gap: '.55rem' }}>
               <div>
-                <label style={{ fontSize: 10, fontWeight: 600, color: '#475569', textTransform: 'uppercase', letterSpacing: '.05em', display: 'block', marginBottom: 4 }}>Phone Number</label>
+                <label style={{ fontSize: 10, fontWeight: 600, color: '#475569', textTransform: 'uppercase', letterSpacing: '.05em', display: 'block', marginBottom: 4 }}>{t('login.phone')}</label>
                 <div style={{ position: 'relative' }}>
                   <svg style={{ position: 'absolute', left: 11, top: '50%', transform: 'translateY(-50%)', color: '#94A3B8', width: 15, height: 15 }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
                   <input
                     type="tel"
                     value={phone}
                     onChange={handlePhoneChange}
-                    placeholder="+20 123 456 7890"
+                    placeholder={t('login.phone_placeholder')}
                     style={{ width: '100%', padding: '.55rem .55rem .55rem 2rem', border: '1.5px solid #e2e8f0', borderRadius: 10, fontSize: '.85rem', outline: 'none', background: '#fff', boxSizing: 'border-box', transition: 'all .2s', boxShadow: 'inset 0 1px 2px rgba(0,0,0,.02)' }}
                     onFocus={e => { e.currentTarget.style.borderColor = '#004ac6'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(0,74,198,.08), inset 0 1px 2px rgba(0,0,0,.02)' }}
                     onBlur={e => { e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.boxShadow = 'inset 0 1px 2px rgba(0,0,0,.02)' }}
@@ -102,10 +104,10 @@ export default function Login() {
 
               {tab === 'register' && (
                 <div>
-                  <label style={{ fontSize: 10, fontWeight: 600, color: '#475569', textTransform: 'uppercase', letterSpacing: '.05em', display: 'block', marginBottom: 4 }}>Gmail Address</label>
+                  <label style={{ fontSize: 10, fontWeight: 600, color: '#475569', textTransform: 'uppercase', letterSpacing: '.05em', display: 'block', marginBottom: 4 }}>{t('register.gmail_address')}</label>
                   <div style={{ position: 'relative' }}>
                     <svg style={{ position: 'absolute', left: 11, top: '50%', transform: 'translateY(-50%)', color: '#94A3B8', width: 15, height: 15 }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 4l-10 8L2 4"/></svg>
-                    <input type="email" placeholder="example@gmail.com" style={{ width: '100%', padding: '.55rem .55rem .55rem 2rem', border: '1.5px solid #e2e8f0', borderRadius: 10, fontSize: '.85rem', outline: 'none', background: '#fff', boxSizing: 'border-box', transition: 'all .2s', boxShadow: 'inset 0 1px 2px rgba(0,0,0,.02)' }}
+                    <input type="email" placeholder={t('register.gmail_placeholder')} style={{ width: '100%', padding: '.55rem .55rem .55rem 2rem', border: '1.5px solid #e2e8f0', borderRadius: 10, fontSize: '.85rem', outline: 'none', background: '#fff', boxSizing: 'border-box', transition: 'all .2s', boxShadow: 'inset 0 1px 2px rgba(0,0,0,.02)' }}
                       onFocus={e => { e.currentTarget.style.borderColor = '#004ac6'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(0,74,198,.08), inset 0 1px 2px rgba(0,0,0,.02)' }}
                       onBlur={e => { e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.boxShadow = 'inset 0 1px 2px rgba(0,0,0,.02)' }}
                     />
@@ -114,7 +116,7 @@ export default function Login() {
               )}
 
               <div>
-                <label style={{ fontSize: 10, fontWeight: 600, color: '#475569', textTransform: 'uppercase', letterSpacing: '.05em', display: 'block', marginBottom: 4 }}>Secure Password</label>
+                <label style={{ fontSize: 10, fontWeight: 600, color: '#475569', textTransform: 'uppercase', letterSpacing: '.05em', display: 'block', marginBottom: 4 }}>{t('login.secure_password')}</label>
                 <div style={{ position: 'relative' }}>
                   <svg style={{ position: 'absolute', left: 11, top: '50%', transform: 'translateY(-50%)', color: '#94A3B8', width: 15, height: 15 }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
                   <input type={showPw ? 'text' : 'password'} placeholder="••••••••" style={{ width: '100%', padding: '.55rem 2rem .55rem 2rem', border: '1.5px solid #e2e8f0', borderRadius: 10, fontSize: '.85rem', outline: 'none', background: '#fff', boxSizing: 'border-box', transition: 'all .2s', boxShadow: 'inset 0 1px 2px rgba(0,0,0,.02)' }}
@@ -131,22 +133,24 @@ export default function Login() {
 
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '.35rem 0' }}>
                 <label style={{ display: 'flex', alignItems: 'center', gap: '.45rem', cursor: 'pointer', fontSize: 12, color: '#64748B' }}>
-                  <input type="checkbox" defaultChecked style={{ width: 14, height: 14, borderRadius: 4, accentColor: '#004ac6', border: '1.5px solid #cbd5e1' }} /> Remember me
+                  <input type="checkbox" defaultChecked style={{ width: 14, height: 14, borderRadius: 4, accentColor: '#004ac6', border: '1.5px solid #cbd5e1' }} /> {t('login.remember_me')}
                 </label>
-                <Link to="/" style={{ fontSize: 12, fontWeight: 600, color: '#004ac6', textDecoration: 'none', borderBottom: '1px dashed #004ac6' }}>Forgot password?</Link>
+                <Link to="/" style={{ fontSize: 12, fontWeight: 600, color: '#004ac6', textDecoration: 'none', borderBottom: '1px dashed #004ac6' }}>{t('login.forgot_password')}</Link>
               </div>
 
               <button type="submit" style={{ width: '100%', padding: '.65rem', background: 'linear-gradient(135deg,#004ac6,#2563eb)', color: '#fff', fontWeight: 700, borderRadius: 10, border: 'none', cursor: 'pointer', fontSize: '.88rem', transition: 'all .2s', boxShadow: '0 2px 8px rgba(0,74,198,.25)' }}
                 onMouseEnter={e => { e.currentTarget.style.background = 'linear-gradient(135deg,#003a9e,#1d4ed8)'; e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,74,198,.35)'; e.currentTarget.style.transform = 'translateY(-1px)' }}
                 onMouseLeave={e => { e.currentTarget.style.background = 'linear-gradient(135deg,#004ac6,#2563eb)'; e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,74,198,.25)'; e.currentTarget.style.transform = 'translateY(0)' }}
-              >{tab === 'login' ? 'Continue to Portal' : 'Create Account'}</button>
+              >{tab === 'login' ? t('login.continue_to_portal') : t('register.create_account')}</button>
             </form>
 
             <footer style={{ marginTop: '.55rem', padding: '.45rem', textAlign: 'center', background: 'rgba(37,99,235,.04)', borderRadius: 8, border: '1px solid rgba(37,99,235,.08)' }}>
               <p style={{ fontSize: 10, color: '#64748B', lineHeight: '14px', margin: 0 }}>
-                By accessing this portal, you agree to the{' '}
-                <Link to="/terms" style={{ color: '#475569', fontWeight: 600, textDecoration: 'underline', textUnderlineOffset: 2 }}>Academic Integrity Guidelines</Link> and{' '}
-                <Link to="/privacy" style={{ color: '#475569', fontWeight: 600, textDecoration: 'underline', textUnderlineOffset: 2 }}>IP Protocols</Link>.
+                {t('login.footer_prefix')}
+                <Link to="/terms" style={{ color: '#475569', fontWeight: 600, textDecoration: 'underline', textUnderlineOffset: 2 }}>{t('login.academic_guidelines')}</Link>
+                {t('login.footer_and')}
+                <Link to="/privacy" style={{ color: '#475569', fontWeight: 600, textDecoration: 'underline', textUnderlineOffset: 2 }}>{t('login.ip_protocols')}</Link>
+                {t('login.footer_suffix')}
               </p>
             </footer>
           </div>

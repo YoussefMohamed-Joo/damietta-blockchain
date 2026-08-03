@@ -1,16 +1,18 @@
 import { useState, useEffect } from 'react'
 import { Bell, X, ExternalLink, Calendar, User, Hash, Tag } from 'lucide-react'
+import { useI18n } from '../i18n'
 
 interface Notif {
   id: number
   type: string
-  text: string
-  time: string
+  textKey: string
+  timeKey: string
   read: boolean
-  from: { name: string; role: string }
+  from: { name: string; roleKey: string }
   relatedId: string
+  titleKey?: string
   title: string
-  description: string
+  descriptionKey: string
   actionUrl: string
   metadata: Record<string, any>
 }
@@ -21,68 +23,101 @@ const typeColors: Record<string, string> = {
   comment: '#F97316', alert: '#EF4444', update: '#6366F1', deadline: '#EC4899',
 }
 
+const typeKeys: Record<string, string> = {
+  submission: 'admin.notif_type_submission',
+  certificate: 'admin.notif_type_certificate',
+  review: 'admin.notif_type_review',
+  registration: 'admin.notif_type_registration',
+  approval: 'admin.notif_type_approval',
+  assignment: 'admin.notif_type_assignment',
+  comment: 'admin.notif_type_comment',
+}
+
+const metaLabels: Record<string, string> = {
+  faculty: 'admin.meta_faculty',
+  year: 'admin.meta_year',
+  supervisor: 'admin.meta_supervisor',
+  issuedDate: 'admin.meta_issued_date',
+  expiresDate: 'admin.meta_expires_date',
+  blockchainHash: 'admin.meta_blockchain_hash',
+  verdict: 'admin.meta_verdict',
+  score: 'admin.meta_score',
+  duration: 'admin.meta_duration',
+  department: 'admin.meta_department',
+  studentId: 'admin.meta_student_id',
+  approvedBy: 'admin.meta_approved_by',
+  hash: 'admin.meta_hash',
+  certificateId: 'admin.meta_certificate_id',
+  format: 'admin.meta_format',
+  deadline: 'admin.meta_deadline',
+  priority: 'admin.meta_priority',
+  submittedBy: 'admin.meta_submitted_by',
+  comment: 'admin.meta_comment',
+  requiresAction: 'admin.meta_requires_action',
+}
+
 const adminNotifs: Notif[] = [
   {
-    id: 1, type: 'submission', text: 'New research submission from Ahmed Hassan', time: '2 min ago', read: false,
-    from: { name: 'Ahmed Hassan', role: 'Student' }, relatedId: 'RES-2026-001',
+    id: 1, type: 'submission', textKey: 'admin.notif_admin1_text', timeKey: 'admin.notif_time_2min', read: false,
+    from: { name: 'Ahmed Hassan', roleKey: 'admin.role_student' }, relatedId: 'RES-2026-001',
     title: 'Blockchain for Healthcare Data',
-    description: 'A new research paper has been submitted and is pending review by the committee. The paper proposes a blockchain-based solution for secure healthcare data management.',
+    descriptionKey: 'admin.notif_admin1_desc',
     actionUrl: '/admin', metadata: { faculty: 'Computer Science', year: '2026', supervisor: 'Dr. Khaled' }
   },
   {
-    id: 2, type: 'certificate', text: 'Certificate issued for RES-2026-001', time: '15 min ago', read: false,
-    from: { name: 'System', role: 'Automatic' }, relatedId: 'CERT-2026-001',
-    title: 'IP Protection Certificate',
-    description: 'A blockchain-secured IP certificate has been generated and issued for the research "Blockchain for Healthcare Data". The certificate includes a QR code for instant verification.',
+    id: 2, type: 'certificate', textKey: 'admin.notif_admin2_text', timeKey: 'admin.notif_time_15min', read: false,
+    from: { name: 'System', roleKey: 'admin.role_automatic' }, relatedId: 'CERT-2026-001',
+    titleKey: 'admin.notif_cert_title', title: 'IP Protection Certificate',
+    descriptionKey: 'admin.notif_admin2_desc',
     actionUrl: '/admin', metadata: { issuedDate: '2026-07-26', expiresDate: '2031-07-26', blockchainHash: '0x7f8a...3b2c' }
   },
   {
-    id: 3, type: 'review', text: 'Review completed by Dr. Mohamed', time: '1 hr ago', read: false,
-    from: { name: 'Dr. Mohamed', role: 'Reviewer' }, relatedId: 'RES-2026-002',
+    id: 3, type: 'review', textKey: 'admin.notif_admin3_text', timeKey: 'admin.notif_time_1hr', read: false,
+    from: { name: 'Dr. Mohamed', roleKey: 'admin.role_reviewer' }, relatedId: 'RES-2026-002',
     title: 'AI-Based Crop Disease Detection',
-    description: 'Dr. Mohamed has completed the review for research "AI-Based Crop Disease Detection". The review included feedback on methodology, results, and recommendations for improvement.',
-    actionUrl: '/admin/reviews', metadata: { verdict: 'Approved with minor revisions', score: '4.2/5', duration: '3 days' }
+    descriptionKey: 'admin.notif_admin3_desc',
+    actionUrl: '/admin/reviews', metadata: { verdict: 'admin.meta_verdict_approved_revisions', score: '4.2/5', duration: 'admin.meta_duration_3days' }
   },
   {
-    id: 4, type: 'registration', text: 'New student registered: Mariam Ali', time: '3 hr ago', read: false,
-    from: { name: 'Mariam Ali', role: 'Student' }, relatedId: 'STU-2026-045',
-    title: 'New Account Registration',
-    description: 'A new student has registered on the Damietta IP Portal. Their account is now active and ready to submit research projects.',
+    id: 4, type: 'registration', textKey: 'admin.notif_admin4_text', timeKey: 'admin.notif_time_3hr', read: false,
+    from: { name: 'Mariam Ali', roleKey: 'admin.role_student' }, relatedId: 'STU-2026-045',
+    titleKey: 'admin.notif_registration_title', title: 'New Account Registration',
+    descriptionKey: 'admin.notif_admin4_desc',
     actionUrl: '/admin', metadata: { faculty: 'Engineering', department: 'Electronics', studentId: '2026045' }
   },
 ]
 
 const studentNotifs: Notif[] = [
   {
-    id: 5, type: 'approval', text: 'Your research RES-2026-001 has been approved', time: '10 min ago', read: false,
-    from: { name: 'Review Committee', role: 'Committee' }, relatedId: 'RES-2026-001',
+    id: 5, type: 'approval', textKey: 'admin.notif_student1_text', timeKey: 'admin.notif_time_10min', read: false,
+    from: { name: 'Review Committee', roleKey: 'admin.role_committee' }, relatedId: 'RES-2026-001',
     title: 'Blockchain for Healthcare Data',
-    description: 'Congratulations! Your research has been approved by the review committee. A blockchain hash has been generated and your IP certificate is ready for download.',
+    descriptionKey: 'admin.notif_student1_desc',
     actionUrl: '/dashboard', metadata: { approvedBy: 'Dr. Khaled, Dr. Ali', hash: '0x7f8a...3b2c', certificateId: 'CERT-2026-001' }
   },
   {
-    id: 6, type: 'certificate', text: 'Certificate CERT-2026-001 is ready', time: '1 hr ago', read: false,
-    from: { name: 'System', role: 'Automatic' }, relatedId: 'CERT-2026-001',
-    title: 'IP Protection Certificate',
-    description: 'Your blockchain-secured IP certificate is now available for download. It includes a unique QR code that anyone can scan to verify authenticity.',
-    actionUrl: '/dashboard', metadata: { issuedDate: '2026-07-26', format: 'PDF + QR' }
+    id: 6, type: 'certificate', textKey: 'admin.notif_student2_text', timeKey: 'admin.notif_time_1hr', read: false,
+    from: { name: 'System', roleKey: 'admin.role_automatic' }, relatedId: 'CERT-2026-001',
+    titleKey: 'admin.notif_cert_title', title: 'IP Protection Certificate',
+    descriptionKey: 'admin.notif_student2_desc',
+    actionUrl: '/dashboard', metadata: { issuedDate: '2026-07-26', format: 'admin.meta_format_pdf_qr' }
   },
 ]
 
 const reviewerNotifs: Notif[] = [
   {
-    id: 7, type: 'assignment', text: 'New submission assigned for review', time: '5 min ago', read: false,
-    from: { name: 'System', role: 'Automatic' }, relatedId: 'RES-2026-003',
+    id: 7, type: 'assignment', textKey: 'admin.notif_reviewer1_text', timeKey: 'admin.notif_time_5min', read: false,
+    from: { name: 'System', roleKey: 'admin.role_automatic' }, relatedId: 'RES-2026-003',
     title: 'IoT Smart Grid Optimization',
-    description: 'A new research has been assigned to you for review. Please evaluate the methodology, results, and provide your recommendation within the specified deadline.',
-    actionUrl: '/admin/reviews', metadata: { deadline: '2026-08-02', priority: 'High', submittedBy: 'Omar Youssef' }
+    descriptionKey: 'admin.notif_reviewer1_desc',
+    actionUrl: '/admin/reviews', metadata: { deadline: '2026-08-02', priority: 'admin.meta_priority_high', submittedBy: 'Omar Youssef' }
   },
   {
-    id: 8, type: 'comment', text: 'Dr. Ali commented on RES-2026-002', time: '30 min ago', read: false,
-    from: { name: 'Dr. Ali', role: 'Reviewer' }, relatedId: 'RES-2026-002',
+    id: 8, type: 'comment', textKey: 'admin.notif_reviewer2_text', timeKey: 'admin.notif_time_30min', read: false,
+    from: { name: 'Dr. Ali', roleKey: 'admin.role_reviewer' }, relatedId: 'RES-2026-002',
     title: 'AI-Based Crop Disease Detection',
-    description: 'Dr. Ali has left a comment on the research review. The comment requires your attention before final approval can be granted.',
-    actionUrl: '/admin/reviews', metadata: { comment: 'Please check the dataset size in section 3.2', requiresAction: true }
+    descriptionKey: 'admin.notif_reviewer2_desc',
+    actionUrl: '/admin/reviews', metadata: { comment: 'admin.meta_comment_dataset', requiresAction: 'admin.meta_requires_action_yes' }
   },
 ]
 
@@ -93,6 +128,7 @@ const allData: Record<string, Notif[]> = {
 }
 
 export default function NotificationBell({ user }: { user: 'admin' | 'student' | 'reviewer' }) {
+  const { t } = useI18n()
   const [notifs, setNotifs] = useState<Notif[]>([])
   const [open, setOpen] = useState(false)
   const [detail, setDetail] = useState<Notif | null>(null)
@@ -132,12 +168,12 @@ export default function NotificationBell({ user }: { user: 'admin' | 'student' |
         {open && (
           <div style={{ position: 'absolute', top: 'calc(100% + 8px)', right: 0, width: 380, background: '#fff', borderRadius: 12, border: '1px solid #e2e8f0', boxShadow: '0 20px 60px rgba(15,23,42,.15)', overflow: 'hidden', zIndex: 100 }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', borderBottom: '1px solid #f1f5f9' }}>
-              <span style={{ fontSize: 13, fontWeight: 700, color: '#0F172A' }}>Notifications</span>
-              <button onClick={markRead} style={{ fontSize: 11, color: '#2563EB', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600 }}>Mark all read</button>
+              <span style={{ fontSize: 13, fontWeight: 700, color: '#0F172A' }}>{t('admin.notifications')}</span>
+              <button onClick={markRead} style={{ fontSize: 11, color: '#2563EB', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600 }}>{t('admin.mark_all_read')}</button>
             </div>
             <div style={{ maxHeight: 360, overflow: 'auto' }}>
               {notifs.length === 0 && (
-                <div style={{ padding: '2rem', textAlign: 'center', color: '#94A3B8', fontSize: 13 }}>No notifications</div>
+                <div style={{ padding: '2rem', textAlign: 'center', color: '#94A3B8', fontSize: 13 }}>{t('admin.no_notifications')}</div>
               )}
               {notifs.map(n => (
                 <div key={n.id} onClick={() => openDetail(n)} style={{ cursor: 'pointer', display: 'flex', gap: 12, padding: '12px 16px', borderBottom: '1px solid #f8fafc', background: n.read ? '#fff' : '#EFF6FF', transition: 'background .15s' }}
@@ -148,8 +184,8 @@ export default function NotificationBell({ user }: { user: 'admin' | 'student' |
                     <div style={{ width: 10, height: 10, borderRadius: '50%', background: typeColors[n.type] || '#94A3B8' }} />
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ fontSize: 13, color: '#1E293B', margin: 0, lineHeight: 1.5, fontWeight: n.read ? 400 : 600 }}>{n.text}</p>
-                    <span style={{ fontSize: 11, color: '#94A3B8', marginTop: 4, display: 'block' }}>{n.time}</span>
+                    <p style={{ fontSize: 13, color: '#1E293B', margin: 0, lineHeight: 1.5, fontWeight: n.read ? 400 : 600 }}>{t(n.textKey)}</p>
+                    <span style={{ fontSize: 11, color: '#94A3B8', marginTop: 4, display: 'block' }}>{t(n.timeKey)}</span>
                   </div>
                   {!n.read && <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#2563EB', flexShrink: 0, marginTop: 6 }} />}
                 </div>
@@ -165,7 +201,7 @@ export default function NotificationBell({ user }: { user: 'admin' | 'student' |
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: '1px solid #f1f5f9' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <div style={{ width: 10, height: 10, borderRadius: '50%', background: typeColors[detail.type] || '#94A3B8' }} />
-                <span style={{ fontSize: 14, fontWeight: 700, color: '#0F172A', textTransform: 'capitalize' }}>{detail.type} Notification</span>
+                <span style={{ fontSize: 14, fontWeight: 700, color: '#0F172A', textTransform: 'capitalize' }}>{t(typeKeys[detail.type] ?? detail.type)} {t('admin.notification')}</span>
               </div>
               <button onClick={() => setDetail(null)} style={{ width: 30, height: 30, borderRadius: 8, border: 'none', background: '#F1F5F9', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748B' }}>
                 <X size={15} />
@@ -173,36 +209,36 @@ export default function NotificationBell({ user }: { user: 'admin' | 'student' |
             </div>
 
             <div style={{ padding: '20px' }}>
-              <h3 style={{ fontSize: 18, fontWeight: 700, color: '#0F172A', margin: '0 0 4px' }}>{detail.title}</h3>
-              <p style={{ fontSize: 13, color: '#64748B', margin: '0 0 20px', lineHeight: 1.7 }}>{detail.description}</p>
+              <h3 style={{ fontSize: 18, fontWeight: 700, color: '#0F172A', margin: '0 0 4px' }}>{t(detail.titleKey ?? detail.title)}</h3>
+              <p style={{ fontSize: 13, color: '#64748B', margin: '0 0 20px', lineHeight: 1.7 }}>{t(detail.descriptionKey)}</p>
 
               <div style={{ background: '#F8FAFC', borderRadius: 12, padding: '16px', display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 20 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                   <User size={15} style={{ color: '#94A3B8', flexShrink: 0 }} />
-                  <span style={{ fontSize: 13, color: '#475569' }}><strong>From:</strong> {detail.from.name} ({detail.from.role})</span>
+                  <span style={{ fontSize: 13, color: '#475569' }}><strong>{t('admin.from')}</strong> {detail.from.name} ({t(detail.from.roleKey)})</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                   <Hash size={15} style={{ color: '#94A3B8', flexShrink: 0 }} />
-                  <span style={{ fontSize: 13, color: '#475569' }}><strong>Reference:</strong> {detail.relatedId}</span>
+                  <span style={{ fontSize: 13, color: '#475569' }}><strong>{t('admin.reference')}</strong> {detail.relatedId}</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                   <Calendar size={15} style={{ color: '#94A3B8', flexShrink: 0 }} />
-                  <span style={{ fontSize: 13, color: '#475569' }}><strong>Time:</strong> {detail.time}</span>
+                  <span style={{ fontSize: 13, color: '#475569' }}><strong>{t('admin.time')}</strong> {t(detail.timeKey)}</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                   <Tag size={15} style={{ color: '#94A3B8', flexShrink: 0 }} />
-                  <span style={{ fontSize: 13, color: '#475569' }}><strong>Type:</strong> {detail.type}</span>
+                  <span style={{ fontSize: 13, color: '#475569' }}><strong>{t('admin.type')}</strong> {t(typeKeys[detail.type] ?? detail.type)}</span>
                 </div>
               </div>
 
               {Object.keys(detail.metadata).length > 0 && (
                 <div style={{ marginBottom: 20 }}>
-                  <h4 style={{ fontSize: 12, fontWeight: 700, color: '#0F172A', textTransform: 'uppercase', letterSpacing: '.05em', margin: '0 0 10px' }}>Additional Details</h4>
+                  <h4 style={{ fontSize: 12, fontWeight: 700, color: '#0F172A', textTransform: 'uppercase', letterSpacing: '.05em', margin: '0 0 10px' }}>{t('admin.additional_details')}</h4>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                     {Object.entries(detail.metadata).map(([key, val]) => (
                       <div key={key} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid #f1f5f9', fontSize: 13 }}>
-                        <span style={{ color: '#64748B', textTransform: 'capitalize' }}>{key.replace(/([A-Z])/g, ' $1').trim()}</span>
-                        <span style={{ color: '#0F172A', fontWeight: 600 }}>{String(val)}</span>
+                        <span style={{ color: '#64748B', textTransform: 'capitalize' }}>{t(metaLabels[key] ?? key.replace(/([A-Z])/g, ' $1').trim())}</span>
+                        <span style={{ color: '#0F172A', fontWeight: 600 }}>{t(String(val))}</span>
                       </div>
                     ))}
                   </div>
@@ -214,7 +250,7 @@ export default function NotificationBell({ user }: { user: 'admin' | 'student' |
                 style={{ width: '100%', padding: '10px', background: '#2563EB', color: '#fff', border: 'none', borderRadius: 10, fontWeight: 600, fontSize: 13, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
               >
                 <ExternalLink size={14} />
-                View Details
+                {t('admin.view_details')}
               </button>
             </div>
           </div>

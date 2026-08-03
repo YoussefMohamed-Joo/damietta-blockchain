@@ -115,3 +115,24 @@ footer .footer-bottom{border-top:1px solid rgba(255,255,255,.06);padding:1.5rem 
 *::-webkit-scrollbar-track{background:rgba(15,23,42,.04);border-radius:3px}
 *::-webkit-scrollbar-thumb{background:rgba(37,99,235,.3);border-radius:3px}
 *::-webkit-scrollbar-thumb:hover{background:rgba(37,99,235,.5)}
+
+/* Language toggle button */
+.lang-toggle{
+  display:inline-flex;align-items:center;gap:6px;border:1.5px solid #CBD5E1;
+  background:rgba(255,255,255,.7);color:#0F172A;font-size:.8rem;font-weight:600;
+  padding:7px 14px;border-radius:999px;cursor:pointer;transition:all .25s;white-space:nowrap;line-height:1;
+}
+.lang-toggle:hover{border-color:#2563EB;color:#2563EB;box-shadow:0 4px 12px -4px rgba(37,99,235,.3)}
+
+/* RTL support */
+html[dir="rtl"] body{font-family:'Segoe UI',Tahoma,Arial,sans-serif}
+html[dir="rtl"] .text-slate-800,html[dir="rtl"] .text-slate-700,html[dir="rtl"] .text-slate-900{letter-spacing:0}
+html[dir="rtl"] section,html[dir="rtl"] .content-section,html[dir="rtl"] .page-header{text-align:right}
+html[dir="rtl"] .section-title,html[dir="rtl"] .section-sub{text-align:center}
+html[dir="rtl"] .ml-auto{margin-left:0!important;margin-right:auto}
+html[dir="rtl"] .mr-auto{margin-right:0!important;margin-left:auto}
+html[dir="rtl"] .search-glass{padding:.35rem 1.5rem .35rem .35rem}
+html[dir="rtl"] .comparison-card li{direction:rtl}
+html[dir="rtl"] .faq-question{text-align:right}
+html[dir="rtl"] .step-line{left:auto;right:calc(50% - 1px)}
+@media(min-width:1024px){html[dir="rtl"] .step-line{right:calc(100% + 4px);left:auto;transform:rotate(180deg)}}

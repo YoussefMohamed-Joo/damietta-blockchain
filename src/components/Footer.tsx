@@ -1,7 +1,10 @@
 import { Link } from 'react-router-dom'
 import { Globe, Shield } from 'lucide-react'
+import { useI18n } from '../i18n'
 
 export default function Footer() {
+  const { t } = useI18n()
+
   const col = (items: [string, string][]) => items.map(([label, to]) => (
     <Link key={to} to={to} style={{ color: '#94A3B8', fontSize: '.85rem', transition: 'color .2s', textDecoration: 'none', padding: '.2rem 0', display: 'inline-block' }}
       onMouseEnter={e => e.currentTarget.style.color = '#fff'}
@@ -16,13 +19,20 @@ export default function Footer() {
     >{label}</a>
   ))
 
+  const cols: { title: string; key: string; external?: boolean; items: [string, string][] }[] = [
+    { title: t('footer.quick_links'), key: 'ql', items: [[t('footer.home'), '/'], [t('footer.features'), '/features'], [t('footer.how'), '/how-it-works'], [t('footer.verify'), '/verify'], [t('footer.admin_panel'), '/admin'], [t('footer.student_dash'), '/dashboard']] },
+    { title: t('footer.resources'), key: 'res', items: [[t('footer.student_portal'), '/student-portal'], [t('footer.faculty_guide'), '/faculty-guide'], [t('footer.faqs'), '/faqs'], [t('footer.contact'), '/contact']] },
+    { title: t('footer.dashboards'), key: 'dash', external: true, items: [[t('footer.student_dashboard'), '/html-dashboards/student-dashboard'], [t('footer.reviewer_dashboard'), '/html-dashboards/reviewer-dashboard'], [t('footer.admin_dashboard'), '/html-dashboards/admin-dashboard'], [t('footer.audit_logs'), '/html-dashboards/audit-logs'], [t('footer.notifications'), '/html-dashboards/notifications']] },
+    { title: t('footer.legal'), key: 'legal', items: [[t('footer.privacy'), '/privacy'], [t('footer.terms'), '/terms']] },
+  ]
+
   return (
     <footer style={{ padding: '3.5rem 2rem 0', marginTop: 'auto', background: 'rgba(15,23,42,.95)', borderTop: '1px solid rgba(255,255,255,.06)', position: 'relative', zIndex: 1 }}>
       <div className="max-w-5xl mx-auto" style={{ display: 'grid', gridTemplateColumns: '1.6fr 1fr 1fr 1fr 1.2fr', gap: '2.5rem' }}>
         <div>
           <img src="/img/logo.png" alt="" style={{ height: 36, marginBottom: '.85rem' }} />
           <p style={{ color: '#94A3B8', fontSize: '.82rem', lineHeight: 1.7 }}>
-            Damietta University's digital platform for protecting and verifying academic research and projects using blockchain technology.
+            {t('footer.tagline')}
           </p>
           <div style={{ display: 'flex', gap: '.6rem', marginTop: '1.25rem' }}>
             {[
@@ -42,22 +52,17 @@ export default function Footer() {
             ><Globe style={{ width: 14, height: 14 }} /></a>
           </div>
         </div>
-        {[
-          { title: 'Quick Links', items: [['Home','/'],['Features','/features'],['How It Works','/how-it-works'],['Verify Research','/verify'],['Admin Panel','/admin'],['Student Dashboard','/dashboard']] as [string, string][] },
-          { title: 'Resources', items: [['Student Portal','/student-portal'],['Faculty Guide','/faculty-guide'],['FAQs','/faqs'],['Contact Support','/contact']] as [string, string][] },
-          { title: 'Dashboards', external: true, items: [['Student Dashboard','/html-dashboards/student-dashboard'],['Reviewer Dashboard','/html-dashboards/reviewer-dashboard'],['Admin Dashboard','/html-dashboards/admin-dashboard'],['Audit Logs','/html-dashboards/audit-logs'],['Notifications','/html-dashboards/notifications']] as [string, string][] },
-          { title: 'Legal & Security', items: [['Privacy Policy','/privacy'],['Terms of Service','/terms']] as [string, string][] },
-        ].map(colData => (
-          <div key={colData.title}>
+        {cols.map(colData => (
+          <div key={colData.key}>
             <h4 style={{ marginBottom: '1rem', fontSize: '.8rem', fontWeight: 700, color: '#E2E8F0', textTransform: 'uppercase', letterSpacing: '.06em' }}>{colData.title}</h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '.5rem' }}>
               {colData.external ? extCol(colData.items) : col(colData.items)}
-              {colData.title === 'Legal & Security' && (
+              {colData.key === 'legal' && (
                 <div style={{ marginTop: '.75rem', padding: '.8rem', background: 'rgba(37,99,235,.1)', borderRadius: 10, border: '1px solid rgba(37,99,235,.2)' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '.4rem', color: '#2563EB', fontSize: '.75rem', fontWeight: 600 }}>
-                    <Shield className="w-3.5 h-3.5" /> Blockchain Secured
+                    <Shield className="w-3.5 h-3.5" /> {t('footer.secured')}
                   </div>
-                  <p style={{ color: '#64748B', fontSize: '.7rem', marginTop: '.2rem', lineHeight: 1.4 }}>All data encrypted and verified on-chain</p>
+                  <p style={{ color: '#64748B', fontSize: '.7rem', marginTop: '.2rem', lineHeight: 1.4 }}>{t('footer.secured_desc')}</p>
                 </div>
               )}
             </div>
@@ -65,7 +70,7 @@ export default function Footer() {
         ))}
       </div>
       <div style={{ maxWidth: 1140, margin: '2rem auto 0', padding: '1.25rem 0', borderTop: '1px solid rgba(148,163,184,.12)', textAlign: 'center', color: '#64748B', fontSize: '.78rem' }}>
-        <span>© 2026 Damietta IP Portal. All rights reserved. Secured by Blockchain Technology.</span>
+        <span>{t('footer.rights')}</span>
       </div>
     </footer>
   )

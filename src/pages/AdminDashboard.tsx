@@ -8,20 +8,21 @@ import {
 } from 'lucide-react'
 import NotificationBell from '../components/NotificationBell'
 import { toast } from '../components/Toast'
+import { useI18n } from '../i18n'
 const sidebarItems = [
-  { key: 'overview', label: 'Overview', icon: LayoutDashboard },
-  { key: 'users', label: 'Users', icon: Users },
-  { key: 'submissions', label: 'Submissions', icon: FileText },
-  { key: 'blockchain', label: 'Blockchain Records', icon: Shield },
-  { key: 'certificates', label: 'Certificates', icon: Award },
-  { key: 'settings', label: 'Settings', icon: Settings },
+  { key: 'overview', label: 'Overview', labelKey: 'admin.overview', icon: LayoutDashboard },
+  { key: 'users', label: 'Users', labelKey: 'admin.users', icon: Users },
+  { key: 'submissions', label: 'Submissions', labelKey: 'admin.submissions', icon: FileText },
+  { key: 'blockchain', label: 'Blockchain Records', labelKey: 'admin.blockchain_records', icon: Shield },
+  { key: 'certificates', label: 'Certificates', labelKey: 'admin.certificates', icon: Award },
+  { key: 'settings', label: 'Settings', labelKey: 'admin.settings', icon: Settings },
 ]
 
 const stats = [
-  { label: 'Total Users', value: '1,284', change: '+12%', icon: Users, color: '#2563EB', bg: 'rgba(37,99,235,.12)' },
-  { label: 'Total Research', value: '3,542', change: '+8%', icon: BookOpen, color: '#14B8A6', bg: 'rgba(20,184,166,.12)' },
-  { label: 'Certificates Issued', value: '2,891', change: '+15%', icon: Award, color: '#F59E0B', bg: 'rgba(245,158,11,.12)' },
-  { label: 'Pending Reviews', value: '47', change: '-3%', icon: Clock, color: '#EF4444', bg: 'rgba(239,68,68,.12)' },
+  { label: 'Total Users', labelKey: 'admin.total_users', value: '1,284', change: '+12%', icon: Users, color: '#2563EB', bg: 'rgba(37,99,235,.12)' },
+  { label: 'Total Research', labelKey: 'admin.total_research', value: '3,542', change: '+8%', icon: BookOpen, color: '#14B8A6', bg: 'rgba(20,184,166,.12)' },
+  { label: 'Certificates Issued', labelKey: 'admin.certificates_issued', value: '2,891', change: '+15%', icon: Award, color: '#F59E0B', bg: 'rgba(245,158,11,.12)' },
+  { label: 'Pending Reviews', labelKey: 'admin.pending_reviews', value: '47', change: '-3%', icon: Clock, color: '#EF4444', bg: 'rgba(239,68,68,.12)' },
 ]
 
 const recentSubmissions = [
@@ -53,7 +54,18 @@ const certData = [
   { id: 'CERT-2026-003', student: 'Hossam Kamal', research: 'Renewable Energy Forecasting', issued: '2026-07-18', qr: '••••' },
 ]
 
+const statusKey: Record<string, string> = {
+  Approved: 'admin.status_approved',
+  Pending: 'admin.status_pending',
+  'Under Review': 'admin.status_under_review',
+  Rejected: 'admin.status_rejected',
+  Confirmed: 'admin.status_confirmed',
+  Active: 'admin.status_active',
+  Inactive: 'admin.status_inactive',
+}
+
 export default function AdminDashboard() {
+  const { t } = useI18n()
   const [active, setActive] = useState('overview')
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [toggles, setToggles] = useState({ 'Maintenance Mode': false, 'Auto-Certificate Generation': true, 'Notification Alerts': true })
@@ -67,6 +79,14 @@ export default function AdminDashboard() {
   const matchStatus = (status: string) => statusFilter === 'All Status' || status === statusFilter
   const smartFilter = <T extends Record<string, any>>(items: T[], fields: string[], statusField?: string) =>
     items.filter(i => matchQuery(fields.map(f => String(i[f]))) && (!statusField || matchStatus(String(i[statusField]))))
+  const activeLabels: Record<string, string> = {
+    overview: 'admin.overview',
+    users: 'admin.users',
+    submissions: 'admin.submissions',
+    blockchain: 'admin.blockchain_records',
+    certificates: 'admin.certificates',
+    settings: 'admin.settings',
+  }
 
   const statusBadge = (s: string) => {
     const m: Record<string, { bg: string; color: string; icon: typeof CheckCircle }> = {
@@ -82,7 +102,7 @@ export default function AdminDashboard() {
     const Icon = c.icon
     return (
       <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '4px 10px', borderRadius: 20, fontSize: '.75rem', fontWeight: 600, background: c.bg, color: c.color }}>
-        <Icon className="w-3 h-3" />{s}
+        <Icon className="w-3 h-3" />{t(statusKey[s] ?? s)}
       </span>
     )
   }
@@ -105,26 +125,26 @@ export default function AdminDashboard() {
                       <span style={{ fontSize: '.75rem', fontWeight: 600, color: isNeg ? '#EF4444' : '#14B8A6', background: isNeg ? 'rgba(239,68,68,.1)' : 'rgba(20,184,166,.1)', padding: '2px 8px', borderRadius: 8 }}>{s.change}</span>
                     </div>
                     <div style={{ fontSize: '1.75rem', fontWeight: 700, color: '#0F172A', marginBottom: '.25rem' }}>{s.value}</div>
-                    <div style={{ fontSize: '.8rem', color: '#64748B' }}>{s.label}</div>
+                    <div style={{ fontSize: '.8rem', color: '#64748B' }}>{t(s.labelKey)}</div>
                   </div>
                 )
               })}
             </div>
             <div style={{ background: 'rgba(255,255,255,.95)', borderRadius: 16, padding: '1.5rem', border: '1px solid rgba(255,255,255,.5)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0F172A', margin: 0 }}>Recent Submissions</h3>
-                <button onClick={() => setActive('submissions')} style={{ fontSize: '.8rem', color: '#2563EB', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600 }}>View All</button>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0F172A', margin: 0 }}>{t('admin.recent_submissions')}</h3>
+                <button onClick={() => setActive('submissions')} style={{ fontSize: '.8rem', color: '#2563EB', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600 }}>{t('admin.view_all')}</button>
               </div>
               <div style={{ overflowX: 'auto' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '.85rem' }}>
                   <thead>
                     <tr style={{ borderBottom: '1px solid rgba(148,163,184,.2)', color: '#64748B', fontSize: '.75rem', textTransform: 'uppercase', letterSpacing: '.05em' }}>
-                      <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>ID</th>
-                      <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>Student</th>
-                      <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>Title</th>
-                      <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>Status</th>
-                      <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>Date</th>
-                      <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>Actions</th>
+                      <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('admin.id')}</th>
+                      <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('admin.student')}</th>
+                      <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('admin.title')}</th>
+                      <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('admin.status')}</th>
+                      <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('admin.date')}</th>
+                      <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('admin.actions')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -137,9 +157,9 @@ export default function AdminDashboard() {
                         <td style={{ padding: '.75rem 0', color: '#64748B' }}>{r.date}</td>
                         <td style={{ padding: '.75rem 0' }}>
                           <div style={{ display: 'flex', gap: '.3rem' }}>
-                            <button onClick={() => toast(`Viewing details for ${r.id}`, 'info')} style={{ width: 28, height: 28, borderRadius: 6, border: '1px solid rgba(37,99,235,.2)', background: 'rgba(37,99,235,.06)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2563EB' }} title="View"><Eye size={13} /></button>
-                            <button onClick={() => toast(`${r.id} approved successfully!`, 'success')} style={{ width: 28, height: 28, borderRadius: 6, border: '1px solid rgba(20,184,166,.2)', background: 'rgba(20,184,166,.06)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#14B8A6' }} title="Approve"><CheckCircle size={13} /></button>
-                            <button onClick={() => toast(`${r.id} rejected.`, 'error')} style={{ width: 28, height: 28, borderRadius: 6, border: '1px solid rgba(239,68,68,.2)', background: 'rgba(239,68,68,.06)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#EF4444' }} title="Reject"><XCircle size={13} /></button>
+                            <button onClick={() => toast(`${t('admin.toast_viewing_details')} ${r.id}`, 'info')} style={{ width: 28, height: 28, borderRadius: 6, border: '1px solid rgba(37,99,235,.2)', background: 'rgba(37,99,235,.06)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2563EB' }} title={t('admin.view')}><Eye size={13} /></button>
+                            <button onClick={() => toast(`${r.id} ${t('admin.toast_approved')}`, 'success')} style={{ width: 28, height: 28, borderRadius: 6, border: '1px solid rgba(20,184,166,.2)', background: 'rgba(20,184,166,.06)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#14B8A6' }} title={t('admin.approve')}><CheckCircle size={13} /></button>
+                            <button onClick={() => toast(`${r.id} ${t('admin.toast_rejected')}`, 'error')} style={{ width: 28, height: 28, borderRadius: 6, border: '1px solid rgba(239,68,68,.2)', background: 'rgba(239,68,68,.06)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#EF4444' }} title={t('admin.reject')}><XCircle size={13} /></button>
                           </div>
                         </td>
                       </tr>
@@ -155,19 +175,19 @@ export default function AdminDashboard() {
           <>
             <div style={{ background: 'rgba(255,255,255,.95)', borderRadius: 16, padding: '1.5rem', border: '1px solid rgba(255,255,255,.5)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0F172A', margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}><Users size={18} /> User Management</h3>
-                <button onClick={() => { setNewUser({ name: '', email: '', role: 'Student', password: '' }); setShowAddUser(true) }} style={{ fontSize: '.8rem', color: '#fff', background: '#2563EB', border: 'none', padding: '8px 16px', borderRadius: 10, cursor: 'pointer', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6 }}><UserPlus size={14} /> Add User</button>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0F172A', margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}><Users size={18} /> {t('admin.user_management')}</h3>
+                <button onClick={() => { setNewUser({ name: '', email: '', role: 'Student', password: '' }); setShowAddUser(true) }} style={{ fontSize: '.8rem', color: '#fff', background: '#2563EB', border: 'none', padding: '8px 16px', borderRadius: 10, cursor: 'pointer', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6 }}><UserPlus size={14} /> {t('admin.add_user')}</button>
               </div>
               <div style={{ overflowX: 'auto' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '.85rem' }}>
                   <thead>
                     <tr style={{ borderBottom: '1px solid rgba(148,163,184,.2)', color: '#64748B', fontSize: '.75rem', textTransform: 'uppercase', letterSpacing: '.05em' }}>
-                      <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>Name</th>
-                      <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>Email</th>
-                      <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>Role</th>
-                      <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>Status</th>
-                      <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>Papers</th>
-                      <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>Actions</th>
+                      <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('admin.name')}</th>
+                      <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('admin.email')}</th>
+                      <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('admin.role')}</th>
+                      <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('admin.status')}</th>
+                      <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('admin.papers')}</th>
+                      <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('admin.actions')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -176,12 +196,12 @@ export default function AdminDashboard() {
                         <td style={{ padding: '.75rem 0', fontWeight: 600, color: '#0F172A' }}>{u.name}</td>
                         <td style={{ padding: '.75rem 0', color: '#64748B' }}>{u.email}</td>
                         <td style={{ padding: '.75rem 0' }}>
-                          <span style={{ padding: '4px 10px', borderRadius: 20, fontSize: '.75rem', fontWeight: 600, background: u.role === 'Admin' ? 'rgba(239,68,68,.1)' : u.role === 'Reviewer' ? 'rgba(37,99,235,.1)' : 'rgba(20,184,166,.1)', color: u.role === 'Admin' ? '#EF4444' : u.role === 'Reviewer' ? '#2563EB' : '#14B8A6' }}>{u.role}</span>
+                          <span style={{ padding: '4px 10px', borderRadius: 20, fontSize: '.75rem', fontWeight: 600, background: u.role === 'Admin' ? 'rgba(239,68,68,.1)' : u.role === 'Reviewer' ? 'rgba(37,99,235,.1)' : 'rgba(20,184,166,.1)', color: u.role === 'Admin' ? '#EF4444' : u.role === 'Reviewer' ? '#2563EB' : '#14B8A6' }}>{t('admin.role_' + u.role.toLowerCase())}</span>
                         </td>
                         <td style={{ padding: '.75rem 0' }}>{statusBadge(u.status)}</td>
                         <td style={{ padding: '.75rem 0', color: '#334155' }}>{u.papers}</td>
                         <td style={{ padding: '.75rem 0' }}>
-                          <button onClick={() => toast(`Managing user: ${u.name}`, 'info')} style={{ width: 32, height: 32, borderRadius: 8, border: '1px solid rgba(148,163,184,.2)', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748B' }}><MoreHorizontal size={15} /></button>
+                          <button onClick={() => toast(`${t('admin.toast_managing_user')} ${u.name}`, 'info')} style={{ width: 32, height: 32, borderRadius: 8, border: '1px solid rgba(148,163,184,.2)', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748B' }}><MoreHorizontal size={15} /></button>
                         </td>
                       </tr>
                     ))}
@@ -194,37 +214,37 @@ export default function AdminDashboard() {
               <div style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(0,0,0,.4)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <div style={{ background: '#fff', borderRadius: 20, padding: '2rem', width: 420, maxWidth: '90vw', boxShadow: '0 25px 60px rgba(0,0,0,.3)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                    <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 700, color: '#0F172A' }}>Add New User</h3>
+                    <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 700, color: '#0F172A' }}>{t('admin.add_new_user')}</h3>
                     <button onClick={() => setShowAddUser(false)} style={{ width: 32, height: 32, borderRadius: 8, border: 'none', background: 'rgba(148,163,184,.1)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748B' }}><X size={16} /></button>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                     <div>
-                      <label style={{ display: 'block', fontSize: '.8rem', fontWeight: 600, color: '#334155', marginBottom: 4 }}>Full Name</label>
-                      <input value={newUser.name} onChange={e => setNewUser({ ...newUser, name: e.target.value })} placeholder="e.g. Mohamed Ali" style={{ width: '100%', padding: '10px 14px', borderRadius: 10, border: '1px solid rgba(148,163,184,.3)', fontSize: '.85rem', outline: 'none', boxSizing: 'border-box' }} />
+                      <label style={{ display: 'block', fontSize: '.8rem', fontWeight: 600, color: '#334155', marginBottom: 4 }}>{t('admin.full_name')}</label>
+                      <input value={newUser.name} onChange={e => setNewUser({ ...newUser, name: e.target.value })} placeholder={t('admin.ph_name_example')} style={{ width: '100%', padding: '10px 14px', borderRadius: 10, border: '1px solid rgba(148,163,184,.3)', fontSize: '.85rem', outline: 'none', boxSizing: 'border-box' }} />
                     </div>
                     <div>
-                      <label style={{ display: 'block', fontSize: '.8rem', fontWeight: 600, color: '#334155', marginBottom: 4 }}>Email Address</label>
-                      <input value={newUser.email} onChange={e => setNewUser({ ...newUser, email: e.target.value })} placeholder="e.g. m.ali@du.edu.eg" style={{ width: '100%', padding: '10px 14px', borderRadius: 10, border: '1px solid rgba(148,163,184,.3)', fontSize: '.85rem', outline: 'none', boxSizing: 'border-box' }} />
+                      <label style={{ display: 'block', fontSize: '.8rem', fontWeight: 600, color: '#334155', marginBottom: 4 }}>{t('admin.email_address')}</label>
+                      <input value={newUser.email} onChange={e => setNewUser({ ...newUser, email: e.target.value })} placeholder={t('admin.ph_email_example')} style={{ width: '100%', padding: '10px 14px', borderRadius: 10, border: '1px solid rgba(148,163,184,.3)', fontSize: '.85rem', outline: 'none', boxSizing: 'border-box' }} />
                     </div>
                     <div>
-                      <label style={{ display: 'block', fontSize: '.8rem', fontWeight: 600, color: '#334155', marginBottom: 4 }}>Password</label>
+                      <label style={{ display: 'block', fontSize: '.8rem', fontWeight: 600, color: '#334155', marginBottom: 4 }}>{t('admin.password')}</label>
                       <input type="password" value={newUser.password} onChange={e => setNewUser({ ...newUser, password: e.target.value })} placeholder="••••••••" style={{ width: '100%', padding: '10px 14px', borderRadius: 10, border: '1px solid rgba(148,163,184,.3)', fontSize: '.85rem', outline: 'none', boxSizing: 'border-box' }} />
                     </div>
                     <div>
-                      <label style={{ display: 'block', fontSize: '.8rem', fontWeight: 600, color: '#334155', marginBottom: 4 }}>Role</label>
+                      <label style={{ display: 'block', fontSize: '.8rem', fontWeight: 600, color: '#334155', marginBottom: 4 }}>{t('admin.role')}</label>
                       <select value={newUser.role} onChange={e => setNewUser({ ...newUser, role: e.target.value })} style={{ width: '100%', padding: '10px 14px', borderRadius: 10, border: '1px solid rgba(148,163,184,.3)', fontSize: '.85rem', outline: 'none', background: '#fff', boxSizing: 'border-box' }}>
-                        <option>Student</option>
-                        <option>Reviewer</option>
-                        <option>Admin</option>
+                        <option value="Student">{t('admin.role_student')}</option>
+                        <option value="Reviewer">{t('admin.role_reviewer')}</option>
+                        <option value="Admin">{t('admin.role_admin')}</option>
                       </select>
                     </div>
                   </div>
                   <button onClick={() => {
-                    if (!newUser.name.trim() || !newUser.email.trim() || !newUser.password.trim()) { toast('Please fill all fields', 'error'); return }
+                    if (!newUser.name.trim() || !newUser.email.trim() || !newUser.password.trim()) { toast(t('admin.toast_fill_fields'), 'error'); return }
                     setUsersData(prev => [...prev, { name: newUser.name.trim(), email: newUser.email.trim(), role: newUser.role, status: 'Active', papers: 0 }])
                     setShowAddUser(false)
-                    toast(`${newUser.name} added successfully!`, 'success')
-                  }} style={{ marginTop: '1.5rem', width: '100%', fontSize: '.85rem', color: '#fff', background: '#2563EB', border: 'none', padding: '12px', borderRadius: 12, cursor: 'pointer', fontWeight: 600 }}>Add User</button>
+                    toast(`${newUser.name} ${t('admin.toast_user_added')}`, 'success')
+                  }} style={{ marginTop: '1.5rem', width: '100%', fontSize: '.85rem', color: '#fff', background: '#2563EB', border: 'none', padding: '12px', borderRadius: 12, cursor: 'pointer', fontWeight: 600 }}>{t('admin.add_user')}</button>
                 </div>
               </div>
             )}
@@ -234,34 +254,34 @@ export default function AdminDashboard() {
         return (
           <div style={{ background: 'rgba(255,255,255,.95)', borderRadius: 16, padding: '1.5rem', border: '1px solid rgba(255,255,255,.5)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0F172A', margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}><List size={18} /> All Submissions</h3>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0F172A', margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}><List size={18} /> {t('admin.all_submissions')}</h3>
               <div style={{ display: 'flex', gap: '.5rem' }}>
                 <div style={{ position: 'relative' }}>
                   <Filter size={14} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: '#94A3B8', pointerEvents: 'none' }} />
                   <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} style={{ padding: '8px 12px 8px 30px', borderRadius: 10, border: '1px solid rgba(148,163,184,.2)', fontSize: '.8rem', background: 'rgba(255,255,255,.5)', color: '#334155', outline: 'none', appearance: 'none' }}>
-                    <option>All Status</option>
-                    <option>Approved</option>
-                    <option>Pending</option>
-                    <option>Under Review</option>
-                    <option>Rejected</option>
-                    <option>Active</option>
-                    <option>Inactive</option>
-                    <option>Confirmed</option>
+                    <option value="All Status">{t('admin.status_all')}</option>
+                    <option value="Approved">{t('admin.status_approved')}</option>
+                    <option value="Pending">{t('admin.status_pending')}</option>
+                    <option value="Under Review">{t('admin.status_under_review')}</option>
+                    <option value="Rejected">{t('admin.status_rejected')}</option>
+                    <option value="Active">{t('admin.status_active')}</option>
+                    <option value="Inactive">{t('admin.status_inactive')}</option>
+                    <option value="Confirmed">{t('admin.status_confirmed')}</option>
                   </select>
                 </div>
-                <button style={{ fontSize: '.8rem', color: '#fff', background: '#2563EB', border: 'none', padding: '8px 16px', borderRadius: 10, cursor: 'pointer', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6 }}><Download size={14} /> Export</button>
+                <button style={{ fontSize: '.8rem', color: '#fff', background: '#2563EB', border: 'none', padding: '8px 16px', borderRadius: 10, cursor: 'pointer', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6 }}><Download size={14} /> {t('admin.export')}</button>
               </div>
             </div>
             <div style={{ overflowX: 'auto' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '.85rem' }}>
                 <thead>
                   <tr style={{ borderBottom: '1px solid rgba(148,163,184,.2)', color: '#64748B', fontSize: '.75rem', textTransform: 'uppercase', letterSpacing: '.05em' }}>
-                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>ID</th>
-                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>Student</th>
-                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>Title</th>
-                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>Status</th>
-                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>Date</th>
-                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>Actions</th>
+                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('admin.id')}</th>
+                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('admin.student')}</th>
+                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('admin.title')}</th>
+                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('admin.status')}</th>
+                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('admin.date')}</th>
+                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('admin.actions')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -274,9 +294,9 @@ export default function AdminDashboard() {
                       <td style={{ padding: '.75rem 0', color: '#64748B' }}>{r.date}</td>
                       <td style={{ padding: '.75rem 0' }}>
                         <div style={{ display: 'flex', gap: '.4rem' }}>
-                          <button onClick={() => toast(`Viewing details for ${r.id}`, 'info')} style={{ width: 32, height: 32, borderRadius: 8, border: '1px solid rgba(37,99,235,.2)', background: 'rgba(37,99,235,.06)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2563EB', transition: 'all .15s' }} title="View"><Eye size={15} /></button>
-                          <button onClick={() => toast(`${r.title} approved!`, 'success')} style={{ width: 32, height: 32, borderRadius: 8, border: '1px solid rgba(20,184,166,.2)', background: 'rgba(20,184,166,.06)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#14B8A6', transition: 'all .15s' }} title="Approve"><CheckCircle size={15} /></button>
-                          <button onClick={() => toast(`${r.title} rejected.`, 'error')} style={{ width: 32, height: 32, borderRadius: 8, border: '1px solid rgba(239,68,68,.2)', background: 'rgba(239,68,68,.06)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#EF4444', transition: 'all .15s' }} title="Reject"><XCircle size={15} /></button>
+                          <button onClick={() => toast(`${t('admin.toast_viewing_details')} ${r.id}`, 'info')} style={{ width: 32, height: 32, borderRadius: 8, border: '1px solid rgba(37,99,235,.2)', background: 'rgba(37,99,235,.06)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2563EB', transition: 'all .15s' }} title={t('admin.view')}><Eye size={15} /></button>
+                          <button onClick={() => toast(`${r.title} ${t('admin.toast_approved')}`, 'success')} style={{ width: 32, height: 32, borderRadius: 8, border: '1px solid rgba(20,184,166,.2)', background: 'rgba(20,184,166,.06)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#14B8A6', transition: 'all .15s' }} title={t('admin.approve')}><CheckCircle size={15} /></button>
+                          <button onClick={() => toast(`${r.title} ${t('admin.toast_rejected')}`, 'error')} style={{ width: 32, height: 32, borderRadius: 8, border: '1px solid rgba(239,68,68,.2)', background: 'rgba(239,68,68,.06)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#EF4444', transition: 'all .15s' }} title={t('admin.reject')}><XCircle size={15} /></button>
                         </div>
                       </td>
                     </tr>
@@ -290,21 +310,21 @@ export default function AdminDashboard() {
         return (
           <div style={{ background: 'rgba(255,255,255,.95)', borderRadius: 16, padding: '1.5rem', border: '1px solid rgba(255,255,255,.5)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0F172A', margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}><Shield size={18} /> Blockchain Transactions</h3>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0F172A', margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}><Shield size={18} /> {t('admin.blockchain_transactions')}</h3>
               <span style={{ fontSize: '.8rem', color: '#64748B', background: 'rgba(37,99,235,.1)', padding: '6px 12px', borderRadius: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
-                <Activity size={14} /> Network: Ethereum Sepolia
+                <Activity size={14} /> {t('admin.network')}: Ethereum Sepolia
               </span>
             </div>
             <div style={{ overflowX: 'auto' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '.85rem' }}>
                 <thead>
                   <tr style={{ borderBottom: '1px solid rgba(148,163,184,.2)', color: '#64748B', fontSize: '.75rem', textTransform: 'uppercase', letterSpacing: '.05em' }}>
-                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>Transaction Hash</th>
-                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>Research</th>
-                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>Timestamp</th>
-                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>Block</th>
-                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>Status</th>
-                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>Explorer</th>
+                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('admin.tx_hash')}</th>
+                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('admin.research')}</th>
+                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('admin.timestamp')}</th>
+                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('admin.block')}</th>
+                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('admin.status')}</th>
+                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('admin.explorer')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -316,8 +336,8 @@ export default function AdminDashboard() {
                       <td style={{ padding: '.75rem 0', fontFamily: 'monospace', color: '#334155' }}>{b.block}</td>
                       <td style={{ padding: '.75rem 0' }}>{statusBadge(b.status)}</td>
                       <td style={{ padding: '.75rem 0' }}>
-                        <button onClick={() => toast(`Viewing transaction ${b.tx}`)} style={{ padding: '6px 12px', borderRadius: 8, border: '1px solid rgba(37,99,235,.2)', background: 'rgba(37,99,235,.06)', cursor: 'pointer', color: '#2563EB', fontSize: '.75rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}>
-                          <Eye className="w-3.5 h-3.5" /> View
+                        <button onClick={() => toast(`${t('admin.toast_viewing_tx')} ${b.tx}`)} style={{ padding: '6px 12px', borderRadius: 8, border: '1px solid rgba(37,99,235,.2)', background: 'rgba(37,99,235,.06)', cursor: 'pointer', color: '#2563EB', fontSize: '.75rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}>
+                          <Eye className="w-3.5 h-3.5" /> {t('admin.view')}
                         </button>
                       </td>
                     </tr>
@@ -331,19 +351,19 @@ export default function AdminDashboard() {
         return (
           <div style={{ background: 'rgba(255,255,255,.95)', borderRadius: 16, padding: '1.5rem', border: '1px solid rgba(255,255,255,.5)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0F172A', margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}><Award size={18} /> Digital Certificates</h3>
-              <button onClick={() => toast('Certificate issuance form opened', 'info')} style={{ fontSize: '.8rem', color: '#fff', background: '#2563EB', border: 'none', padding: '8px 16px', borderRadius: 10, cursor: 'pointer', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6 }}><Award size={14} /> Issue New</button>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0F172A', margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}><Award size={18} /> {t('admin.digital_certificates')}</h3>
+              <button onClick={() => toast(t('admin.toast_cert_issuance'), 'info')} style={{ fontSize: '.8rem', color: '#fff', background: '#2563EB', border: 'none', padding: '8px 16px', borderRadius: 10, cursor: 'pointer', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6 }}><Award size={14} /> {t('admin.issue_new')}</button>
             </div>
             <div style={{ overflowX: 'auto' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '.85rem' }}>
                 <thead>
                   <tr style={{ borderBottom: '1px solid rgba(148,163,184,.2)', color: '#64748B', fontSize: '.75rem', textTransform: 'uppercase', letterSpacing: '.05em' }}>
-                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>Certificate ID</th>
-                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>Student</th>
-                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>Research</th>
-                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>Issued Date</th>
-                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>QR Code</th>
-                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>Actions</th>
+                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('admin.certificate_id')}</th>
+                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('admin.student')}</th>
+                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('admin.research')}</th>
+                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('admin.issued_date')}</th>
+                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('admin.qr_code')}</th>
+                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('admin.actions')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -358,8 +378,8 @@ export default function AdminDashboard() {
                       </td>
                       <td style={{ padding: '.75rem 0' }}>
                         <div style={{ display: 'flex', gap: '.4rem' }}>
-                          <button onClick={() => toast(`Viewing certificate ${c.id}`, 'info')} style={{ width: 32, height: 32, borderRadius: 8, border: '1px solid rgba(37,99,235,.2)', background: 'rgba(37,99,235,.06)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2563EB' }}><Eye size={15} /></button>
-                          <button onClick={() => toast(`Downloading ${c.id}`, 'success')} style={{ width: 32, height: 32, borderRadius: 8, border: '1px solid rgba(20,184,166,.2)', background: 'rgba(20,184,166,.06)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#14B8A6' }}><Download size={15} /></button>
+                          <button onClick={() => toast(`${t('admin.toast_viewing_cert')} ${c.id}`, 'info')} style={{ width: 32, height: 32, borderRadius: 8, border: '1px solid rgba(37,99,235,.2)', background: 'rgba(37,99,235,.06)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2563EB' }}><Eye size={15} /></button>
+                          <button onClick={() => toast(`${t('admin.toast_downloading')} ${c.id}`, 'success')} style={{ width: 32, height: 32, borderRadius: 8, border: '1px solid rgba(20,184,166,.2)', background: 'rgba(20,184,166,.06)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#14B8A6' }}><Download size={15} /></button>
                         </div>
                       </td>
                     </tr>
@@ -377,15 +397,15 @@ export default function AdminDashboard() {
         }
         return (
           <div style={{ background: 'rgba(255,255,255,.95)', borderRadius: 16, padding: '1.5rem', border: '1px solid rgba(255,255,255,.5)' }}>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0F172A', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: 8 }}><Settings size={18} /> Platform Settings</h3>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0F172A', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: 8 }}><Settings size={18} /> {t('admin.platform_settings')}</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
               {[
-                { label: 'Maintenance Mode', desc: 'Disable user access during maintenance', type: 'toggle' },
-                { label: 'Blockchain Network', desc: 'Sepolia Testnet (Chain ID: 11155111)', type: 'info' },
-                { label: 'Auto-Certificate Generation', desc: 'Automatically issue certificates upon approval', type: 'toggle' },
-                { label: 'Storage Provider', desc: 'IPFS (InterPlanetary File System) — 98.2% Uptime', type: 'info' },
-                { label: 'Max Upload Size', desc: '50 MB per research document', type: 'text' },
-                { label: 'Notification Alerts', desc: 'Send email notifications for reviews and approvals', type: 'toggle' },
+                { label: 'Maintenance Mode', labelKey: 'admin.setting_maintenance', descKey: 'admin.setting_maintenance_desc', type: 'toggle' },
+                { label: 'Blockchain Network', labelKey: 'admin.setting_blockchain_network', descKey: 'admin.setting_blockchain_network_desc', type: 'info' },
+                { label: 'Auto-Certificate Generation', labelKey: 'admin.setting_auto_cert', descKey: 'admin.setting_auto_cert_desc', type: 'toggle' },
+                { label: 'Storage Provider', labelKey: 'admin.setting_storage', descKey: 'admin.setting_storage_desc', type: 'info' },
+                { label: 'Max Upload Size', labelKey: 'admin.setting_max_upload', descKey: 'admin.setting_max_upload_desc', type: 'text' },
+                { label: 'Notification Alerts', labelKey: 'admin.setting_notifications', descKey: 'admin.setting_notifications_desc', type: 'toggle' },
               ].map(s => {
                 const Icon = settingIcons[s.label]
                 const isOn = s.type === 'toggle' ? toggles[s.label as keyof typeof toggles] : false
@@ -394,8 +414,8 @@ export default function AdminDashboard() {
                     <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                       {Icon && <div style={{ width: 36, height: 36, borderRadius: 10, background: 'rgba(37,99,235,.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2563EB' }}><Icon size={16} /></div>}
                       <div>
-                        <div style={{ fontWeight: 600, color: '#0F172A', fontSize: '.9rem' }}>{s.label}</div>
-                        <div style={{ fontSize: '.8rem', color: '#64748B', marginTop: 2 }}>{s.desc}</div>
+                        <div style={{ fontWeight: 600, color: '#0F172A', fontSize: '.9rem' }}>{t(s.labelKey)}</div>
+                        <div style={{ fontSize: '.8rem', color: '#64748B', marginTop: 2 }}>{t(s.descKey)}</div>
                       </div>
                     </div>
                     {s.type === 'toggle' ? (
@@ -403,7 +423,7 @@ export default function AdminDashboard() {
                         <div style={{ width: 20, height: 20, borderRadius: '50%', background: '#fff', position: 'absolute', top: 2, left: isOn ? 22 : 2, boxShadow: '0 1px 3px rgba(0,0,0,.15)', transition: 'left .2s' }} />
                       </div>
                     ) : s.type === 'info' ? (
-                      <span style={{ fontSize: '.8rem', color: '#2563EB', fontWeight: 500, background: 'rgba(37,99,235,.08)', padding: '6px 12px', borderRadius: 8 }}>{s.desc.split('—')[0].trim()}</span>
+                      <span style={{ fontSize: '.8rem', color: '#2563EB', fontWeight: 500, background: 'rgba(37,99,235,.08)', padding: '6px 12px', borderRadius: 8 }}>{t(s.descKey).split('—')[0].trim()}</span>
                     ) : (
                       <input value={uploadSize} onChange={e => setUploadSize(e.target.value)} style={{ width: 100, padding: '6px 10px', borderRadius: 8, border: '1px solid rgba(148,163,184,.2)', fontSize: '.8rem', textAlign: 'center', background: 'rgba(255,255,255,.5)' }} />
                     )}
@@ -411,7 +431,7 @@ export default function AdminDashboard() {
                 )
               })}
             </div>
-            <button onClick={() => toast('Settings saved successfully!', 'success')} style={{ marginTop: '1.5rem', fontSize: '.85rem', color: '#fff', background: '#2563EB', border: 'none', padding: '10px 24px', borderRadius: 10, cursor: 'pointer', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6 }}><Save size={15} /> Save Changes</button>
+            <button onClick={() => toast(t('admin.toast_settings_saved'), 'success')} style={{ marginTop: '1.5rem', fontSize: '.85rem', color: '#fff', background: '#2563EB', border: 'none', padding: '10px 24px', borderRadius: 10, cursor: 'pointer', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6 }}><Save size={15} /> {t('admin.save_changes')}</button>
           </div>
         )
     }
@@ -431,11 +451,11 @@ export default function AdminDashboard() {
         top: 0,
         height: '100vh',
       }}>
-          <a href="/" style={{ textDecoration: 'none', padding: '1.25rem', borderBottom: '1px solid rgba(148,163,184,.1)', display: 'flex', alignItems: 'center', gap: '.75rem', transition: 'opacity .2s' }} title="Back to Home">
+          <a href="/" style={{ textDecoration: 'none', padding: '1.25rem', borderBottom: '1px solid rgba(148,163,184,.1)', display: 'flex', alignItems: 'center', gap: '.75rem', transition: 'opacity .2s' }} title={t('admin.back_to_home')}>
             <img src="/img/logo.png" alt="" style={{ height: 32, borderRadius: 8 }} />
             <div>
-              <div style={{ color: '#fff', fontWeight: 700, fontSize: '.85rem' }}>IP Portal</div>
-              <div style={{ color: '#14B8A6', fontSize: '.7rem' }}>Admin Panel</div>
+              <div style={{ color: '#fff', fontWeight: 700, fontSize: '.85rem' }}>{t('admin.brand')}</div>
+              <div style={{ color: '#14B8A6', fontSize: '.7rem' }}>{t('admin.panel_label')}</div>
             </div>
           </a>
         <nav style={{ flex: 1, padding: '.75rem', display: 'flex', flexDirection: 'column', gap: '.25rem' }}>
@@ -453,7 +473,7 @@ export default function AdminDashboard() {
                 onMouseLeave={e => { if (active !== item.key) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#94A3B8' } }}
               >
                 <Icon className="w-4 h-4" />
-                {item.label}
+                {t(item.labelKey)}
               </button>
             )
           })}
@@ -463,13 +483,13 @@ export default function AdminDashboard() {
             onMouseEnter={e => { e.currentTarget.style.background = 'rgba(148,163,184,.08)'; e.currentTarget.style.color = '#E2E8F0' }}
             onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#94A3B8' }}
           >
-            <LayoutDashboard className="w-4 h-4" /> Home
+            <LayoutDashboard className="w-4 h-4" /> {t('admin.home')}
           </a>
           <a href="/login" style={{ display: 'flex', alignItems: 'center', gap: '.75rem', padding: '.7rem .85rem', borderRadius: 12, cursor: 'pointer', fontSize: '.85rem', fontWeight: 500, color: '#EF4444', textDecoration: 'none', width: '100%' }}
             onMouseEnter={e => { e.currentTarget.style.background = 'rgba(239,68,68,.1)'; e.currentTarget.style.color = '#EF4444' }}
             onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#EF4444' }}
           >
-            <LogOut className="w-4 h-4" /> Logout
+            <LogOut className="w-4 h-4" /> {t('admin.logout')}
           </a>
         </div>
       </aside>
@@ -479,12 +499,12 @@ export default function AdminDashboard() {
             <button onClick={() => setSidebarOpen(!sidebarOpen)} style={{ width: 36, height: 36, borderRadius: 10, border: '1px solid rgba(148,163,184,.2)', background: 'rgba(255,255,255,.5)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748B' }}>
               {sidebarOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
             </button>
-            <h2 style={{ fontSize: '1.4rem', fontWeight: 700, color: '#0F172A', margin: 0, textTransform: 'capitalize' }}>{active}</h2>
+            <h2 style={{ fontSize: '1.4rem', fontWeight: 700, color: '#0F172A', margin: 0, textTransform: 'capitalize' }}>{t(activeLabels[active] ?? active)}</h2>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <div style={{ position: 'relative' }}>
               <Search className="w-4 h-4" style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#94A3B8' }} />
-              <input placeholder="Search anything..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} style={{ padding: '8px 12px 8px 36px', borderRadius: 10, border: '1px solid rgba(148,163,184,.2)', fontSize: '.8rem', width: 220, background: 'rgba(255,255,255,.5)', outline: 'none' }} />
+              <input placeholder={t('admin.search_placeholder')} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} style={{ padding: '8px 12px 8px 36px', borderRadius: 10, border: '1px solid rgba(148,163,184,.2)', fontSize: '.8rem', width: 220, background: 'rgba(255,255,255,.5)', outline: 'none' }} />
             </div>
             <NotificationBell user="admin" />
             <div style={{ width: 36, height: 36, borderRadius: 10, background: 'linear-gradient(135deg,#2563EB,#14B8A6)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '.8rem', fontWeight: 700 }}>AK</div>

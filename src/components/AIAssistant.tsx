@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { X, Send, Sparkles } from 'lucide-react'
 import { chatWithAI } from '../lib/groq'
+import { useI18n } from '../i18n'
 
 interface Message {
   role: 'user' | 'assistant'
@@ -8,9 +9,10 @@ interface Message {
 }
 
 export default function AIAssistant({ context }: { context?: string }) {
+  const { t } = useI18n()
   const [open, setOpen] = useState(false)
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'assistant', content: 'Hello! I\'m your AI assistant. Ask me anything about the IP Portal.' },
+    { role: 'assistant', content: t('assistant.greeting') },
   ])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
@@ -32,7 +34,7 @@ export default function AIAssistant({ context }: { context?: string }) {
     } catch (e: any) {
       setMessages((prev) => [
         ...prev,
-        { role: 'assistant', content: `⚠️ ${e?.message || 'Connection error. Make sure VITE_GROQ_API_KEY is set in .env'}` },
+        { role: 'assistant', content: `⚠️ ${e?.message || t('assistant.connection_error')}` },
       ])
     } finally {
       setLoading(false)
@@ -47,7 +49,7 @@ export default function AIAssistant({ context }: { context?: string }) {
           className="fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-full bg-[#2563EB] px-5 py-3 text-white shadow-lg transition-all hover:bg-[#1d4ed8] hover:scale-105"
         >
           <Sparkles size={18} />
-          <span className="text-sm font-medium">AI Assistant</span>
+          <span className="text-sm font-medium">{t('assistant.title')}</span>
         </button>
       )}
 
@@ -56,7 +58,7 @@ export default function AIAssistant({ context }: { context?: string }) {
           <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
             <div className="flex items-center gap-2">
               <Sparkles size={18} className="text-[#14B8A6]" />
-              <span className="text-sm font-semibold text-white">AI Assistant</span>
+              <span className="text-sm font-semibold text-white">{t('assistant.title')}</span>
             </div>
             <button onClick={() => setOpen(false)} className="text-white/60 hover:text-white">
               <X size={18} />
@@ -80,7 +82,7 @@ export default function AIAssistant({ context }: { context?: string }) {
             {loading && (
               <div className="flex justify-start">
                 <div className="rounded-xl bg-white/10 px-3 py-2 text-sm text-gray-400">
-                  <span className="animate-pulse">Thinking...</span>
+                  <span className="animate-pulse">{t('assistant.thinking')}</span>
                 </div>
               </div>
             )}
@@ -93,7 +95,7 @@ export default function AIAssistant({ context }: { context?: string }) {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                placeholder="Ask anything..."
+                placeholder={t('assistant.placeholder')}
                 className="flex-1 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder-white/40 outline-none focus:border-[#2563EB]"
               />
               <button

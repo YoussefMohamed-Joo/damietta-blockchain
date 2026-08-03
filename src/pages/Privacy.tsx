@@ -1,18 +1,21 @@
+import { useI18n } from '../i18n'
+
 const sections = [
-  { num: '01', title: 'Information We Collect', text: 'We collect personal information that you provide directly to us when registering an account, including your full name, university email address, student ID, and faculty affiliation. We also collect the research documents and metadata you upload to the platform.' },
-  { num: '02', title: 'How We Use Your Information', text: 'Your personal information is used to create and maintain your account, verify your identity as a Damietta University student, process your research submissions, and communicate with you about the status of your submissions. The research metadata stored on the blockchain is public by design to enable verification.' },
-  { num: '03', title: 'Data Security', text: 'All data is encrypted in transit using TLS 1.3 and at rest using AES-256 encryption. Research documents are stored on IPFS with encryption, ensuring only authorized parties can access the original files. The blockchain only stores cryptographic hashes and metadata, not the actual research content.' },
-  { num: '04', title: 'Data Retention', text: 'Your account information is retained for as long as your account is active. Blockchain records are permanent and cannot be deleted due to the immutable nature of the technology. Research documents stored on IPFS are retained indefinitely to ensure ongoing verification.' },
-  { num: '05', title: 'Your Rights', text: 'You have the right to access, update, or delete your personal information at any time through your account settings. You can request a copy of all data associated with your account. For privacy-related inquiries, contact our data protection officer at privacy@damietta-ip.edu.eg.' },
-  { num: '06', title: 'Third-Party Sharing', text: 'We do not share your personal information with third parties except as required by law or with your explicit consent. The verification portal displays only the information necessary for authenticity verification — research hash, timestamp, and ownership — and does not expose your personal contact details.' },
+  { num: '01' },
+  { num: '02' },
+  { num: '03' },
+  { num: '04' },
+  { num: '05' },
+  { num: '06' },
 ]
 
 export default function Privacy() {
+  const { t } = useI18n()
   return (
     <>
       <div className="page-header">
-        <h1>Privacy Policy</h1>
-        <p>How Damietta University collects, uses, and protects your personal data.</p>
+        <h1>{t('privacy.title')}</h1>
+        <p>{t('privacy.subtitle')}</p>
       </div>
       <div className="content-section">
         <div style={{
@@ -24,7 +27,7 @@ export default function Privacy() {
         }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
             {sections.map((s, i) => (
-              <div key={s.title} style={{
+              <div key={s.num} style={{
                 position: 'relative',
                 paddingLeft: '4rem',
                 borderBottom: i < sections.length - 1 ? '1px solid rgba(148,163,184,.15)' : 'none',
@@ -39,8 +42,8 @@ export default function Privacy() {
                   borderRadius: 6,
                   lineHeight: '1.4rem',
                 }}>{s.num}</div>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0F172A', marginBottom: '.5rem', marginTop: 0 }}>{s.title}</h3>
-                <p style={{ color: '#475569', fontSize: '.9rem', lineHeight: 1.8, margin: 0 }}>{s.text}</p>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0F172A', marginBottom: '.5rem', marginTop: 0 }}>{t(`privacy.s${s.num}_title`)}</h3>
+                <p style={{ color: '#475569', fontSize: '.9rem', lineHeight: 1.8, margin: 0 }}>{t(`privacy.s${s.num}_text`)}</p>
               </div>
             ))}
           </div>
