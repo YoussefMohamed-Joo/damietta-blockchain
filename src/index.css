@@ -123,6 +123,8 @@ footer .footer-bottom{border-top:1px solid rgba(255,255,255,.06);padding:1.5rem 
   padding:7px 14px;border-radius:999px;cursor:pointer;transition:all .25s;white-space:nowrap;line-height:1;
 }
 .lang-toggle:hover{border-color:#2563EB;color:#2563EB;box-shadow:0 4px 12px -4px rgba(37,99,235,.3)}
+.footer-lang-toggle{border-color:rgba(148,163,184,.35);background:rgba(148,163,184,.1);color:#cbd5e1}
+.footer-lang-toggle:hover{border-color:#60A5FA;color:#fff;background:rgba(37,99,235,.2)}
 
 /* RTL support */
 html[dir="rtl"] body{font-family:'Segoe UI',Tahoma,Arial,sans-serif}

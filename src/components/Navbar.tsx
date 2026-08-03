@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { useI18n } from '../i18n'
 
 export default function Navbar() {
-  const { lang, setLang, t } = useI18n()
+  const { lang, t } = useI18n()
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const location = useLocation()
@@ -33,8 +33,6 @@ export default function Navbar() {
 
   const linkClass = (to: string) => `nav-link text-slate-800 text-base ${isActive(to)}`
 
-  const toggleLang = () => setLang(lang === 'ar' ? 'en' : 'ar')
-
   return (
     <header className="absolute top-0 left-0 right-0 z-20 pt-0 lg:pt-8 px-2 sm:px-6 lg:px-10">
       <nav className={`navbar-glass mx-auto max-w-5xl px-3 sm:px-4 py-0 flex items-center min-h-[20px] sm:min-h-[32px] lg:min-h-[58.5px] ${scrolled ? 'scrolled' : ''}`}>
@@ -47,9 +45,6 @@ export default function Navbar() {
           <li>{navLink('/how-it-works', t('nav.how'))}</li>
         </ul>
         <div className="hidden lg:flex items-center justify-end gap-2 xl:gap-3 shrink-0">
-          <button className="lang-toggle" onClick={toggleLang} style={{ marginRight: lang === 'ar' ? 'auto' : undefined }}>
-            {t('nav.switch_lang')}
-          </button>
           <Link to="/login" className="login-btn px-4 xl:px-5 py-2.5 text-sm">{t('nav.login')}</Link>
           <Link to="/register" className="register-btn px-4 xl:px-5 py-2.5 text-sm">{t('nav.register')}</Link>
         </div>
@@ -64,7 +59,6 @@ export default function Navbar() {
           <li><Link to="/how-it-works" className={linkClass('/how-it-works')} onClick={() => setMenuOpen(false)}>{t('nav.how')}</Link></li>
         </ul>
         <div className="flex flex-col gap-3 mt-5 pt-5 border-t border-slate-200/60">
-          <button className="lang-toggle self-start" onClick={toggleLang}>{t('nav.switch_lang')}</button>
           <Link to="/login" className="login-btn w-full text-center px-5 py-2.5 text-sm" onClick={() => setMenuOpen(false)}>{t('nav.login')}</Link>
           <Link to="/register" className="register-btn w-full text-center px-5 py-2.5 text-sm" onClick={() => setMenuOpen(false)}>{t('nav.register')}</Link>
         </div>

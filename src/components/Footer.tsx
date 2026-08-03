@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom'
-import { Globe, Shield } from 'lucide-react'
+import { Globe, Languages, Shield } from 'lucide-react'
 import { useI18n } from '../i18n'
 
 export default function Footer() {
-  const { t } = useI18n()
+  const { lang, setLang, t } = useI18n()
 
   const col = (items: [string, string][]) => items.map(([label, to]) => (
     <Link key={to} to={to} style={{ color: '#94A3B8', fontSize: '.85rem', transition: 'color .2s', textDecoration: 'none', padding: '.2rem 0', display: 'inline-block' }}
@@ -69,7 +69,10 @@ export default function Footer() {
           </div>
         ))}
       </div>
-      <div style={{ maxWidth: 1140, margin: '2rem auto 0', padding: '1.25rem 0', borderTop: '1px solid rgba(148,163,184,.12)', textAlign: 'center', color: '#64748B', fontSize: '.78rem' }}>
+      <div style={{ maxWidth: 1140, margin: '2rem auto 0', padding: '1.25rem 0', borderTop: '1px solid rgba(148,163,184,.12)', textAlign: 'center', color: '#64748B', fontSize: '.78rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
+        <button className="lang-toggle footer-lang-toggle" onClick={() => setLang(lang === 'ar' ? 'en' : 'ar')}>
+          <Languages style={{ width: 14, height: 14 }} /> {t('nav.switch_lang')}
+        </button>
         <span>{t('footer.rights')}</span>
       </div>
     </footer>
