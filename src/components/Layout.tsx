@@ -7,7 +7,7 @@ export default function Layout() {
   return (
     <>
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <FloatingPathsBackground position={-1} className="w-full h-full">
+        <FloatingPathsBackground position={-1} colorClass="text-[#94A3B8]" className="w-full h-full">
           <div />
         </FloatingPathsBackground>
       </div>
