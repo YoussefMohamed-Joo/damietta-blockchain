@@ -28,7 +28,7 @@ export default function Footer() {
   ]
 
   return (
-    <footer style={{ padding: '3.5rem 2rem 0', marginTop: 'auto', background: 'rgba(15,23,42,.95)', borderTop: '1px solid rgba(255,255,255,.06)', position: 'relative', zIndex: 1, overflow: 'hidden' }}>
+    <footer style={{ padding: '3.5rem 2rem 0', marginTop: 'auto', background: '#0F172A', borderTop: '1px solid rgba(255,255,255,.06)', position: 'relative', zIndex: 1, overflow: 'hidden' }}>
       <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 0, opacity: .7 }}>
         <FloatingPathsBackground position={-1} colorClass="text-[#cbd5e1]" className="w-full h-full">
           <div />
