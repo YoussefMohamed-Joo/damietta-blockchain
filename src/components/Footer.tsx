@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Globe, Languages, Shield } from 'lucide-react'
 import { useI18n } from '../i18n'
+import { FloatingPathsBackground } from './ui/floating-paths'
 
 export default function Footer() {
   const { lang, setLang, t } = useI18n()
@@ -27,8 +28,13 @@ export default function Footer() {
   ]
 
   return (
-    <footer style={{ padding: '3.5rem 2rem 0', marginTop: 'auto', background: 'rgba(15,23,42,.95)', borderTop: '1px solid rgba(255,255,255,.06)', position: 'relative', zIndex: 1 }}>
-      <div className="max-w-5xl mx-auto" style={{ display: 'grid', gridTemplateColumns: '1.6fr 1fr 1fr 1fr 1.2fr', gap: '2.5rem' }}>
+    <footer style={{ padding: '3.5rem 2rem 0', marginTop: 'auto', background: 'rgba(15,23,42,.95)', borderTop: '1px solid rgba(255,255,255,.06)', position: 'relative', zIndex: 1, overflow: 'hidden' }}>
+      <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 0, opacity: .7 }}>
+        <FloatingPathsBackground position={-1} colorClass="text-[#cbd5e1]" className="w-full h-full">
+          <div />
+        </FloatingPathsBackground>
+      </div>
+      <div className="max-w-5xl mx-auto" style={{ position: 'relative', zIndex: 1, display: 'grid', gridTemplateColumns: '1.6fr 1fr 1fr 1fr 1.2fr', gap: '2.5rem' }}>
         <div>
           <img src="/img/logo.png" alt="" style={{ height: 36, marginBottom: '.85rem' }} />
           <p style={{ color: '#94A3B8', fontSize: '.82rem', lineHeight: 1.7 }}>
@@ -69,7 +75,7 @@ export default function Footer() {
           </div>
         ))}
       </div>
-      <div style={{ maxWidth: 1140, margin: '2rem auto 0', padding: '1.25rem 0', borderTop: '1px solid rgba(148,163,184,.12)', textAlign: 'center', color: '#64748B', fontSize: '.78rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
+      <div style={{ position: 'relative', zIndex: 1, maxWidth: 1140, margin: '2rem auto 0', padding: '1.25rem 0', borderTop: '1px solid rgba(148,163,184,.12)', textAlign: 'center', color: '#64748B', fontSize: '.78rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
         <button className="lang-toggle footer-lang-toggle" onClick={() => setLang(lang === 'ar' ? 'en' : 'ar')}>
           <Languages style={{ width: 14, height: 14 }} /> {t('nav.switch_lang')}
         </button>
