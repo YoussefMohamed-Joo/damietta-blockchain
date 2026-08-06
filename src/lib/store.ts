@@ -174,7 +174,10 @@ export function subscribe(fn: () => void): () => void {
   listeners.add(fn)
   return () => { listeners.delete(fn) }
 }
-export function useDB(): DB { return useSyncExternalStore(subscribe, getSnapshot) as unknown as DB }
+export function useDB(): DB {
+  useSyncExternalStore(subscribe, getSnapshot)
+  return db
+}
 
 export function approveSubmission(id: string) {
   const s = db.submissions.find(x => x.id === id)
