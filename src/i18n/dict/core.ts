@@ -7,6 +7,9 @@ export default {
     'nav.register': 'Register',
     'nav.switch_lang': 'عربي',
     'nav.menu': 'Toggle menu',
+    'nav.notifications': 'Notifications',
+    'nav.mark_all_read': 'Mark all read',
+    'nav.no_notifications': 'No notifications',
     'footer.tagline':
       "Damietta University's digital platform for protecting and verifying academic research and projects using blockchain technology.",
     'footer.quick_links': 'Quick Links',
@@ -42,6 +45,9 @@ export default {
     'nav.register': 'إنشاء حساب',
     'nav.switch_lang': 'English',
     'nav.menu': 'تبديل القائمة',
+    'nav.notifications': 'الإشعارات',
+    'nav.mark_all_read': 'تحديد الكل كمقروء',
+    'nav.no_notifications': 'لا توجد إشعارات',
     'footer.tagline':
       'المنصة الرقمية لجامعة دمياط لحماية وتوثيق الأبحاث والمشاريع الأكاديمية باستخدام تقنية البلوكشين.',
     'footer.quick_links': 'روابط سريعة',

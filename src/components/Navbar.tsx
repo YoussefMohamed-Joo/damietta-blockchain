@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useI18n } from '../i18n'
+import SiteBell from './SiteBell'
 
 export default function Navbar() {
   const { t } = useI18n()
@@ -45,6 +46,7 @@ export default function Navbar() {
           <li>{navLink('/how-it-works', t('nav.how'))}</li>
         </ul>
         <div className="hidden lg:flex items-center justify-end gap-2 xl:gap-3 shrink-0">
+          <SiteBell />
           <Link to="/login" className="login-btn px-4 xl:px-5 py-2.5 text-sm">{t('nav.login')}</Link>
           <Link to="/register" className="register-btn px-4 xl:px-5 py-2.5 text-sm">{t('nav.register')}</Link>
         </div>

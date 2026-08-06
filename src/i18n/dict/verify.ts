@@ -4,6 +4,11 @@ export default {
     'verify.hero_desc': 'Enter the Research Hash ID or Student ID to instantly verify authenticity.',
     'verify.search_placeholder': 'Enter Research Hash ID or Student ID (e.g. 0x7f8a...)',
     'verify.search_btn': 'Verify Now',
+    'verify.try_sample': 'Try a sample:',
+    'verify.result_valid': 'VERIFIED — Authentic',
+    'verify.result_valid_desc': 'This record exists on the blockchain and is authentic.',
+    'verify.result_not_found': 'NOT FOUND',
+    'verify.result_not_found_desc': 'No matching blockchain record was found. Double-check the ID or hash you entered.',
     'verify.section1_title': 'How Verification Works',
     'verify.section1_desc':
       'The verification system uses the cryptographic hash stored on the blockchain to confirm the authenticity of a research document. When you enter a hash ID, the system looks up the corresponding blockchain record and returns the verification status, timestamp, and ownership details.',
@@ -18,6 +23,11 @@ export default {
     'verify.hero_desc': 'أدخل معرف بصمة البحث أو الرقم الأكاديمي للتحقق من صحة الوثيقة فوراً.',
     'verify.search_placeholder': 'أدخل معرف بصمة البحث أو الرقم الأكاديمي (مثال: 0x7f8a...)',
     'verify.search_btn': 'تحقق الآن',
+    'verify.try_sample': 'جرّب مثالاً:',
+    'verify.result_valid': 'تم التحقق — الوثيقة أصلية',
+    'verify.result_valid_desc': 'هذا السجل موجود على البلوكشين وهو أصلي.',
+    'verify.result_not_found': 'غير موجود',
+    'verify.result_not_found_desc': 'لم يتم العثور على سجل بلوكشين مطابق. تأكد من المعرف أو التجزئة التي أدخلتها.',
     'verify.section1_title': 'كيف تعمل عملية التحقق',
     'verify.section1_desc':
       'يستخدم نظام التحقق بصمة التشفير المخزنة على البلوكشين لتأكيد صحة وثيقة البحث. عند إدخال معرف البصمة، يبحث النظام عن السجل المقابل على البلوكشين ويعيد حالة التحقق والطابع الزمني وتفاصيل الملكية.',

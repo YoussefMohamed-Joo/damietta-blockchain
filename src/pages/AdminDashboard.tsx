@@ -1,14 +1,19 @@
-import { useState } from 'react'
+import { lazy, Suspense, useState } from 'react'
 import {
   LayoutDashboard, Users, FileText, Shield, Settings, LogOut,
   Search, CheckCircle, XCircle, Clock,
   BookOpen, Award, Menu, X, Eye,
   Download, MoreHorizontal, UserCheck, AlertTriangle, Activity, Filter, List,
-  Bell, Upload, Save, HardDrive, Wifi, UserPlus
+  Bell, Upload, Save, HardDrive, Wifi, UserPlus, BarChart3
 } from 'lucide-react'
 import NotificationBell from '../components/NotificationBell'
+import CertificateModal from '../components/CertificateModal'
 import { toast } from '../components/Toast'
 import { useI18n } from '../i18n'
+import { useDB, approveSubmission, rejectSubmission, addUser as storeAddUser } from '../lib/store'
+
+const Charts = lazy(() => import('../components/AdminCharts'))
+
 const sidebarItems = [
   { key: 'overview', label: 'Overview', labelKey: 'admin.overview', icon: LayoutDashboard },
   { key: 'users', label: 'Users', labelKey: 'admin.users', icon: Users },
@@ -16,42 +21,6 @@ const sidebarItems = [
   { key: 'blockchain', label: 'Blockchain Records', labelKey: 'admin.blockchain_records', icon: Shield },
   { key: 'certificates', label: 'Certificates', labelKey: 'admin.certificates', icon: Award },
   { key: 'settings', label: 'Settings', labelKey: 'admin.settings', icon: Settings },
-]
-
-const stats = [
-  { label: 'Total Users', labelKey: 'admin.total_users', value: '1,284', change: '+12%', icon: Users, color: '#2563EB', bg: 'rgba(37,99,235,.12)' },
-  { label: 'Total Research', labelKey: 'admin.total_research', value: '3,542', change: '+8%', icon: BookOpen, color: '#14B8A6', bg: 'rgba(20,184,166,.12)' },
-  { label: 'Certificates Issued', labelKey: 'admin.certificates_issued', value: '2,891', change: '+15%', icon: Award, color: '#F59E0B', bg: 'rgba(245,158,11,.12)' },
-  { label: 'Pending Reviews', labelKey: 'admin.pending_reviews', value: '47', change: '-3%', icon: Clock, color: '#EF4444', bg: 'rgba(239,68,68,.12)' },
-]
-
-const recentSubmissions = [
-  { id: 'RES-2026-001', student: 'Ahmed Hassan', title: 'Blockchain for Healthcare Data', status: 'Approved', date: '2026-07-24', hash: '0x7f8a...3b2c' },
-  { id: 'RES-2026-002', student: 'Mariam Ali', title: 'AI-Based Crop Disease Detection', status: 'Pending', date: '2026-07-23', hash: '—' },
-  { id: 'RES-2026-003', student: 'Omar Youssef', title: 'IoT Smart Grid Optimization', status: 'Under Review', date: '2026-07-22', hash: '—' },
-  { id: 'RES-2026-004', student: 'Nour El-Din', title: 'NLP for Arabic Sentiment Analysis', status: 'Approved', date: '2026-07-21', hash: '0x9d2f...7e1a' },
-  { id: 'RES-2026-005', student: 'Laila Mahmoud', title: 'Deep Learning for Medical Imaging', status: 'Rejected', date: '2026-07-20', hash: '—' },
-]
-
-const initialUsers = [
-  { name: 'Dr. Khaled Ibrahim', email: 'k.ibrahim@du.edu.eg', role: 'Admin', status: 'Active', papers: 42 },
-  { name: 'Dr. Samira Younis', email: 's.younis@du.edu.eg', role: 'Reviewer', status: 'Active', papers: 28 },
-  { name: 'Ahmed Hassan', email: 'ahmed.hassan@stud.du.edu.eg', role: 'Student', status: 'Active', papers: 3 },
-  { name: 'Mariam Ali', email: 'mariam.ali@stud.du.edu.eg', role: 'Student', status: 'Active', papers: 1 },
-  { name: 'Sarah Nabil', email: 's.nabil@du.edu.eg', role: 'Reviewer', status: 'Inactive', papers: 15 },
-]
-
-const blockchainRecords = [
-  { tx: '0x7f8a...3b2c', research: 'Blockchain for Healthcare Data', timestamp: '2026-07-24 14:32:18', block: 18472921, status: 'Confirmed' },
-  { tx: '0x9d2f...7e1a', research: 'NLP for Arabic Sentiment Analysis', timestamp: '2026-07-21 09:15:42', block: 18471200, status: 'Confirmed' },
-  { tx: '0x4b1e...8f3d', research: 'Renewable Energy Forecasting', timestamp: '2026-07-18 16:04:55', block: 18468934, status: 'Confirmed' },
-  { tx: '0x2c8a...5e9f', research: 'Smart Agriculture System', timestamp: '2026-07-15 11:22:30', block: 18465412, status: 'Confirmed' },
-]
-
-const certData = [
-  { id: 'CERT-2026-001', student: 'Ahmed Hassan', research: 'Blockchain for Healthcare Data', issued: '2026-07-24', qr: '••••' },
-  { id: 'CERT-2026-002', student: 'Nour El-Din', research: 'NLP for Arabic Sentiment Analysis', issued: '2026-07-21', qr: '••••' },
-  { id: 'CERT-2026-003', student: 'Hossam Kamal', research: 'Renewable Energy Forecasting', issued: '2026-07-18', qr: '••••' },
 ]
 
 const statusKey: Record<string, string> = {
@@ -66,19 +35,22 @@ const statusKey: Record<string, string> = {
 
 export default function AdminDashboard() {
   const { t } = useI18n()
+  const db = useDB()
   const [active, setActive] = useState('overview')
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [toggles, setToggles] = useState({ 'Maintenance Mode': false, 'Auto-Certificate Generation': true, 'Notification Alerts': true })
   const [uploadSize, setUploadSize] = useState('50 MB')
   const [showAddUser, setShowAddUser] = useState(false)
   const [newUser, setNewUser] = useState({ name: '', email: '', role: 'Student', password: '' })
-  const [usersData, setUsersData] = useState(initialUsers)
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState('All Status')
+  const [viewCert, setViewCert] = useState<typeof db.certificates[0] | null>(null)
+
   const matchQuery = (fields: string[]) => !searchQuery || fields.some(f => f.toLowerCase().includes(searchQuery.toLowerCase()))
   const matchStatus = (status: string) => statusFilter === 'All Status' || status === statusFilter
   const smartFilter = <T extends Record<string, any>>(items: T[], fields: string[], statusField?: string) =>
     items.filter(i => matchQuery(fields.map(f => String(i[f]))) && (!statusField || matchStatus(String(i[statusField]))))
+
   const activeLabels: Record<string, string> = {
     overview: 'admin.overview',
     users: 'admin.users',
@@ -87,6 +59,15 @@ export default function AdminDashboard() {
     certificates: 'admin.certificates',
     settings: 'admin.settings',
   }
+
+const pendingCount = db.submissions.filter(s => s.status === 'Pending' || s.status === 'Under Review').length
+
+  const stats = [
+    { label: 'Total Users', labelKey: 'admin.total_users', value: db.users.length.toLocaleString(), change: '+12%', icon: Users, color: '#2563EB', bg: 'rgba(37,99,235,.12)' },
+    { label: 'Total Research', labelKey: 'admin.total_research', value: db.submissions.length.toLocaleString(), change: '+8%', icon: BookOpen, color: '#14B8A6', bg: 'rgba(20,184,166,.12)' },
+    { label: 'Certificates Issued', labelKey: 'admin.certificates_issued', value: db.certificates.length.toLocaleString(), change: '+15%', icon: Award, color: '#F59E0B', bg: 'rgba(245,158,11,.12)' },
+    { label: 'Pending Reviews', labelKey: 'admin.pending_reviews', value: String(pendingCount), change: '-3%', icon: Clock, color: '#EF4444', bg: 'rgba(239,68,68,.12)' },
+  ]
 
   const statusBadge = (s: string) => {
     const m: Record<string, { bg: string; color: string; icon: typeof CheckCircle }> = {
@@ -105,6 +86,13 @@ export default function AdminDashboard() {
         <Icon className="w-3 h-3" />{t(statusKey[s] ?? s)}
       </span>
     )
+  }
+
+  const exportCsv = () => {
+    const rows = [['ID', 'Student', 'Title', 'Status', 'Date'], ...db.submissions.map(s => [s.id, s.student, s.title, s.status, s.date])]
+    const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n')
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); a.download = 'submissions.csv'; a.click()
+    toast(t('admin.toast_exported'), 'success')
   }
 
   const renderContent = () => {
@@ -130,6 +118,18 @@ export default function AdminDashboard() {
                 )
               })}
             </div>
+
+            <div style={{ marginBottom: '2rem' }}>
+              <div style={{ background: 'rgba(255,255,255,.95)', borderRadius: 16, padding: '1.5rem', border: '1px solid rgba(255,255,255,.5)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                  <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#0F172A', margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}><BarChart3 size={16} style={{ color: '#2563EB' }} /> {t('admin.submissions_chart')} · {t('admin.status_distribution')}</h3>
+                </div>
+                <Suspense fallback={<div style={{ height: 260, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94A3B8', fontSize: '.8rem' }}>{t('admin.loading_chart')}</div>}>
+                  <Charts submissions={db.submissions} />
+                </Suspense>
+              </div>
+            </div>
+
             <div style={{ background: 'rgba(255,255,255,.95)', borderRadius: 16, padding: '1.5rem', border: '1px solid rgba(255,255,255,.5)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
                 <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0F172A', margin: 0 }}>{t('admin.recent_submissions')}</h3>
@@ -148,7 +148,7 @@ export default function AdminDashboard() {
                     </tr>
                   </thead>
                   <tbody>
-                    {smartFilter(recentSubmissions, ['id', 'student', 'title', 'status', 'date'], 'status').map(r => (
+                    {smartFilter(db.submissions.slice(0, 5), ['id', 'student', 'title', 'status', 'date'], 'status').map(r => (
                       <tr key={r.id} style={{ borderBottom: '1px solid rgba(148,163,184,.1)' }}>
                         <td style={{ padding: '.75rem 0', fontWeight: 600, color: '#2563EB' }}>{r.id}</td>
                         <td style={{ padding: '.75rem 0', color: '#0F172A' }}>{r.student}</td>
@@ -158,8 +158,8 @@ export default function AdminDashboard() {
                         <td style={{ padding: '.75rem 0' }}>
                           <div style={{ display: 'flex', gap: '.3rem' }}>
                             <button onClick={() => toast(`${t('admin.toast_viewing_details')} ${r.id}`, 'info')} style={{ width: 28, height: 28, borderRadius: 6, border: '1px solid rgba(37,99,235,.2)', background: 'rgba(37,99,235,.06)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2563EB' }} title={t('admin.view')}><Eye size={13} /></button>
-                            <button onClick={() => toast(`${r.id} ${t('admin.toast_approved')}`, 'success')} style={{ width: 28, height: 28, borderRadius: 6, border: '1px solid rgba(20,184,166,.2)', background: 'rgba(20,184,166,.06)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#14B8A6' }} title={t('admin.approve')}><CheckCircle size={13} /></button>
-                            <button onClick={() => toast(`${r.id} ${t('admin.toast_rejected')}`, 'error')} style={{ width: 28, height: 28, borderRadius: 6, border: '1px solid rgba(239,68,68,.2)', background: 'rgba(239,68,68,.06)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#EF4444' }} title={t('admin.reject')}><XCircle size={13} /></button>
+                            <button onClick={() => { approveSubmission(r.id); toast(`${r.id} ${t('admin.toast_approved')}`, 'success') }} disabled={r.status === 'Approved'} style={{ width: 28, height: 28, borderRadius: 6, border: '1px solid rgba(20,184,166,.2)', background: 'rgba(20,184,166,.06)', cursor: r.status === 'Approved' ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: r.status === 'Approved' ? '#CBD5E1' : '#14B8A6' }} title={t('admin.approve')}><CheckCircle size={13} /></button>
+                            <button onClick={() => { rejectSubmission(r.id); toast(`${r.id} ${t('admin.toast_rejected')}`, 'error') }} disabled={r.status !== 'Pending' && r.status !== 'Under Review'} style={{ width: 28, height: 28, borderRadius: 6, border: '1px solid rgba(239,68,68,.2)', background: 'rgba(239,68,68,.06)', cursor: (r.status !== 'Pending' && r.status !== 'Under Review') ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: (r.status !== 'Pending' && r.status !== 'Under Review') ? '#CBD5E1' : '#EF4444' }} title={t('admin.reject')}><XCircle size={13} /></button>
                           </div>
                         </td>
                       </tr>
@@ -191,7 +191,7 @@ export default function AdminDashboard() {
                     </tr>
                   </thead>
                   <tbody>
-                    {smartFilter(usersData, ['name', 'email', 'role', 'status'], 'status').map(u => (
+                    {smartFilter(db.users, ['name', 'email', 'role', 'status'], 'status').map(u => (
                       <tr key={u.email} style={{ borderBottom: '1px solid rgba(148,163,184,.1)' }}>
                         <td style={{ padding: '.75rem 0', fontWeight: 600, color: '#0F172A' }}>{u.name}</td>
                         <td style={{ padding: '.75rem 0', color: '#64748B' }}>{u.email}</td>
@@ -241,7 +241,7 @@ export default function AdminDashboard() {
                   </div>
                   <button onClick={() => {
                     if (!newUser.name.trim() || !newUser.email.trim() || !newUser.password.trim()) { toast(t('admin.toast_fill_fields'), 'error'); return }
-                    setUsersData(prev => [...prev, { name: newUser.name.trim(), email: newUser.email.trim(), role: newUser.role, status: 'Active', papers: 0 }])
+                    storeAddUser({ name: newUser.name.trim(), email: newUser.email.trim(), role: newUser.role as any })
                     setShowAddUser(false)
                     toast(`${newUser.name} ${t('admin.toast_user_added')}`, 'success')
                   }} style={{ marginTop: '1.5rem', width: '100%', fontSize: '.85rem', color: '#fff', background: '#2563EB', border: 'none', padding: '12px', borderRadius: 12, cursor: 'pointer', fontWeight: 600 }}>{t('admin.add_user')}</button>
@@ -260,16 +260,10 @@ export default function AdminDashboard() {
                   <Filter size={14} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: '#94A3B8', pointerEvents: 'none' }} />
                   <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} style={{ padding: '8px 12px 8px 30px', borderRadius: 10, border: '1px solid rgba(148,163,184,.2)', fontSize: '.8rem', background: 'rgba(255,255,255,.5)', color: '#334155', outline: 'none', appearance: 'none' }}>
                     <option value="All Status">{t('admin.status_all')}</option>
-                    <option value="Approved">{t('admin.status_approved')}</option>
-                    <option value="Pending">{t('admin.status_pending')}</option>
-                    <option value="Under Review">{t('admin.status_under_review')}</option>
-                    <option value="Rejected">{t('admin.status_rejected')}</option>
-                    <option value="Active">{t('admin.status_active')}</option>
-                    <option value="Inactive">{t('admin.status_inactive')}</option>
-                    <option value="Confirmed">{t('admin.status_confirmed')}</option>
+                    {['Approved', 'Pending', 'Under Review', 'Rejected'].map(s => <option key={s} value={s}>{t(statusKey[s])}</option>)}
                   </select>
                 </div>
-                <button style={{ fontSize: '.8rem', color: '#fff', background: '#2563EB', border: 'none', padding: '8px 16px', borderRadius: 10, cursor: 'pointer', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6 }}><Download size={14} /> {t('admin.export')}</button>
+                <button onClick={exportCsv} style={{ fontSize: '.8rem', color: '#fff', background: '#2563EB', border: 'none', padding: '8px 16px', borderRadius: 10, cursor: 'pointer', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6 }}><Download size={14} /> {t('admin.export')}</button>
               </div>
             </div>
             <div style={{ overflowX: 'auto' }}>
@@ -285,8 +279,8 @@ export default function AdminDashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {smartFilter(recentSubmissions.concat(recentSubmissions), ['id', 'student', 'title', 'status', 'date'], 'status').slice(0, 8).map((r, i) => (
-                    <tr key={i} style={{ borderBottom: '1px solid rgba(148,163,184,.1)' }}>
+                  {smartFilter(db.submissions, ['id', 'student', 'title', 'status', 'date'], 'status').map(r => (
+                    <tr key={r.id} style={{ borderBottom: '1px solid rgba(148,163,184,.1)' }}>
                       <td style={{ padding: '.75rem 0', fontWeight: 600, color: '#2563EB' }}>{r.id}</td>
                       <td style={{ padding: '.75rem 0', color: '#0F172A' }}>{r.student}</td>
                       <td style={{ padding: '.75rem 0', color: '#334155' }}>{r.title}</td>
@@ -294,9 +288,9 @@ export default function AdminDashboard() {
                       <td style={{ padding: '.75rem 0', color: '#64748B' }}>{r.date}</td>
                       <td style={{ padding: '.75rem 0' }}>
                         <div style={{ display: 'flex', gap: '.4rem' }}>
-                          <button onClick={() => toast(`${t('admin.toast_viewing_details')} ${r.id}`, 'info')} style={{ width: 32, height: 32, borderRadius: 8, border: '1px solid rgba(37,99,235,.2)', background: 'rgba(37,99,235,.06)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2563EB', transition: 'all .15s' }} title={t('admin.view')}><Eye size={15} /></button>
-                          <button onClick={() => toast(`${r.title} ${t('admin.toast_approved')}`, 'success')} style={{ width: 32, height: 32, borderRadius: 8, border: '1px solid rgba(20,184,166,.2)', background: 'rgba(20,184,166,.06)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#14B8A6', transition: 'all .15s' }} title={t('admin.approve')}><CheckCircle size={15} /></button>
-                          <button onClick={() => toast(`${r.title} ${t('admin.toast_rejected')}`, 'error')} style={{ width: 32, height: 32, borderRadius: 8, border: '1px solid rgba(239,68,68,.2)', background: 'rgba(239,68,68,.06)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#EF4444', transition: 'all .15s' }} title={t('admin.reject')}><XCircle size={15} /></button>
+                          <button onClick={() => toast(`${t('admin.toast_viewing_details')} ${r.id}`, 'info')} style={{ width: 32, height: 32, borderRadius: 8, border: '1px solid rgba(37,99,235,.2)', background: 'rgba(37,99,235,.06)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2563EB' }} title={t('admin.view')}><Eye size={15} /></button>
+                          <button onClick={() => { approveSubmission(r.id); toast(`${r.title} ${t('admin.toast_approved')}`, 'success') }} disabled={r.status === 'Approved'} style={{ width: 32, height: 32, borderRadius: 8, border: '1px solid rgba(20,184,166,.2)', background: 'rgba(20,184,166,.06)', cursor: r.status === 'Approved' ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: r.status === 'Approved' ? '#CBD5E1' : '#14B8A6' }} title={t('admin.approve')}><CheckCircle size={15} /></button>
+                          <button onClick={() => { rejectSubmission(r.id); toast(`${r.title} ${t('admin.toast_rejected')}`, 'error') }} disabled={r.status === 'Approved' || r.status === 'Rejected'} style={{ width: 32, height: 32, borderRadius: 8, border: '1px solid rgba(239,68,68,.2)', background: 'rgba(239,68,68,.06)', cursor: (r.status === 'Approved' || r.status === 'Rejected') ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: (r.status === 'Approved' || r.status === 'Rejected') ? '#CBD5E1' : '#EF4444' }} title={t('admin.reject')}><XCircle size={15} /></button>
                         </div>
                       </td>
                     </tr>
@@ -324,22 +318,16 @@ export default function AdminDashboard() {
                     <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('admin.timestamp')}</th>
                     <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('admin.block')}</th>
                     <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('admin.status')}</th>
-                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('admin.explorer')}</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {smartFilter(blockchainRecords, ['tx', 'research', 'timestamp', 'block', 'status'], 'status').map(b => (
+                  {db.blockchain.map(b => (
                     <tr key={b.tx} style={{ borderBottom: '1px solid rgba(148,163,184,.1)' }}>
                       <td style={{ padding: '.75rem 0', fontFamily: 'monospace', fontWeight: 600, color: '#2563EB', fontSize: '.8rem' }}>{b.tx}</td>
                       <td style={{ padding: '.75rem 0', color: '#0F172A' }}>{b.research}</td>
                       <td style={{ padding: '.75rem 0', color: '#64748B', fontSize: '.8rem' }}>{b.timestamp}</td>
                       <td style={{ padding: '.75rem 0', fontFamily: 'monospace', color: '#334155' }}>{b.block}</td>
                       <td style={{ padding: '.75rem 0' }}>{statusBadge(b.status)}</td>
-                      <td style={{ padding: '.75rem 0' }}>
-                        <button onClick={() => toast(`${t('admin.toast_viewing_tx')} ${b.tx}`)} style={{ padding: '6px 12px', borderRadius: 8, border: '1px solid rgba(37,99,235,.2)', background: 'rgba(37,99,235,.06)', cursor: 'pointer', color: '#2563EB', fontSize: '.75rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}>
-                          <Eye className="w-3.5 h-3.5" /> {t('admin.view')}
-                        </button>
-                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -349,45 +337,55 @@ export default function AdminDashboard() {
         )
       case 'certificates':
         return (
-          <div style={{ background: 'rgba(255,255,255,.95)', borderRadius: 16, padding: '1.5rem', border: '1px solid rgba(255,255,255,.5)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0F172A', margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}><Award size={18} /> {t('admin.digital_certificates')}</h3>
-              <button onClick={() => toast(t('admin.toast_cert_issuance'), 'info')} style={{ fontSize: '.8rem', color: '#fff', background: '#2563EB', border: 'none', padding: '8px 16px', borderRadius: 10, cursor: 'pointer', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6 }}><Award size={14} /> {t('admin.issue_new')}</button>
-            </div>
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '.85rem' }}>
-                <thead>
-                  <tr style={{ borderBottom: '1px solid rgba(148,163,184,.2)', color: '#64748B', fontSize: '.75rem', textTransform: 'uppercase', letterSpacing: '.05em' }}>
-                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('admin.certificate_id')}</th>
-                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('admin.student')}</th>
-                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('admin.research')}</th>
-                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('admin.issued_date')}</th>
-                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('admin.qr_code')}</th>
-                    <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('admin.actions')}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {smartFilter(certData, ['id', 'student', 'research', 'issued', 'qr']).map(c => (
-                    <tr key={c.id} style={{ borderBottom: '1px solid rgba(148,163,184,.1)' }}>
-                      <td style={{ padding: '.75rem 0', fontWeight: 600, color: '#2563EB' }}>{c.id}</td>
-                      <td style={{ padding: '.75rem 0', color: '#0F172A' }}>{c.student}</td>
-                      <td style={{ padding: '.75rem 0', color: '#334155' }}>{c.research}</td>
-                      <td style={{ padding: '.75rem 0', color: '#64748B' }}>{c.issued}</td>
-                      <td style={{ padding: '.75rem 0' }}>
-                        <span style={{ fontFamily: 'monospace', color: '#94A3B8', fontSize: '.75rem', background: 'rgba(0,0,0,.03)', padding: '4px 8px', borderRadius: 6 }}>{c.qr}</span>
-                      </td>
-                      <td style={{ padding: '.75rem 0' }}>
-                        <div style={{ display: 'flex', gap: '.4rem' }}>
-                          <button onClick={() => toast(`${t('admin.toast_viewing_cert')} ${c.id}`, 'info')} style={{ width: 32, height: 32, borderRadius: 8, border: '1px solid rgba(37,99,235,.2)', background: 'rgba(37,99,235,.06)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2563EB' }}><Eye size={15} /></button>
-                          <button onClick={() => toast(`${t('admin.toast_downloading')} ${c.id}`, 'success')} style={{ width: 32, height: 32, borderRadius: 8, border: '1px solid rgba(20,184,166,.2)', background: 'rgba(20,184,166,.06)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#14B8A6' }}><Download size={15} /></button>
-                        </div>
-                      </td>
+          <>
+            <div style={{ background: 'rgba(255,255,255,.95)', borderRadius: 16, padding: '1.5rem', border: '1px solid rgba(255,255,255,.5)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0F172A', margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}><Award size={18} /> {t('admin.digital_certificates')}</h3>
+                <button onClick={() => {
+                  const first = db.submissions.find(s => s.status === 'Approved' && !db.certificates.some(c => c.research === s.title))
+                  if (!first) { toast(t('admin.toast_no_cert'), 'error'); return }
+                  approveSubmission(first.id)
+                  const cert = db.certificates[0]
+                  setViewCert(cert)
+                  toast(`${t('admin.toast_cert_issued')} ${cert.id}`, 'success')
+                }} style={{ fontSize: '.8rem', color: '#fff', background: '#2563EB', border: 'none', padding: '8px 16px', borderRadius: 10, cursor: 'pointer', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6 }}><Award size={14} /> {t('admin.issue_new')}</button>
+              </div>
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '.85rem' }}>
+                  <thead>
+                    <tr style={{ borderBottom: '1px solid rgba(148,163,184,.2)', color: '#64748B', fontSize: '.75rem', textTransform: 'uppercase', letterSpacing: '.05em' }}>
+                      <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('admin.certificate_id')}</th>
+                      <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('admin.student')}</th>
+                      <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('admin.research')}</th>
+                      <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('admin.issued_date')}</th>
+                      <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('admin.qr_code')}</th>
+                      <th style={{ textAlign: 'left', padding: '0 0 .75rem' }}>{t('admin.actions')}</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {db.certificates.map(c => (
+                      <tr key={c.id} style={{ borderBottom: '1px solid rgba(148,163,184,.1)' }}>
+                        <td style={{ padding: '.75rem 0', fontWeight: 600, color: '#2563EB' }}>{c.id}</td>
+                        <td style={{ padding: '.75rem 0', color: '#0F172A' }}>{c.student}</td>
+                        <td style={{ padding: '.75rem 0', color: '#334155' }}>{c.research}</td>
+                        <td style={{ padding: '.75rem 0', color: '#64748B' }}>{c.issued}</td>
+                        <td style={{ padding: '.75rem 0' }}>
+                          <span style={{ fontFamily: 'monospace', color: '#94A3B8', fontSize: '.75rem', background: 'rgba(0,0,0,.03)', padding: '4px 8px', borderRadius: 6 }}>{c.hash.slice(0, 10)}...</span>
+                        </td>
+                        <td style={{ padding: '.75rem 0' }}>
+                          <div style={{ display: 'flex', gap: '.4rem' }}>
+                            <button onClick={() => setViewCert(c)} style={{ width: 32, height: 32, borderRadius: 8, border: '1px solid rgba(37,99,235,.2)', background: 'rgba(37,99,235,.06)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2563EB' }}><Eye size={15} /></button>
+                            <button onClick={() => setViewCert(c)} style={{ width: 32, height: 32, borderRadius: 8, border: '1px solid rgba(20,184,166,.2)', background: 'rgba(20,184,166,.06)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#14B8A6' }}><Download size={15} /></button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
+            {viewCert && <CertificateModal cert={viewCert} onClose={() => setViewCert(null)} />}
+          </>
         )
       case 'settings':
         const settingIcons: Record<string, any> = {

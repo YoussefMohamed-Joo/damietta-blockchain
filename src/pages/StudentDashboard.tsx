@@ -6,8 +6,10 @@ import {
   Hash, Loader2, Camera, ZoomIn, ZoomOut
 } from 'lucide-react'
 import NotificationBell from '../components/NotificationBell'
+import CertificateModal from '../components/CertificateModal'
 import { toast } from '../components/Toast'
 import { useI18n } from '../i18n'
+import { useDB, addSubmission, type Submission, type Certificate } from '../lib/store'
 const sidebarItems = [
   { key: 'overview', label: 'Overview', labelKey: 'student.overview', icon: LayoutDashboard },
   { key: 'my-research', label: 'My Research', labelKey: 'student.my_research', icon: FileText },
@@ -15,18 +17,9 @@ const sidebarItems = [
   { key: 'profile', label: 'Profile', labelKey: 'student.profile', icon: User },
 ]
 
-const researchData = [
-  { id: 'RES-2026-001', title: 'Blockchain for Healthcare Data', status: 'Approved', date: '2026-07-24', hash: '0x7f8a...3b2c' },
-  { id: 'RES-2026-002', title: 'AI-Based Crop Disease Detection', status: 'Pending', date: '2026-07-23', hash: '—' },
-  { id: 'RES-2026-003', title: 'IoT Smart Grid Optimization', status: 'Under Review', date: '2026-07-22', hash: '—' },
-]
-
-const certData = [
-  { id: 'CERT-2026-001', research: 'Blockchain for Healthcare Data', issued: '2026-07-24', expires: '2031-07-24' },
-]
-
 export default function StudentDashboard() {
   const { t } = useI18n()
+  const db = useDB()
   const [active, setActive] = useState('overview')
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [uploadTitle, setUploadTitle] = useState('')
@@ -35,16 +28,19 @@ export default function StudentDashboard() {
   const [profileName, setProfileName] = useState('Ahmed Hassan')
   const [profileEmail, setProfileEmail] = useState('ahmed.hassan@stud.du.edu.eg')
   const [profileDept, setProfileDept] = useState('Computer Science')
-  const [submissions, setSubmissions] = useState(researchData)
   const [fileName, setFileName] = useState('')
-  const [viewingSubmission, setViewingSubmission] = useState<typeof researchData[0] | null>(null)
+  const [viewingSubmission, setViewingSubmission] = useState<Submission | null>(null)
+  const [viewCert, setViewCert] = useState<Certificate | null>(null)
   const [profilePic, setProfilePic] = useState('')
   const [cropModal, setCropModal] = useState(false)
   const [cropImage, setCropImage] = useState('')
   const [cropZoom, setCropZoom] = useState(1)
   const [cropPos, setCropPos] = useState({ x: 0, y: 0 })
   const [dragging, setDragging] = useState(false)
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
+const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
+
+  const submissions = db.submissions.filter(s => s.student === 'Ahmed Hassan')
+  const myCerts = db.certificates.filter(c => c.student === 'Ahmed Hassan')
 
   const statusKey: Record<string, string> = {
     Approved: 'student.status_approved',
@@ -82,10 +78,10 @@ export default function StudentDashboard() {
           <>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.25rem', marginBottom: '2rem' }}>
               {[
-                { label: 'Total Submissions', labelKey: 'student.total_submissions', value: '3', icon: BookOpen, color: '#2563EB', bg: 'rgba(37,99,235,.12)' },
-                { label: 'Approved', labelKey: 'student.approved', value: '1', icon: CheckCircle, color: '#14B8A6', bg: 'rgba(20,184,166,.12)' },
-                { label: 'Pending Review', labelKey: 'student.pending_review', value: '2', icon: Clock, color: '#F59E0B', bg: 'rgba(245,158,11,.12)' },
-                { label: 'Certificates', labelKey: 'student.certificates', value: '1', icon: Award, color: '#8B5CF6', bg: 'rgba(139,92,246,.12)' },
+                { label: 'Total Submissions', labelKey: 'student.total_submissions', value: String(submissions.length), icon: BookOpen, color: '#2563EB', bg: 'rgba(37,99,235,.12)' },
+                { label: 'Approved', labelKey: 'student.approved', value: String(submissions.filter(s => s.status === 'Approved').length), icon: CheckCircle, color: '#14B8A6', bg: 'rgba(20,184,166,.12)' },
+                { label: 'Pending Review', labelKey: 'student.pending_review', value: String(submissions.filter(s => s.status === 'Pending' || s.status === 'Under Review').length), icon: Clock, color: '#F59E0B', bg: 'rgba(245,158,11,.12)' },
+                { label: 'Certificates', labelKey: 'student.certificates', value: String(myCerts.length), icon: Award, color: '#8B5CF6', bg: 'rgba(139,92,246,.12)' },
               ].map(s => {
                 const Icon = s.icon
                 return (
@@ -99,6 +95,48 @@ export default function StudentDashboard() {
                 )
               })}
             </div>
+
+            {submissions.length > 0 && (() => {
+              const latest = submissions[0]
+              const steps = ['Pending', 'Under Review', 'Approved']
+              const rejected = latest.status === 'Rejected'
+              const current = rejected ? -1 : steps.indexOf(latest.status as any)
+              const stepKey = (s: string) => s === 'Pending' ? 'student.progress_submitted' : s === 'Under Review' ? 'student.progress_review' : 'student.progress_approved'
+              return (
+                <div style={{ background: 'rgba(255,255,255,.95)', borderRadius: 16, padding: '1.5rem', border: '1px solid rgba(255,255,255,.5)', marginBottom: '2rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+                    <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#0F172A', margin: 0 }}>{t('student.progress_title')}</h3>
+                    <span style={{ fontSize: '.8rem', color: '#64748B' }}>{latest.id} · {latest.title}</span>
+                  </div>
+                  {rejected ? (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12, background: 'rgba(239,68,68,.08)', border: '1px solid rgba(239,68,68,.25)', borderRadius: 12, padding: '1rem' }}>
+                      <XCircle className="w-6 h-6" style={{ color: '#EF4444' }} />
+                      <div>
+                        <div style={{ fontWeight: 700, color: '#B91C1C', fontSize: '.9rem' }}>{t('student.progress_rejected_title')}</div>
+                        <div style={{ fontSize: '.8rem', color: '#64748B' }}>{t('student.progress_rejected_desc')}</div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                      {steps.map((s, i) => (
+                        <div key={s} style={{ display: 'flex', alignItems: 'center', flex: i === steps.length - 1 ? 0 : 1, width: i === steps.length - 1 ? 'auto' : undefined }}>
+                          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: 84 }}>
+                            <div style={{ width: 36, height: 36, borderRadius: '50%', background: i <= current ? 'linear-gradient(135deg,#2563EB,#14B8A6)' : '#E2E8F0', display: 'flex', alignItems: 'center', justifyContent: 'center', color: i <= current ? '#fff' : '#94A3B8', fontWeight: 700, fontSize: '.85rem' }}>
+                              {i < current ? <CheckCircle className="w-4 h-4" /> : i + 1}
+                            </div>
+                            <div style={{ fontSize: '.72rem', fontWeight: 600, color: i <= current ? '#0F172A' : '#94A3B8', marginTop: 6, textAlign: 'center' }}>{t(stepKey(s))}</div>
+                          </div>
+                          {i < steps.length - 1 && (
+                            <div style={{ flex: 1, height: 3, borderRadius: 2, background: i < current ? 'linear-gradient(90deg,#2563EB,#14B8A6)' : '#E2E8F0', margin: '0 4px', marginBottom: 22 }} />
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )
+            })()}
+
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
               <div style={{ background: 'rgba(255,255,255,.95)', borderRadius: 16, padding: '1.5rem', border: '1px solid rgba(255,255,255,.5)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
@@ -196,9 +234,8 @@ export default function StudentDashboard() {
               </div>
               <button onClick={() => {
                 if (!uploadTitle.trim() || !supervisor.trim()) { toast(t('student.toast_fill_fields'), 'error'); return }
-                const newId = `RES-2026-${String(submissions.length + 1).padStart(3, '0')}`
-                setSubmissions(prev => [...prev, { id: newId, title: uploadTitle.trim(), status: 'Pending', date: new Date().toISOString().slice(0, 10), hash: '—' }])
-                toast(`"${uploadTitle}" ${t('student.toast_submitted')}`, 'success')
+                const newId = addSubmission({ title: uploadTitle.trim(), supervisor: supervisor.trim() })
+                toast(`"${uploadTitle.trim()}" ${t('student.toast_submitted')} (${newId})`, 'success')
                 setUploadTitle(''); setSupervisor(''); setKeywords(''); setFileName('')
               }} style={{ fontSize: '.85rem', color: '#fff', background: '#2563EB', border: 'none', padding: '10px 24px', borderRadius: 10, cursor: 'pointer', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6 }}>
                 <Hash className="w-4 h-4" /> {t('student.submit_generate_hash')}
@@ -210,14 +247,14 @@ export default function StudentDashboard() {
         return (
           <div style={{ background: 'rgba(255,255,255,.95)', borderRadius: 16, padding: '1.5rem', border: '1px solid rgba(255,255,255,.5)' }}>
             <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0F172A', marginBottom: '1.25rem' }}>{t('student.my_certificates')}</h3>
-            {certData.length === 0 ? (
+            {myCerts.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '3rem 1rem', color: '#94A3B8' }}>
                 <Award className="w-12 h-12" style={{ margin: '0 auto 1rem', opacity: 0.3 }} />
                 <p>{t('student.no_certificates')}</p>
               </div>
             ) : (
               <div style={{ display: 'grid', gap: '1rem' }}>
-                {certData.map(c => (
+                {myCerts.map(c => (
                   <div key={c.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.25rem', background: 'rgba(255,255,255,.4)', borderRadius: 12, border: '1px solid rgba(255,255,255,.3)' }}>
                     <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
                       <div style={{ width: 48, height: 48, borderRadius: 12, background: 'rgba(139,92,246,.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -233,10 +270,10 @@ export default function StudentDashboard() {
                       </div>
                     </div>
                     <div style={{ display: 'flex', gap: '.5rem' }}>
-                      <button onClick={() => window.open(`/certificate/${c.id}`, '_blank')} style={{ width: 36, height: 36, borderRadius: 10, border: '1px solid rgba(37,99,235,.2)', background: 'rgba(37,99,235,.06)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2563EB' }}>
+                      <button onClick={() => setViewCert(c)} style={{ width: 36, height: 36, borderRadius: 10, border: '1px solid rgba(37,99,235,.2)', background: 'rgba(37,99,235,.06)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2563EB' }}>
                         <Eye size={16} />
                       </button>
-                      <button onClick={() => { const a = document.createElement('a'); a.href = '#'; a.download = `${c.id}.pdf`; a.click() }} style={{ width: 36, height: 36, borderRadius: 10, border: '1px solid rgba(20,184,166,.2)', background: 'rgba(20,184,166,.06)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#14B8A6' }}>
+                      <button onClick={() => setViewCert(c)} style={{ width: 36, height: 36, borderRadius: 10, border: '1px solid rgba(20,184,166,.2)', background: 'rgba(20,184,166,.06)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#14B8A6' }}>
                         <Download size={16} />
                       </button>
                     </div>
@@ -244,6 +281,7 @@ export default function StudentDashboard() {
                 ))}
               </div>
             )}
+            {viewCert && <CertificateModal cert={viewCert} onClose={() => setViewCert(null)} />}
           </div>
         )
       case 'profile':
