@@ -39,15 +39,15 @@ export default function Navbar() {
 
   const firstName = session ? session.name.trim().split(/\s+/)[0] : ''
 
-  const userChip = (
-    <Link to="/profile" title={session!.name} style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(255,255,255,.9)', border: '1px solid rgba(148,163,184,.25)', borderRadius: 12, padding: '6px 12px', height: 40, boxSizing: 'border-box', textDecoration: 'none', transition: 'all .2s', cursor: 'pointer' }}
+  const userChip = session && (
+    <Link to="/profile" title={session.name} style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(255,255,255,.9)', border: '1px solid rgba(148,163,184,.25)', borderRadius: 12, padding: '6px 12px', height: 40, boxSizing: 'border-box', textDecoration: 'none', transition: 'all .2s', cursor: 'pointer' }}
       onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(0,74,198,.4)'; e.currentTarget.style.boxShadow = '0 2px 10px rgba(0,74,198,.08)' }}
       onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(148,163,184,.25)'; e.currentTarget.style.boxShadow = 'none' }}
     >
-      {session!.avatar ? (
-        <img src={session!.avatar} alt="" style={{ width: 28, height: 28, borderRadius: '50%', objectFit: 'cover' }} />
+      {session.avatar ? (
+        <img src={session.avatar} alt="" style={{ width: 28, height: 28, borderRadius: '50%', objectFit: 'cover' }} />
       ) : (
-        <span style={{ width: 28, height: 28, borderRadius: '50%', background: 'linear-gradient(135deg,#004ac6,#14B8A6)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700 }}>{session!.name.trim().charAt(0).toUpperCase()}</span>
+        <span style={{ width: 28, height: 28, borderRadius: '50%', background: 'linear-gradient(135deg,#004ac6,#14B8A6)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700 }}>{session.name.trim().charAt(0).toUpperCase()}</span>
       )}
       <span className="text-slate-800 text-sm font-semibold whitespace-nowrap">{firstName}</span>
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6"/></svg>
