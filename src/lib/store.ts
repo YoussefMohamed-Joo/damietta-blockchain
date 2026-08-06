@@ -45,6 +45,7 @@ export interface Session {
   name: string
   email: string
   role: 'Admin' | 'Reviewer' | 'Student'
+  avatar?: string
 }
 
 export interface SiteNotification {
@@ -261,6 +262,14 @@ export function register(data: { name: string; email: string; role?: Session['ro
 
 export function logout() {
   db.session = null
+  save()
+}
+
+export function updateProfile(data: { name?: string; email?: string; avatar?: string }) {
+  if (!db.session) return
+  if (data.name !== undefined) db.session.name = data.name
+  if (data.email !== undefined) db.session.email = data.email
+  if (data.avatar !== undefined) db.session.avatar = data.avatar
   save()
 }
 

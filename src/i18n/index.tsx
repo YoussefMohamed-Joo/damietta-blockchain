@@ -17,12 +17,13 @@ import reviewer from './dict/reviewer'
 import student from './dict/student'
 import assistant from './dict/assistant'
 import cert from './dict/cert'
+import profile from './dict/profile'
 
 type Lang = 'en' | 'ar'
 
 const DICTS = [
   core, home, features, how, verify, portal, faculty, faqs,
-  contact, privacy, terms, login, register, admin, reviewer, student, assistant, cert,
+  contact, privacy, terms, login, register, admin, reviewer, student, assistant, cert, profile,
 ]
 
 const merge = (lang: Lang): Record<string, string> =>

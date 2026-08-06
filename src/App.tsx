@@ -15,6 +15,7 @@ import Terms from './pages/Terms'
 import AdminDashboard from './pages/AdminDashboard'
 import StudentDashboard from './pages/StudentDashboard'
 import ReviewerDashboard from './pages/ReviewerDashboard'
+import Profile from './pages/Profile'
 import AIAssistant from './components/AIAssistant'
 import ToastContainer from './components/Toast'
 
@@ -33,6 +34,7 @@ export default function App() {
         <Route path="/features" element={<Features />} />
         <Route path="/how-it-works" element={<HowItWorks />} />
         <Route path="/verify" element={<Verify />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/student-portal" element={<StudentPortal />} />
         <Route path="/faculty-guide" element={<FacultyGuide />} />
         <Route path="/faqs" element={<FAQs />} />
