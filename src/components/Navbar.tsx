@@ -66,7 +66,7 @@ export default function Navbar() {
           <li>{navLink('/how-it-works', t('nav.how'))}</li>
         </ul>
         <div className="hidden lg:flex items-center justify-end gap-2 xl:gap-3 shrink-0">
-          <SiteBell />
+          {session && <SiteBell />}
           {session ? userChip : (
             <>
               <Link to="/login" className="login-btn px-4 xl:px-5 py-2.5 text-sm">{t('nav.login')}</Link>
