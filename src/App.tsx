@@ -16,6 +16,10 @@ import AdminDashboard from './pages/AdminDashboard'
 import StudentDashboard from './pages/StudentDashboard'
 import ReviewerDashboard from './pages/ReviewerDashboard'
 import Profile from './pages/Profile'
+import IpTools from './pages/IpTools'
+import News from './pages/News'
+import Research from './pages/Research'
+import Team from './pages/Team'
 import AIAssistant from './components/AIAssistant'
 import ToastContainer from './components/Toast'
 
@@ -35,6 +39,10 @@ export default function App() {
         <Route path="/how-it-works" element={<HowItWorks />} />
         <Route path="/verify" element={<Verify />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/tools" element={<IpTools />} />
+        <Route path="/news" element={<News />} />
+        <Route path="/research" element={<Research />} />
+        <Route path="/team" element={<Team />} />
         <Route path="/student-portal" element={<StudentPortal />} />
         <Route path="/faculty-guide" element={<FacultyGuide />} />
         <Route path="/faqs" element={<FAQs />} />
