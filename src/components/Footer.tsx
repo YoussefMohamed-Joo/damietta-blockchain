@@ -17,7 +17,7 @@ const cols: { title: string; key: string; items: [string, string][] }[] = [
     { title: t('footer.quick_links'), key: 'ql', items: [[t('footer.home'), '/'], [t('footer.features'), '/features'], [t('footer.how'), '/how-it-works'], [t('footer.verify'), '/verify']] },
     { title: t('footer.explore'), key: 'explore', items: [[t('footer.tools'), '/tools'], [t('footer.research'), '/research'], [t('footer.news'), '/news'], [t('footer.team'), '/team']] },
     { title: t('footer.platform'), key: 'platform', items: [[t('footer.admin_panel'), '/admin'], [t('footer.reviewer_dash2'), '/admin/reviews'], [t('footer.student_dash'), '/dashboard'], [t('profile.title'), '/profile']] },
-    { title: t('footer.resources'), key: 'res', items: [[t('footer.student_portal'), '/student-portal'], [t('footer.faculty_guide'), '/faculty-guide'], [t('footer.faqs'), '/faqs'], [t('footer.contact'), '/contact']] },
+    { title: t('footer.resources'), key: 'res', items: [[t('footer.guide'), '/guide'], [t('footer.student_portal'), '/student-portal'], [t('footer.faculty_guide'), '/faculty-guide'], [t('footer.faqs'), '/faqs'], [t('footer.contact'), '/contact']] },
     { title: t('footer.legal'), key: 'legal', items: [[t('footer.privacy'), '/privacy'], [t('footer.terms'), '/terms']] },
   ]
 

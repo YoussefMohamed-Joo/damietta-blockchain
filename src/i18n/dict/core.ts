@@ -43,6 +43,7 @@ export default {
     'footer.news': 'News & Events',
     'footer.research': 'Research Registry',
     'footer.team': 'Our Team',
+    'footer.guide': 'User Guide',
     'footer.reviewer_dash2': 'Reviewer Panel',
   },
   ar: {
@@ -89,6 +90,7 @@ export default {
     'footer.news': 'الأخبار والفعاليات',
     'footer.research': 'سجل الأبحاث',
     'footer.team': 'فريقنا',
+    'footer.guide': 'دليل المستخدم',
     'footer.reviewer_dash2': 'لوحة المراجع',
   },
 }

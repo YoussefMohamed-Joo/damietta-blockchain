@@ -22,12 +22,13 @@ import tools from './dict/tools'
 import news from './dict/news'
 import research from './dict/research'
 import team from './dict/team'
+import guide from './dict/guide'
 
 type Lang = 'en' | 'ar'
 
 const DICTS = [
   core, home, features, how, verify, portal, faculty, faqs,
-  contact, privacy, terms, login, register, admin, reviewer, student, assistant, cert, profile, tools, news, research, team,
+  contact, privacy, terms, login, register, admin, reviewer, student, assistant, cert, profile, tools, news, research, team, guide,
 ]
 
 const merge = (lang: Lang): Record<string, string> =>
