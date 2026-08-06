@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useI18n } from '../i18n'
+import { login, register } from '../lib/store'
 
 function formatPhone(val: string) {
   const digits = val.replace(/\D/g, '')
@@ -13,9 +14,24 @@ function formatPhone(val: string) {
 
 export default function Login() {
   const { t } = useI18n()
+  const navigate = useNavigate()
   const [tab, setTab] = useState<'login' | 'register'>('login')
   const [showPw, setShowPw] = useState(false)
   const [phone, setPhone] = useState('')
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    const fullName = name.trim()
+    if (!fullName) return
+    if (tab === 'register') {
+      register({ name: fullName, email: email.trim() || 'student@du.edu.eg' })
+    } else {
+      login(fullName, email.trim() || 'ahmed.hassan@stud.du.edu.eg')
+    }
+    navigate('/')
+  }
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value.replace(/[^\d+ ]/g, '')
@@ -85,7 +101,23 @@ export default function Login() {
               <hr style={{ flex: 1, border: 'none', borderTop: '1px dashed #e2e8f0' }} />
             </div>
 
-            <form style={{ display: 'flex', flexDirection: 'column', gap: '.55rem' }}>
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '.55rem' }}>
+              <div>
+                <label style={{ fontSize: 10, fontWeight: 600, color: '#475569', textTransform: 'uppercase', letterSpacing: '.05em', display: 'block', marginBottom: 4 }}>{tab === 'login' ? t('login.your_name') : t('register.full_name')}</label>
+                <div style={{ position: 'relative' }}>
+                  <svg style={{ position: 'absolute', left: 11, top: '50%', transform: 'translateY(-50%)', color: '#94A3B8', width: 15, height: 15 }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={e => setName(e.target.value)}
+                    placeholder={tab === 'login' ? t('login.your_name_placeholder') : t('register.full_name_placeholder')}
+                    style={{ width: '100%', padding: '.55rem .55rem .55rem 2rem', border: '1.5px solid #e2e8f0', borderRadius: 10, fontSize: '.85rem', outline: 'none', background: '#fff', boxSizing: 'border-box', transition: 'all .2s', boxShadow: 'inset 0 1px 2px rgba(0,0,0,.02)' }}
+                    onFocus={e => { e.currentTarget.style.borderColor = '#004ac6'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(0,74,198,.08), inset 0 1px 2px rgba(0,0,0,.02)' }}
+                    onBlur={e => { e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.boxShadow = 'inset 0 1px 2px rgba(0,0,0,.02)' }}
+                  />
+                </div>
+              </div>
+
               <div>
                 <label style={{ fontSize: 10, fontWeight: 600, color: '#475569', textTransform: 'uppercase', letterSpacing: '.05em', display: 'block', marginBottom: 4 }}>{t('login.phone')}</label>
                 <div style={{ position: 'relative' }}>
@@ -107,7 +139,7 @@ export default function Login() {
                   <label style={{ fontSize: 10, fontWeight: 600, color: '#475569', textTransform: 'uppercase', letterSpacing: '.05em', display: 'block', marginBottom: 4 }}>{t('register.gmail_address')}</label>
                   <div style={{ position: 'relative' }}>
                     <svg style={{ position: 'absolute', left: 11, top: '50%', transform: 'translateY(-50%)', color: '#94A3B8', width: 15, height: 15 }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 4l-10 8L2 4"/></svg>
-                    <input type="email" placeholder={t('register.gmail_placeholder')} style={{ width: '100%', padding: '.55rem .55rem .55rem 2rem', border: '1.5px solid #e2e8f0', borderRadius: 10, fontSize: '.85rem', outline: 'none', background: '#fff', boxSizing: 'border-box', transition: 'all .2s', boxShadow: 'inset 0 1px 2px rgba(0,0,0,.02)' }}
+                    <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder={t('register.gmail_placeholder')} style={{ width: '100%', padding: '.55rem .55rem .55rem 2rem', border: '1.5px solid #e2e8f0', borderRadius: 10, fontSize: '.85rem', outline: 'none', background: '#fff', boxSizing: 'border-box', transition: 'all .2s', boxShadow: 'inset 0 1px 2px rgba(0,0,0,.02)' }}
                       onFocus={e => { e.currentTarget.style.borderColor = '#004ac6'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(0,74,198,.08), inset 0 1px 2px rgba(0,0,0,.02)' }}
                       onBlur={e => { e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.boxShadow = 'inset 0 1px 2px rgba(0,0,0,.02)' }}
                     />

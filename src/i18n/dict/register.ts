@@ -6,6 +6,8 @@ export default {
       'Register to protect your research with blockchain technology.',
     'register.gmail_address': 'Gmail Address',
     'register.gmail_placeholder': 'example@gmail.com',
+    'register.full_name': 'Full Name',
+    'register.full_name_placeholder': 'e.g. Ahmed Hassan',
   },
   ar: {
     'register.tab_register': 'التسجيل',
@@ -14,5 +16,7 @@ export default {
       'سجّل لحماية أبحاثك باستخدام تقنية البلوكشين.',
     'register.gmail_address': 'بريد Gmail',
     'register.gmail_placeholder': 'example@gmail.com',
+    'register.full_name': 'الاسم الكامل',
+    'register.full_name_placeholder': 'مثال: أحمد حسن',
   },
 }

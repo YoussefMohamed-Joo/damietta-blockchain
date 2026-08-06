@@ -41,6 +41,12 @@ export interface BlockchainRecord {
   status: 'Confirmed'
 }
 
+export interface Session {
+  name: string
+  email: string
+  role: 'Admin' | 'Reviewer' | 'Student'
+}
+
 export interface SiteNotification {
   id: number
   type: string
@@ -48,6 +54,7 @@ export interface SiteNotification {
   text: string
   time: string
   read: boolean
+  user?: string
 }
 
 export interface DB {
@@ -57,6 +64,7 @@ export interface DB {
   blockchain: BlockchainRecord[]
   notifications: SiteNotification[]
   verifiedIds: string[]
+  session: Session | null
 }
 
 const KEY = 'ipp_db_v1'
@@ -130,6 +138,8 @@ function seed(): DB {
     { id: 2, type: 'approval', title: 'Research approved', text: '"Renewable Energy Forecasting" was approved and a certificate was issued.', time: '1 hr ago', read: false },
     { id: 3, type: 'update', title: 'Portal maintenance', text: 'Scheduled maintenance on Saturday 02:00–04:00 AM.', time: '5 hr ago', read: true },
     { id: 4, type: 'alert', title: 'Security notice', text: 'New blockchain verification endpoint is live for public use.', time: '1 day ago', read: true },
+    { id: 5, type: 'submission', title: 'Your research received', text: '"Blockchain for Healthcare Data" has been received and is pending review.', time: '3 min ago', read: false, user: 'Ahmed Hassan' },
+    { id: 6, type: 'update', title: 'Review in progress', text: '"AI-Based Crop Disease Detection" is now under review.', time: '40 min ago', read: false, user: 'Mariam Ali' },
   ]
 
   return {
@@ -145,13 +155,17 @@ function seed(): DB {
     blockchain,
     notifications,
     verifiedIds: approved.map(s => s.hash),
+    session: null,
   }
 }
 
 function load(): DB {
   try {
     const raw = localStorage.getItem(KEY)
-    if (raw) return JSON.parse(raw) as DB
+    if (raw) {
+      const parsed = JSON.parse(raw) as DB
+      return { ...parsed, session: parsed.session ?? null }
+    }
   } catch (e) { /* ignore */ }
   const db = seed()
   try { localStorage.setItem(KEY, JSON.stringify(db)) } catch (e) { /* ignore */ }
@@ -188,7 +202,7 @@ export function approveSubmission(id: string) {
   db.certificates.unshift({ id: cid, student: s.student, research: s.title, issued: new Date().toISOString().slice(0, 10), expires: '2031-08-01', hash: s.hash, faculty: s.faculty, supervisor: s.supervisor })
   db.blockchain.unshift({ tx: s.hash, research: s.title, timestamp: new Date().toLocaleString(), block: 18480000 + db.blockchain.length * 97, status: 'Confirmed' })
   db.verifiedIds.push(s.hash)
-  db.notifications.unshift({ id: Date.now(), type: 'approval', title: 'Research approved', text: `"${s.title}" was approved and certificate ${cid} issued.`, time: 'Just now', read: false })
+  db.notifications.unshift({ id: Date.now(), type: 'approval', title: 'Research approved', text: `"${s.title}" was approved and certificate ${cid} issued.`, time: 'Just now', read: false, user: s.student })
   save()
 }
 
@@ -197,7 +211,7 @@ export function rejectSubmission(id: string) {
   if (!s) return
   s.status = 'Rejected'
   s.hash = '—'
-  db.notifications.unshift({ id: Date.now(), type: 'alert', title: 'Research rejected', text: `"${s.title}" was rejected by the review committee.`, time: 'Just now', read: false })
+  db.notifications.unshift({ id: Date.now(), type: 'alert', title: 'Research rejected', text: `"${s.title}" was rejected by the review committee.`, time: 'Just now', read: false, user: s.student })
   save()
 }
 
@@ -221,13 +235,32 @@ export function addSubmission(data: { title: string; supervisor: string; faculty
     hash: '—',
     month: now.getMonth() + 1,
   })
-  db.notifications.unshift({ id: Date.now(), type: 'submission', title: 'New research submitted', text: `"${data.title}" was submitted and is pending review.`, time: 'Just now', read: false })
+  db.notifications.unshift({ id: Date.now(), type: 'submission', title: 'New research submitted', text: `"${data.title}" was submitted and is pending review.`, time: 'Just now', read: false, user: 'Ahmed Hassan' })
   save()
   return id
 }
 
 export function markNotifsRead() {
   db.notifications.forEach(n => { n.read = true })
+  save()
+}
+
+export function login(name: string, email: string, role: Session['role'] = 'Student') {
+  db.session = { name, email, role }
+  save()
+}
+
+export function register(data: { name: string; email: string; role?: Session['role'] }) {
+  if (!db.users.some(u => u.email.toLowerCase() === data.email.toLowerCase())) {
+    db.users.unshift({ name: data.name, email: data.email, role: data.role || 'Student', status: 'Active', papers: 0 })
+  }
+  db.session = { name: data.name, email: data.email, role: data.role || 'Student' }
+  db.notifications.unshift({ id: Date.now(), type: 'update', title: 'Welcome to the portal', text: `Account registered for ${data.name}. Your notifications will appear here.`, time: 'Just now', read: false, user: data.name })
+  save()
+}
+
+export function logout() {
+  db.session = null
   save()
 }
 

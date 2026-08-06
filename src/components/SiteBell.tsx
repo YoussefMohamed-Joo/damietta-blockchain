@@ -21,7 +21,9 @@ export default function SiteBell() {
     return () => document.removeEventListener('mousedown', onClick)
   }, [])
 
-  const unread = db.notifications.filter(n => !n.read).length
+  const sessionName = db.session?.name
+  const mine = db.notifications.filter(n => (sessionName && n.user) ? n.user === sessionName : !n.user)
+  const unread = mine.filter(n => !n.read).length
 
   return (
     <div ref={ref} style={{ position: 'relative' }}>
@@ -38,8 +40,8 @@ export default function SiteBell() {
             <button onClick={() => { markNotifsRead(); setOpen(false) }} style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, color: '#2563EB', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600 }}><CheckCheck className="w-3.5 h-3.5" /> {t('nav.mark_all_read')}</button>
           </div>
           <div style={{ maxHeight: 340, overflow: 'auto' }}>
-            {db.notifications.length === 0 && <div style={{ padding: '2rem', textAlign: 'center', color: '#94A3B8', fontSize: 13 }}>{t('nav.no_notifications')}</div>}
-            {db.notifications.map(n => (
+            {mine.length === 0 && <div style={{ padding: '2rem', textAlign: 'center', color: '#94A3B8', fontSize: 13 }}>{t('nav.no_notifications')}</div>}
+            {mine.map(n => (
               <div key={n.id} style={{ display: 'flex', gap: 12, padding: '12px 16px', borderBottom: '1px solid #f8fafc', background: n.read ? '#fff' : '#EFF6FF' }}>
                 <div style={{ width: 10, height: 10, borderRadius: '50%', background: typeColor[n.type] || '#94A3B8', flexShrink: 0, marginTop: 5 }} />
                 <div style={{ flex: 1, minWidth: 0 }}>

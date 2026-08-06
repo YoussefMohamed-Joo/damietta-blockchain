@@ -2,9 +2,12 @@ import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useI18n } from '../i18n'
 import SiteBell from './SiteBell'
+import { useDB, logout } from '../lib/store'
 
 export default function Navbar() {
   const { t } = useI18n()
+  const db = useDB()
+  const session = db.session
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const location = useLocation()
@@ -34,6 +37,18 @@ export default function Navbar() {
 
   const linkClass = (to: string) => `nav-link text-slate-800 text-base ${isActive(to)}`
 
+  const firstName = session ? session.name.trim().split(/\s+/)[0] : ''
+
+  const userChip = (
+    <>
+      <span style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(255,255,255,.9)', border: '1px solid rgba(148,163,184,.25)', borderRadius: 12, padding: '6px 12px', height: 40, boxSizing: 'border-box' }}>
+        <span style={{ width: 28, height: 28, borderRadius: '50%', background: 'linear-gradient(135deg,#004ac6,#14B8A6)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700 }}>{session!.name.trim().charAt(0).toUpperCase()}</span>
+        <span className="text-slate-800 text-sm font-semibold whitespace-nowrap">{firstName}</span>
+      </span>
+      <button onClick={() => logout()} className="login-btn px-4 py-2.5 text-sm">{t('nav.logout')}</button>
+    </>
+  )
+
   return (
     <header className="absolute top-0 left-0 right-0 z-20 pt-0 lg:pt-8 px-2 sm:px-6 lg:px-10">
       <nav className={`navbar-glass mx-auto max-w-5xl px-3 sm:px-4 py-0 flex items-center min-h-[20px] sm:min-h-[32px] lg:min-h-[58.5px] ${scrolled ? 'scrolled' : ''}`}>
@@ -47,8 +62,12 @@ export default function Navbar() {
         </ul>
         <div className="hidden lg:flex items-center justify-end gap-2 xl:gap-3 shrink-0">
           <SiteBell />
-          <Link to="/login" className="login-btn px-4 xl:px-5 py-2.5 text-sm">{t('nav.login')}</Link>
-          <Link to="/register" className="register-btn px-4 xl:px-5 py-2.5 text-sm">{t('nav.register')}</Link>
+          {session ? userChip : (
+            <>
+              <Link to="/login" className="login-btn px-4 xl:px-5 py-2.5 text-sm">{t('nav.login')}</Link>
+              <Link to="/register" className="register-btn px-4 xl:px-5 py-2.5 text-sm">{t('nav.register')}</Link>
+            </>
+          )}
         </div>
         <button id="menuToggle" onClick={() => setMenuOpen(!menuOpen)} className="lg:hidden ml-auto p-0.5 sm:p-1 rounded-lg hover:bg-slate-100 transition" aria-label={t('nav.menu')}>
           <svg id="menuIcon" xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5 text-slate-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" dangerouslySetInnerHTML={{ __html: menuOpen ? close : burger }} />
@@ -61,8 +80,20 @@ export default function Navbar() {
           <li><Link to="/how-it-works" className={linkClass('/how-it-works')} onClick={() => setMenuOpen(false)}>{t('nav.how')}</Link></li>
         </ul>
         <div className="flex flex-col gap-3 mt-5 pt-5 border-t border-slate-200/60">
-          <Link to="/login" className="login-btn w-full text-center px-5 py-2.5 text-sm" onClick={() => setMenuOpen(false)}>{t('nav.login')}</Link>
-          <Link to="/register" className="register-btn w-full text-center px-5 py-2.5 text-sm" onClick={() => setMenuOpen(false)}>{t('nav.register')}</Link>
+          {session ? (
+            <>
+              <div className="flex items-center gap-3 px-3 py-2">
+                <span style={{ width: 34, height: 34, borderRadius: '50%', background: 'linear-gradient(135deg,#004ac6,#14B8A6)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 700 }}>{session.name.trim().charAt(0).toUpperCase()}</span>
+                <span className="text-slate-800 font-semibold text-sm">{firstName}</span>
+              </div>
+              <button onClick={() => logout()} className="login-btn w-full text-center px-5 py-2.5 text-sm">{t('nav.logout')}</button>
+            </>
+          ) : (
+            <>
+              <Link to="/login" className="login-btn w-full text-center px-5 py-2.5 text-sm" onClick={() => setMenuOpen(false)}>{t('nav.login')}</Link>
+              <Link to="/register" className="register-btn w-full text-center px-5 py-2.5 text-sm" onClick={() => setMenuOpen(false)}>{t('nav.register')}</Link>
+            </>
+          )}
         </div>
       </div>
     </header>
