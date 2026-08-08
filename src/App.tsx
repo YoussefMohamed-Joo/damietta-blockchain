@@ -19,7 +19,6 @@ import Profile from './pages/Profile'
 import IpTools from './pages/IpTools'
 import News from './pages/News'
 import Research from './pages/Research'
-import Team from './pages/Team'
 import GettingStarted from './pages/GettingStarted'
 import AIAssistant from './components/AIAssistant'
 import ToastContainer from './components/Toast'
@@ -43,7 +42,6 @@ export default function App() {
         <Route path="/tools" element={<IpTools />} />
         <Route path="/news" element={<News />} />
         <Route path="/research" element={<Research />} />
-        <Route path="/team" element={<Team />} />
         <Route path="/guide" element={<GettingStarted />} />
         <Route path="/student-portal" element={<StudentPortal />} />
         <Route path="/faculty-guide" element={<FacultyGuide />} />
